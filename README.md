@@ -1,2 +1,2 @@
-# Ziben
+# Ziben Game Engine
 Game engine
