@@ -23,9 +23,6 @@ namespace Ziben {
 
     }; // class EventDispatcher
 
-    EventDispatcher::EventDispatcher(Event& event)
-        : m_Event(event) {}
-
     template <EventChild T>
     bool EventDispatcher::Dispatch(const EventFunc<T>& eventFunc) {
         if (m_Event.GetEventType() == T::GetStaticEventType()) {

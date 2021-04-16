@@ -7,3 +7,6 @@
 [submodule "External/glew-cmake"]
 	path = External/glew-cmake
 	url = https://github.com/Perlmint/glew-cmake
+[submodule "External/spdlog"]
+	path = External/spdlog
+	url = https://github.com/gabime/spdlog

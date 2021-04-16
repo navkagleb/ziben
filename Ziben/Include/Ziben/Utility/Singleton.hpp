@@ -12,7 +12,7 @@ namespace Ziben {
         static T& Create(Args&&... args);
 
         static void Destroy();
-        static inline T& GetRef();
+        static inline T& Get();
         static inline T* GetPointer();
 
         NON_COPYABLE(Singleton);
@@ -45,7 +45,7 @@ namespace Ziben {
     }
 
     template <typename T>
-    inline T& Singleton<T>::GetRef() {
+    inline T& Singleton<T>::Get() {
         if (!s_Instance) {
             std::stringstream ss;
             ss << "Ziben::Singleton::GetRef: s_Instance(";

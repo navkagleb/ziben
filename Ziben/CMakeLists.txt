@@ -1,16 +1,17 @@
 set(TARGET ZibenEngine)
 
 file(GLOB HEADER_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/*.hpp
+    Include/Ziben/*.hpp
     Include/Ziben/Event/*.hpp
     Include/Ziben/System/*.hpp
     Include/Ziben/Utility/*.hpp
 )
 
 file(GLOB SOURCE_FILES
+    Include/Ziben/*.cpp
     Include/Ziben/Event/*.cpp
     Include/Ziben/System/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
+    Source/*.cpp
 )
 
 add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
@@ -23,6 +24,6 @@ target_include_directories(${TARGET}
         ${CMAKE_CURRENT_SOURCE_DIR}/Source
 )
 
-target_link_libraries(${TARGET} PUBLIC glfw libglew_static glm)
+target_link_libraries(${TARGET} PUBLIC spdlog glfw libglew_static glm)
 
 target_precompile_headers(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Source/ZibenPch.hpp)

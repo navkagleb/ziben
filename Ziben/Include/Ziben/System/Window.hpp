@@ -7,9 +7,16 @@
 
 namespace Ziben {
 
-    class Window_Impl {
+    class Window {
     public:
         using EventFunc = std::function<void(Event& event)>;
+
+    public:
+        friend class Input;
+
+    public:
+        Window(std::string title, int width, int height);
+        ~Window();
 
         [[nodiscard]] inline const std::string& GetTitle() const { return m_Title; }
         [[nodiscard]] inline int GetWidth() const { return m_Width; }
@@ -24,15 +31,16 @@ namespace Ziben {
         void Hide();
         void Show();
 
-        void OnUpdate();
+        void OnEventUpdate();
+        void SwapBuffers();
         void Close();
 
-        friend class Singleton<Window_Impl>;
-        friend class Input;
+        explicit inline operator GLFWwindow*() const { return m_Handle; }
 
     private:
         using HandleType = GLFWwindow;
 
+    private:
         static void MouseMovedCallback(HandleType* handle, double x, double y);
         static void MouseScrolledCallback(HandleType* handle, double offsetX, double offsetY);
         static void MouseButtonCallback(HandleType* handle, int button, int action, int mods);
@@ -46,12 +54,6 @@ namespace Ziben {
         static void WindowHoverCallback(HandleType* handle, int hovered);
 
     private:
-        Window_Impl(std::string title, int width, int height);
-        ~Window_Impl();
-
-        [[nodiscard]] HandleType* GetHandle() const { return m_Handle; }
-
-    private:
         std::string m_Title;
         int         m_Width;
         int         m_Height;
@@ -60,7 +62,5 @@ namespace Ziben {
         EventFunc   m_EventFunc;
 
     }; // class Window
-
-    using Window = Singleton<Window_Impl>;
 
 } // namespace Ziben

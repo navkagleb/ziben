@@ -3,6 +3,7 @@ project(Ziben)
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_subdirectory(External/spdlog)     # logging library
 add_subdirectory(External/glfw)       # glfw library
 add_subdirectory(External/glew-cmake) # glew library
 add_subdirectory(External/glm)        # glm library
