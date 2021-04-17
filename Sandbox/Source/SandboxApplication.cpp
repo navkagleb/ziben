@@ -18,4 +18,9 @@ void SandboxApplication::OnEvent(Ziben::Event& event) {
         ZIBEN_INFO("{0}", event.ToString());
         return true;
     });
+
+    dispatcher.Dispatch<Ziben::WindowCloseEvent>([this](auto& event) {
+        ZIBEN_INFO("{0}", event.ToString());
+        return true;
+    });
 }

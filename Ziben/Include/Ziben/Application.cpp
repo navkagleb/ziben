@@ -27,3 +27,18 @@ namespace Ziben {
         }
     }
 }
+
+// Entry Point!
+int main(int argc, char** argv) {
+    Ziben::Log::Create();
+
+    ZIBEN_CORE_INFO("Ziben Core Log!");
+    ZIBEN_INFO("Ziben Client Log!");
+
+    auto application = ::CreateApplication(argc, argv);
+    application->Run();
+
+    delete application;
+
+    Ziben::Log::Destroy();
+}

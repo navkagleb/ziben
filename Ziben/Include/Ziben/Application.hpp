@@ -26,5 +26,8 @@ namespace Ziben {
 
 } // namespace Ziben
 
-// To be defined in Client!
-Ziben::Application* CreateApplication();
+// Must be defined in Client!
+Ziben::Application* CreateApplication(int argc, char** argv);
+
+// Entry Point!
+int main(int argc, char** argv);
