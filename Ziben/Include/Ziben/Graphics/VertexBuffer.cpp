@@ -28,4 +28,8 @@ namespace Ziben {
         glDeleteBuffers(1, &m_Handle);
     }
 
+    void VertexBuffer::SetLayout(const VertexBufferLayout& layout) {
+        m_Layout = layout;
+    }
+
 } // namespace Ziben

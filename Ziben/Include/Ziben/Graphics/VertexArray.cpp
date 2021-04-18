@@ -31,6 +31,18 @@ namespace Ziben {
         VertexBuffer::Bind(*vertexBuffer);
 
         m_VertexBuffers.push_back(vertexBuffer);
+
+        for (uint32_t index = 0; const auto& element : vertexBuffer->GetLayout()) {
+            glEnableVertexAttribArray(index);
+            glVertexAttribPointer(
+                index++,
+                ShaderData::GetCount(element.Type),
+                ShaderData::ToNativeType(element.Type),
+                element.IsNormalized,
+                static_cast<GLsizei>(vertexBuffer->GetLayout().GetStride()),
+                (const void*)element.Offset
+            );
+        }
     }
 
     void VertexArray::SetIndexBuffer(IndexBuffer* indexBuffer) {

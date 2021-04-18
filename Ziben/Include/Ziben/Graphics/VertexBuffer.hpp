@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphicsCore.hpp"
+#include "VertexBufferLayout.hpp"
 
 namespace Ziben {
 
@@ -17,11 +18,15 @@ namespace Ziben {
 
         [[nodiscard]] inline std::size_t GetSize() const { return m_Size; }
         [[nodiscard]] inline BufferUsage GetUsage() const { return m_Usage; }
+        [[nodiscard]] inline const VertexBufferLayout& GetLayout() const { return m_Layout; }
+
+        void SetLayout(const VertexBufferLayout& layout);
 
     private:
-        HandleType  m_Handle;
-        std::size_t m_Size;
-        BufferUsage m_Usage;
+        HandleType         m_Handle;
+        std::size_t        m_Size;
+        BufferUsage        m_Usage;
+        VertexBufferLayout m_Layout;
 
     }; // class VertexBuffer
 
