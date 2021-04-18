@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ziben/System/Window.hpp"
+#include "Ziben/Scene/SceneManager.hpp"
 
 namespace Ziben {
 
@@ -12,15 +13,17 @@ namespace Ziben {
         Application(std::string title, int width, int height);
         virtual ~Application();
 
-        [[nodiscard]] const Window& GetWindow() const { return *m_Window; }
+        [[nodiscard]] inline Window& GetWindow() { return *m_Window; }
+        [[nodiscard]] inline SceneManager& GetSceneManager() { return *m_SceneManager }
 
         void Run();
 
     private:
         static Application* s_Instance;
 
-    protected:
-        Window* m_Window;
+    private:
+        Window*             m_Window;
+        SceneManager*       m_SceneManager;
 
     }; // class Application
 

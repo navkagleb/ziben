@@ -1,19 +1,9 @@
 #include "VertexBuffer.hpp"
 
-#include <GL/glew.h>
-
 namespace Ziben {
 
-    VertexBuffer::VertexBuffer(const void* data, std::size_t size)
-        : m_Handle(0) {
-
-        glGenBuffers(1, &m_Handle);
-        glBindBuffer(GL_ARRAY_BUFFER, m_Handle);
-        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size), data, GL_STATIC_DRAW);
-    }
-
-    VertexBuffer::~VertexBuffer() {
-        glDeleteBuffers(1, &m_Handle);
+    VertexBuffer* VertexBuffer::Create(const void* data, std::size_t size, BufferUsage usage) {
+        return new VertexBuffer(data, size, usage);
     }
 
     void VertexBuffer::Bind(VertexBuffer& vertexBuffer) {
@@ -22,6 +12,20 @@ namespace Ziben {
 
     void VertexBuffer::Unbind() {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    VertexBuffer::VertexBuffer(const void* data, std::size_t size, BufferUsage usage)
+        : m_Handle(0)
+        , m_Size(size)
+        , m_Usage(usage) {
+
+        glGenBuffers(1, &m_Handle);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Handle);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Size), data, static_cast<GLenum>(m_Usage));
+    }
+
+    VertexBuffer::~VertexBuffer() {
+        glDeleteBuffers(1, &m_Handle);
     }
 
 } // namespace Ziben

@@ -8,7 +8,7 @@
 SandboxApplication::SandboxApplication(std::string title, int width, int height)
     : Ziben::Application(std::move(title), width, height) {
 
-    m_Window->SetEventFunc([this](auto& event) { OnEvent(std::forward<decltype(event)>(event)); });
+    GetWindow().SetEventFunc([this](auto& event) { OnEvent(std::forward<decltype(event)>(event)); });
 }
 
 void SandboxApplication::OnEvent(Ziben::Event& event) {

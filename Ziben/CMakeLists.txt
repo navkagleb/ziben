@@ -4,6 +4,7 @@ file(GLOB HEADER_FILES
     Include/Ziben/*.hpp
     Include/Ziben/Event/*.hpp
     Include/Ziben/Graphics/*.hpp
+    Include/Ziben/Scene/*.hpp
     Include/Ziben/System/*.hpp
     Include/Ziben/Utility/*.hpp
 )
@@ -12,6 +13,7 @@ file(GLOB SOURCE_FILES
     Include/Ziben/*.cpp
     Include/Ziben/Event/*.cpp
     Include/Ziben/Graphics/*.cpp
+    Include/Ziben/Scene/*.cpp
     Include/Ziben/System/*.cpp
     Source/*.cpp
 )
