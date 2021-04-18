@@ -1,5 +1,9 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
+#include "GraphicsCore.hpp"
+
 namespace Ziben {
 
     namespace ShaderData {
@@ -67,7 +71,50 @@ namespace Ziben {
 
     } // namespace ShaderData
 
+    enum class ShaderType : uint16_t {
+        Vertex         = GL_VERTEX_SHADER,
+        Fragment       = GL_FRAGMENT_SHADER,
+        Geometry       = GL_GEOMETRY_SHADER,
+        TessControl    = GL_TESS_CONTROL_SHADER,
+        TessEvaluation = GL_TESS_EVALUATION_SHADER,
+        Compute        = GL_COMPUTE_SHADER
+    };
+
     class Shader {
+    public:
+        static Shader* Create();
+
+        static void Bind(Shader& shader);
+        static void Unbind();
+
+    public:
+        Shader();
+        ~Shader();
+
+        void Compile(const std::string& filename);
+        void Compile(const std::string& filename, ShaderType type);
+
+        void BindAttribLocation(uint32_t location, const std::string& name) const;
+        void BindFragDataLocation(uint32_t location, const std::string& name) const;
+
+        void SetUniform(const std::string& name, bool value);
+        void SetUniform(const std::string& name, int value);
+        void SetUniform(const std::string& name, float value);
+        void SetUniform(const std::string& name, float x, float y, float z);
+        void SetUniform(const std::string& name, const glm::vec3& vec3);
+        void SetUniform(const std::string& name, const glm::vec4& vec4);
+        void SetUniform(const std::string& name, const glm::mat3& mat3);
+        void SetUniform(const std::string& name, const glm::mat4& mat4);
+
+    private:
+        int GetUniformLocation(const std::string& name);
+
+        void Link();
+
+    private:
+        HandleType                 m_Handle;
+        bool                       m_IsLinked;
+        std::map<std::string, int> m_UniformLocations;
 
     }; // class Shader
 
