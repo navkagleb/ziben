@@ -15,7 +15,7 @@ namespace Ziben {
         [[nodiscard]] inline std::shared_ptr<spdlog::logger>& GetCoreLogger() { return m_CoreLogger; }
         [[nodiscard]] inline std::shared_ptr<spdlog::logger>& GetClientLogger() { return m_ClientLogger; }
 
-    private:
+    public:
         Log_Impl();
         ~Log_Impl() = default;
 

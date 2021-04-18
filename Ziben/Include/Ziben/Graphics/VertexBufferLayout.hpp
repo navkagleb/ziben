@@ -11,6 +11,10 @@ namespace Ziben {
             ShaderData::Type Type         = ShaderData::Type::None;
             std::size_t      Offset       = 0;
             bool             IsNormalized = false;
+
+            Element(ShaderData::Type type, std::string name)
+                : Name(std::move(name))
+                , Type(type) {}
         };
 
     public:

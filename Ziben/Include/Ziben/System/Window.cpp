@@ -24,6 +24,9 @@ namespace Ziben {
         glfwMakeContextCurrent(m_Handle);
         glfwSetWindowUserPointer(m_Handle, this);
 
+        if (glewInit() != GLEW_OK)
+            throw std::runtime_error("Ziben::Window::Ctor: glew crash in init!");
+
         // Set glfw callbacks
         glfwSetCursorPosCallback(     m_Handle, MouseMovedCallback     );
         glfwSetScrollCallback(        m_Handle, MouseScrolledCallback  );

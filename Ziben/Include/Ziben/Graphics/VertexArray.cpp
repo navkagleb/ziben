@@ -18,8 +18,15 @@ namespace Ziben {
         : m_Handle(0)
         , m_IndexBuffer(nullptr) {
 
+        std::cout << "VertexArray begin -- " << std::endl;
+
         glGenVertexArrays(1, &m_Handle);
+
+        std::cout << "m_Handle = " << m_Handle << std::endl;
+
         glBindVertexArray(m_Handle);
+
+        std::cout << "VertexArray end -- " << std::endl;
     }
 
     VertexArray::~VertexArray() {

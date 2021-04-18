@@ -11,8 +11,17 @@
 SandboxApplication::SandboxApplication(std::string title, int width, int height)
     : Ziben::Application(std::move(title), width, height) {
 
+//    glewExperimental = GL_TRUE;
+//
+//    if (!glewInit())
+//        throw std::runtime_error("Ziben::Window::Ctor: glew crash in init!");
+
     GetWindow().SetEventFunc([this](auto& event) { OnEvent(std::forward<decltype(event)>(event)); });
-    GetSceneManager().PushScene(new DiffuseScene);
+    std::cout << "Before Diffuse Scene" << std::endl;
+    auto diffuseScene = new DiffuseScene;
+    std::cout << "_---" << std::endl;
+    GetSceneManager().PushScene(diffuseScene);
+    std::cout << "After Diffuse Scene" << std::endl;
 }
 
 void SandboxApplication::OnEvent(Ziben::Event& event) {

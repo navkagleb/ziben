@@ -3,7 +3,7 @@
 namespace Ziben {
 
 #define EVENT_CLASS_TYPE(ClassName)                                                                      \
-    static EventType GetStaticEventType() { return EventType::ClassName; }                               \
+    [[nodiscard]] static EventType GetStaticEventType() { return EventType::ClassName; }                 \
     [[nodiscard]] inline EventType GetEventType() const override { return GetStaticEventType(); }        \
     [[nodiscard]] inline std::string GetName() const override { return #ClassName; }
 

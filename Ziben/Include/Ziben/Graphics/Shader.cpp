@@ -78,7 +78,14 @@ namespace Ziben {
 
         std::ifstream shaderCode(filename);
 
-        std::string shaderCodeString((std::istream_iterator<char>(shaderCode)), std::istream_iterator<char>());
+        std::ifstream     infile(filename);
+        std::stringstream result;
+
+        result << infile.rdbuf();
+
+        infile.close();
+
+        std::string shaderCodeString = result.str();
         const char* shaderCodeCString = shaderCodeString.c_str();
 
         glShaderSource(shaderHandle, 1, &shaderCodeCString, nullptr);

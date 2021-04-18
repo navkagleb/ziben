@@ -9,7 +9,7 @@ namespace Ziben {
         SceneManager() = default;
         ~SceneManager() = default;
 
-        inline Scene* GetActiveScene() { return m_Scenes.top(); }
+        Scene* GetActiveScene();
 
         void PushScene(Scene* scene);
         void PopScene();
