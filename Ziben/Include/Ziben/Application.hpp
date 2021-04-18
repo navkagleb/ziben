@@ -14,7 +14,7 @@ namespace Ziben {
         virtual ~Application();
 
         [[nodiscard]] inline Window& GetWindow() { return *m_Window; }
-        [[nodiscard]] inline SceneManager& GetSceneManager() { return *m_SceneManager }
+        [[nodiscard]] inline SceneManager& GetSceneManager() { return *m_SceneManager; }
 
         void Run();
 
