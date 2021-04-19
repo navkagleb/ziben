@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Ziben/Core/TimeStep.hpp"
+
 namespace Ziben {
 
     class Event;
@@ -12,7 +14,7 @@ namespace Ziben {
         virtual void OnEvent(Event& event) {}
         virtual void OnAttach() {}
         virtual void OnDetach() {}
-        virtual void OnUpdate() {}
+        virtual void OnUpdate(const TimeStep& timeStep) {}
         virtual void OnImGuiRender() {}
 
     protected:

@@ -3,14 +3,14 @@
 #include <Ziben/Scene/Scene.hpp>
 #include <Ziben/Graphics/Shader.hpp>
 
-#include "Torus.hpp"
+#include "Entities/Torus.hpp"
 
 class DiffuseScene : public Ziben::Scene {
 public:
     DiffuseScene();
 
     void OnEvent(Ziben::Event& event) override;
-    void OnUpdate(float dt) override;
+    void OnUpdate(const Ziben::TimeStep& timeStep) override;
     void OnRender() const override;
     void OnImGuiRender() override;
 

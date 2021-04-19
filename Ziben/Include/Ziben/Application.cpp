@@ -32,11 +32,13 @@ namespace Ziben {
         glClearColor(0.3f, 0.3f, 0.4f, 0.5f);
 
         while (m_Window->IsOpen()) {
+            m_TimeStep.Update(static_cast<float>(glfwGetTime()));
+
             m_Window->OnEventUpdate();
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            m_SceneManager->GetActiveScene()->OnUpdate(0.0f);
+            m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
             m_SceneManager->GetActiveScene()->OnRender();
 
             ImGuiLayer::Begin();

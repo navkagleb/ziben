@@ -1,8 +1,23 @@
 set(TARGET Sandbox)
 
-file(GLOB HEADER_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.hpp)
-file(GLOB SOURCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp)
+file(GLOB HEADER_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Application/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entities/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Scene/*.hpp
+)
+
+file(GLOB SOURCE_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Application/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entities/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Scene/*.cpp
+)
+
+include_directories(Source)
 
 add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${TARGET} PRIVATE ZibenEngine)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Media DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

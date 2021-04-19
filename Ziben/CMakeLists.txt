@@ -2,6 +2,7 @@ set(TARGET ZibenEngine)
 
 file(GLOB HEADER_FILES
     Include/Ziben/*.hpp
+    Include/Ziben/Core/*.hpp
     Include/Ziben/Event/*.hpp
     Include/Ziben/Graphics/*.hpp
     Include/Ziben/ImGui/*.hpp
@@ -15,6 +16,7 @@ file(GLOB SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/External/imgui/*.cpp
 
     Include/Ziben/*.cpp
+    Include/Ziben/Core/*.cpp
     Include/Ziben/Event/*.cpp
     Include/Ziben/Graphics/*.cpp
     Include/Ziben/ImGui/*.cpp

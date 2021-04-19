@@ -16,8 +16,8 @@ DiffuseScene::DiffuseScene()
 
     glEnable(GL_DEPTH_TEST);
 
-    m_Shader->Compile("../../Sandbox/Media/Diffuse.vert");
-    m_Shader->Compile("../../Sandbox/Media/Diffuse.frag");
+    m_Shader->Compile("Media/Diffuse.vert");
+    m_Shader->Compile("Media/Diffuse.frag");
 
     Ziben::Shader::Bind(*m_Shader);
 
@@ -59,14 +59,14 @@ void DiffuseScene::OnEvent(Ziben::Event& event) {
     });
 }
 
-void DiffuseScene::OnUpdate(float dt) {
+void DiffuseScene::OnUpdate(const Ziben::TimeStep& timeStep) {
     if (m_Angles.x >= 360.0f)
         m_Angles.x = 0.0f;
-    m_Angles.x += 0.01f;
+    m_Angles.x += 10.0f * (float)timeStep;
 
     if (m_Angles.y >= 360.0f)
         m_Angles.y = 0.0f;
-    m_Angles.y += 0.03f;
+    m_Angles.y += 30.0f * (float)timeStep;
 
     m_Model  = glm::mat4(1.0f);
     m_Model  = glm::rotate(m_Model, glm::radians(m_Angles.x), glm::vec3(1.0f, 0.0f, 0.0f));

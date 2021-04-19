@@ -2,6 +2,7 @@
 
 #include "Ziben/System/Window.hpp"
 #include "Ziben/Scene/SceneManager.hpp"
+#include "Ziben/Core/TimeStep.hpp"
 
 namespace Ziben {
 
@@ -12,14 +13,17 @@ namespace Ziben {
     public:
         static Application& Get() { return *s_Instance; }
 
-    public:
+    protected:
         Application(std::string title, int width, int height);
+
+    public:
         virtual ~Application();
 
         [[nodiscard]] inline Window& GetWindow() { return *m_Window; }
         [[nodiscard]] inline SceneManager& GetSceneManager() { return *m_SceneManager; }
 
         void Run();
+
 
     private:
         static Application* s_Instance;
@@ -32,6 +36,7 @@ namespace Ziben {
         SceneManager*       m_SceneManager;
         LayerStack*         m_LayerStack;
         ImGuiLayer*         m_ImGuiLayer;
+        TimeStep            m_TimeStep;
 
     }; // class Application
 

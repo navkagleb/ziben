@@ -24,7 +24,7 @@ namespace Ziben {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
 
-        ImGuiIO& io = ImGui::GetIO();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
 
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;        // Enable Gamepad Controls
@@ -45,6 +45,20 @@ namespace Ziben {
         ImGui::DestroyContext();
     }
 
+    void ImGuiLayer::OnImGuiRender() {
+        ImGui::Begin("FPS");
+
+        {
+            ImGui::Text(
+                "Application average %.3f ms/frame (%.1f FPS)",
+                1000.0f / ImGui::GetIO().Framerate,
+                ImGui::GetIO().Framerate
+            );
+        }
+
+        ImGui::End();
+    }
+
     void ImGuiLayer::Begin() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -52,14 +66,6 @@ namespace Ziben {
     }
 
     void ImGuiLayer::End() {
-        auto& io          = ImGui::GetIO();
-        auto& application = Application::Get();
-
-        io.DisplaySize = ImVec2(
-            (float)application.GetWindow().GetWidth(),
-            (float)application.GetWindow().GetHeight()
-        );
-
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
