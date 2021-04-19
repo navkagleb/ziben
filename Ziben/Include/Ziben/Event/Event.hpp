@@ -44,23 +44,29 @@ namespace Ziben {
 
     class Event {
     public:
+        friend class ImGuiLayer;
+        friend class EventDispatcher;
+
+    public:
         virtual ~Event() = default;
+
+        [[nodiscard]] inline bool IsHandled() const { return m_IsHandled; }
 
         [[nodiscard]] virtual EventType GetEventType() const = 0;
         [[nodiscard]] virtual std::string GetName() const = 0;
         [[nodiscard]] virtual int GetCategoryFlags() const = 0;
         [[nodiscard]] virtual std::string ToString() const = 0;
 
-        [[nodiscard]] inline bool IsInCategory(EventCategory category) const { return GetCategoryFlags() & category; }
-
-        friend class EventDispatcher;
+        [[nodiscard]] inline bool IsInCategory(EventCategory category) const {
+            return GetCategoryFlags() & category;
+        }
 
     protected:
         Event()
-            : m_Handled(false) {}
+            : m_IsHandled(false) {}
 
     protected:
-        bool m_Handled;
+        bool m_IsHandled;
 
     }; // class IEvent
 

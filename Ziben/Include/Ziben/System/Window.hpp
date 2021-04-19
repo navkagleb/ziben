@@ -10,7 +10,8 @@ namespace Ziben {
 
     class Window {
     public:
-        using EventFunc = std::function<void(Event& event)>;
+        using EventCallback = std::function<void(Event& event)>;
+        using HandleType    = GLFWwindow;
 
     public:
         friend class Input;
@@ -26,8 +27,8 @@ namespace Ziben {
         [[nodiscard]] inline bool IsOpen() const { return !glfwWindowShouldClose(m_Handle); }
         [[nodiscard]] inline bool IsVisible() const { return glfwGetWindowAttrib(m_Handle, GLFW_VISIBLE); }
 
-        void SetEventFunc(const EventFunc& eventFunc);
-        void SetEventFunc(EventFunc&& eventFunc);
+        void SetEventCallback(const EventCallback& eventFunc);
+        void SetEventCallback(EventCallback&& eventFunc);
 
         void Hide();
         void Show();
@@ -36,10 +37,8 @@ namespace Ziben {
         void SwapBuffers();
         void Close();
 
-        explicit inline operator GLFWwindow*() const { return m_Handle; }
-
-    private:
-        using HandleType = GLFWwindow;
+    public:
+        explicit inline operator HandleType*() const { return m_Handle; }
 
     private:
         static void MouseMovedCallback(HandleType* handle, double x, double y);
@@ -54,13 +53,23 @@ namespace Ziben {
         static void WindowFocusCallback(HandleType* handle, int focused);
         static void WindowHoverCallback(HandleType* handle, int hovered);
 
+        static void DebugMessageCallback(
+            uint32_t    source,
+            uint32_t    type,
+            uint32_t    id,
+            uint32_t    severity,
+            int         length,
+            const char* message,
+            const void* userParam
+        );
+
     private:
-        std::string m_Title;
-        int         m_Width;
-        int         m_Height;
-        bool        m_IsVerticalSync;
-        HandleType* m_Handle;
-        EventFunc   m_EventFunc;
+        std::string   m_Title;
+        int           m_Width;
+        int           m_Height;
+        bool          m_IsVerticalSync;
+        HandleType*   m_Handle;
+        EventCallback m_EventCallback;
 
     }; // class Window
 

@@ -1,5 +1,5 @@
 #include "SandboxApplication.hpp"
 
-Ziben::Application* CreateApplication(int argc, char** argv) {
+Ziben::Application* Ziben::CreateApplication(int argc, char** argv) {
     return new SandboxApplication("SandboxApplication", 1280, 720);
 }

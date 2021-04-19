@@ -1,10 +1,7 @@
 #include "TriangleMesh.hpp"
 
 TriangleMesh::TriangleMesh()
-    : m_VertexArray(nullptr) {
-    std::cout << "Triangle mesh" << std::endl;
-    m_VertexArray = Ziben::VertexArray::Create();
-}
+    : m_VertexArray(Ziben::VertexArray::Create()) {}
 
 void TriangleMesh::OnRender() const {
     Ziben::VertexArray::Bind(*m_VertexArray);

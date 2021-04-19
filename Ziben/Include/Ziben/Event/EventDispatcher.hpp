@@ -26,7 +26,7 @@ namespace Ziben {
     template <EventChildConcept T>
     bool EventDispatcher::Dispatch(const EventFunc<T>& eventFunc) {
         if (m_Event.GetEventType() == T::GetStaticEventType()) {
-            m_Event.m_Handled = eventFunc(static_cast<T&>(m_Event));
+            m_Event.m_IsHandled = eventFunc(static_cast<T&>(m_Event));
             return true;
         }
 

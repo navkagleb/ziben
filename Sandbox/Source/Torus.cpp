@@ -8,8 +8,6 @@ Torus::Torus(float outerRadius, float innerRadius, std::size_t sideCount, std::s
     : m_VertexBuffer(nullptr)
     , m_IndexBuffer(nullptr) {
 
-    ZIBEN_WARN("Torus enter");
-
     uint32_t facesCount  = sideCount * ringCount;
     uint32_t vertexCount = sideCount * (ringCount + 1);
 
@@ -89,6 +87,4 @@ Torus::Torus(float outerRadius, float innerRadius, std::size_t sideCount, std::s
 
     m_VertexArray->PushVertexBuffer(m_VertexBuffer);
     m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-    ZIBEN_WARN("Torus end");
 }

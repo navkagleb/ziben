@@ -9,6 +9,7 @@ class DiffuseScene : public Ziben::Scene {
 public:
     DiffuseScene();
 
+    void OnEvent(Ziben::Event& event) override;
     void OnUpdate(float dt) override;
     void OnRender() const override;
     void OnImGuiRender() override;

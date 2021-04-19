@@ -3,18 +3,23 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Ziben/System/Log.hpp>
+#include <Ziben/Event/EventDispatcher.hpp>
+#include <Ziben/Event/WindowEvent.hpp>
+#include <Ziben/Event/MouseEvent.hpp>
+
+#include <imgui.h>
 
 DiffuseScene::DiffuseScene()
     : Ziben::Scene("DiffuseScene")
     , m_Torus(0.4f, 0.2f, 30, 100)
     , m_Shader(Ziben::Shader::Create()) {
 
-    ZIBEN_WARN("DiffuseScene enter");
-
     glEnable(GL_DEPTH_TEST);
 
     m_Shader->Compile("../../Sandbox/Media/Diffuse.vert");
     m_Shader->Compile("../../Sandbox/Media/Diffuse.frag");
+
+    Ziben::Shader::Bind(*m_Shader);
 
     m_Angles = glm::vec3(0.0f, 35.0f, 0.0f);
     m_Model  = glm::mat4(1.0f);
@@ -33,18 +38,35 @@ DiffuseScene::DiffuseScene()
     m_Shader->SetUniform("u_LightPosition", m_View * m_LightPosition);
 
     m_Projection = glm::perspective(glm::radians(70.0f), (float)1280/720, 0.3f, 100.0f);
+}
 
-    ZIBEN_WARN("DiffuseScene exit");
+void DiffuseScene::OnEvent(Ziben::Event& event) {
+    Ziben::EventDispatcher dispatcher(event);
+
+    dispatcher.Dispatch<Ziben::WindowFocusedEvent>([this](Ziben::WindowFocusedEvent& event) {
+        ZIBEN_INFO("{0}", event.ToString());
+        return true;
+    });
+
+    dispatcher.Dispatch<Ziben::WindowCloseEvent>([this](Ziben::WindowCloseEvent& event) {
+        ZIBEN_INFO("{0}", event.ToString());
+        return true;
+    });
+
+    dispatcher.Dispatch<Ziben::MouseButtonPressedEvent>([this](auto& event) {
+        ZIBEN_INFO("{0}", event.ToString());
+        return true;
+    });
 }
 
 void DiffuseScene::OnUpdate(float dt) {
     if (m_Angles.x >= 360.0f)
         m_Angles.x = 0.0f;
-    m_Angles.x += 0.15f;
+    m_Angles.x += 0.01f;
 
     if (m_Angles.y >= 360.0f)
         m_Angles.y = 0.0f;
-    m_Angles.y += 0.1f;
+    m_Angles.y += 0.03f;
 
     m_Model  = glm::mat4(1.0f);
     m_Model  = glm::rotate(m_Model, glm::radians(m_Angles.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -77,14 +99,14 @@ void DiffuseScene::OnRender() const {
 }
 
 void DiffuseScene::OnImGuiRender() {
-//    ImGui::Begin("Diffuse Scene");
-//
-//    {
-//        ImGui::SliderFloat4("LightPosition", &m_LightPosition[0], -100, 100);
-//        ImGui::SliderFloat3("Kd", &m_Kd[0], 0, 10);
-//        ImGui::SliderFloat3("Ld", &m_Ld[0], 0, 10);
-//        ImGui::SliderFloat3("Rotation", &m_Angles[0], 0, 360);
-//    }
-//
-//    ImGui::End();
+    ImGui::Begin("Diffuse Scene");
+
+    {
+        ImGui::SliderFloat4("LightPosition", &m_LightPosition[0], -100, 100);
+        ImGui::SliderFloat3("Kd", &m_Kd[0], 0, 10);
+        ImGui::SliderFloat3("Ld", &m_Ld[0], 0, 10);
+        ImGui::SliderFloat3("Rotation", &m_Angles[0], 0, 360);
+    }
+
+    ImGui::End();
 }
