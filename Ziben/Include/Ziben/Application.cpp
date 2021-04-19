@@ -1,7 +1,6 @@
 #include "Application.hpp"
 
 #include "Ziben/System/Log.hpp"
-#include "Ziben/Scene/LayerStack.hpp"
 #include "Ziben/ImGui/ImGuiLayer.hpp"
 
 namespace Ziben {
@@ -38,15 +37,16 @@ namespace Ziben {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
-            m_SceneManager->GetActiveScene()->OnRender();
-
             ImGuiLayer::Begin();
+
+            if (m_SceneManager->HasActiveScene()) {
+                m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
+                m_SceneManager->GetActiveScene()->OnRender();
+                m_SceneManager->GetActiveScene()->OnImGuiRender();
+            }
 
             for (Layer* layer : *m_LayerStack)
                 layer->OnImGuiRender();
-
-            m_SceneManager->GetActiveScene()->OnImGuiRender();
 
             ImGuiLayer::End();
 
@@ -55,7 +55,8 @@ namespace Ziben {
     }
 
     void Application::OnEvent(Event& event) {
-        m_SceneManager->GetActiveScene()->OnEvent(event);
+        if (m_SceneManager->HasActiveScene())
+            m_SceneManager->GetActiveScene()->OnEvent(event);
 
         for (auto it = m_LayerStack->ReverseBegin(); it != m_LayerStack->ReverseEnd(); ++it) {
             if (event.IsHandled())

@@ -9,6 +9,8 @@ namespace Ziben {
         SceneManager() = default;
         ~SceneManager() = default;
 
+        [[nodiscard]] inline bool HasActiveScene() const { return !m_Scenes.empty(); }
+
         Scene* GetActiveScene();
 
         void PushScene(Scene* scene);

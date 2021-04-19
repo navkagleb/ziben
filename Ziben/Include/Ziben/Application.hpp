@@ -2,11 +2,11 @@
 
 #include "Ziben/System/Window.hpp"
 #include "Ziben/Scene/SceneManager.hpp"
+#include "Ziben/Scene/LayerStack.hpp"
 #include "Ziben/Core/TimeStep.hpp"
 
 namespace Ziben {
 
-    class LayerStack;
     class ImGuiLayer;
 
     class Application {
@@ -21,9 +21,9 @@ namespace Ziben {
 
         [[nodiscard]] inline Window& GetWindow() { return *m_Window; }
         [[nodiscard]] inline SceneManager& GetSceneManager() { return *m_SceneManager; }
+        [[nodiscard]] inline LayerStack& GetLayerStack() { return *m_LayerStack; }
 
         void Run();
-
 
     private:
         static Application* s_Instance;
