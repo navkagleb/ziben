@@ -1,12 +1,8 @@
 #include "Window.hpp"
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-
-#include "Ziben/Event/MouseEvent.hpp"
-#include "Ziben/Event/KeyEvent.hpp"
-#include "Ziben/Event/WindowEvent.hpp"
+#include "MouseEvent.hpp"
+#include "KeyEvent.hpp"
+#include "WindowEvent.hpp"
 
 #include "Log.hpp"
 
@@ -56,9 +52,11 @@ namespace Ziben {
         glfwSetWindowFocusCallback(   m_Handle, WindowFocusCallback    );
         glfwSetCursorEnterCallback(   m_Handle, WindowHoverCallback    );
 
+    #if ZIBEN_DEBUG
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
         glDebugMessageCallback(DebugMessageCallback, nullptr);
+    #endif
 
         // Print OpenGL info
         const uint8_t* renderer    = glGetString(GL_RENDERER);
@@ -285,6 +283,7 @@ namespace Ziben {
         }
     }
 
+#if ZIBEN_DEBUG
     void Window::DebugMessageCallback(
         uint32_t    source,
         uint32_t    type,
@@ -342,5 +341,6 @@ namespace Ziben {
             message
         );
     }
+#endif
 
 } // namespace Ziben

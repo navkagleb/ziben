@@ -2,8 +2,8 @@
 
 #include <glm/vec2.hpp>
 
-#include "Ziben/Core/ButtonCodes.hpp"
-#include "Ziben/Core/KeyCodes.hpp"
+#include "ButtonCodes.hpp"
+#include "KeyCodes.hpp"
 
 namespace Ziben {
 

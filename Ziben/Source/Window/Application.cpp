@@ -1,7 +1,7 @@
 #include "Application.hpp"
 
-#include "Ziben/System/Log.hpp"
-#include "Ziben/ImGui/ImGuiLayer.hpp"
+#include "Log.hpp"
+#include "Ziben/Scene/ImGuiLayer.hpp"
 
 namespace Ziben {
 

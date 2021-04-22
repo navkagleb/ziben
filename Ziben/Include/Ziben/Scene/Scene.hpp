@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Ziben/Core/TimeStep.hpp"
+#include "Ziben/Window/TimeStep.hpp"
+#include "Ziben/Window/Event.hpp"
 
 namespace Ziben {
-
-    class Event;
 
     class Scene {
     public:
         explicit Scene(std::string name);
-        virtual ~Scene();
+        virtual ~Scene() = default;
 
         virtual void OnEvent(Event& event) {}
         virtual void OnUpdate(const TimeStep& timeStep) {}

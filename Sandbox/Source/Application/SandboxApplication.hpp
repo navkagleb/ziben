@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Ziben/Application.hpp>
+#include <Ziben/Window/Application.hpp>
 
 class SandboxApplication : public Ziben::Application {
 public:

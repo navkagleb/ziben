@@ -1,6 +1,6 @@
 #include "Input.hpp"
 
-#include "Ziben/Application.hpp"
+#include "Application.hpp"
 
 namespace Ziben {
 
@@ -13,8 +13,8 @@ namespace Ziben {
 
         glfwGetCursorPos(
             (GLFWwindow*)Application::Get().GetWindow(),
-            reinterpret_cast<double *>(&result.x),
-            reinterpret_cast<double *>(&result.y)
+            reinterpret_cast<double*>(&result.x),
+            reinterpret_cast<double*>(&result.y)
         );
 
         return result;

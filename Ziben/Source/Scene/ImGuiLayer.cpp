@@ -4,7 +4,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "Ziben/Application.hpp"
+#include "Ziben/Window/Application.hpp"
 
 namespace Ziben {
 

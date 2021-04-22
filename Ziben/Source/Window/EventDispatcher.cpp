@@ -1,4 +1,4 @@
-#include "EventDispatcher.hpp"
+#include "Ziben/Window/EventDispatcher.hpp"
 
 namespace Ziben {
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Ziben/System/Window.hpp"
+#include "Window.hpp"
+#include "TimeStep.hpp"
 #include "Ziben/Scene/SceneManager.hpp"
 #include "Ziben/Scene/LayerStack.hpp"
-#include "Ziben/Core/TimeStep.hpp"
 
 namespace Ziben {
 

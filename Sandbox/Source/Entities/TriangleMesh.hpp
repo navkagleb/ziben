@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Ziben/Graphics/VertexArray.hpp>
+#include <Ziben/Renderer/VertexArray.hpp>
 
 class TriangleMesh {
 public:

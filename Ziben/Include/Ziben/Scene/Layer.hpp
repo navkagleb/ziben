@@ -1,10 +1,9 @@
 #pragma once
 
-#include "Ziben/Core/TimeStep.hpp"
+#include "Ziben/Window/Event.hpp"
+#include "Ziben/Window/TimeStep.hpp"
 
 namespace Ziben {
-
-    class Event;
 
     class Layer {
     public:

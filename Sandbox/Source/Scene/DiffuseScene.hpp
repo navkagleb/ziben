@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Ziben/Scene/Scene.hpp>
-#include <Ziben/Graphics/Shader.hpp>
+#include <Ziben/Renderer/Shader.hpp>
 
 #include "Entities/Torus.hpp"
 

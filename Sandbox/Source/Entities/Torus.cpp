@@ -2,7 +2,7 @@
 
 #include <glm/gtc/constants.hpp>
 
-#include <Ziben/System/Log.hpp>
+#include <Ziben/Window/Log.hpp>
 
 Torus::Torus(float outerRadius, float innerRadius, std::size_t sideCount, std::size_t ringCount)
     : m_VertexBuffer(nullptr)

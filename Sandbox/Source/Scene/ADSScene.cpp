@@ -2,10 +2,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <Ziben/System/Log.hpp>
-#include <Ziben/Event/EventDispatcher.hpp>
-#include <Ziben/Event/WindowEvent.hpp>
-#include <Ziben/Event/MouseEvent.hpp>
+#include <Ziben/Window/Log.hpp>
+#include <Ziben/Window/EventDispatcher.hpp>
+#include <Ziben/Window/WindowEvent.hpp>
+#include <Ziben/Window/MouseEvent.hpp>
 
 #include <imgui.h>
 

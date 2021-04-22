@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ziben/Scene/Layer.hpp"
+#include "Layer.hpp"
 
 namespace Ziben {
 
@@ -21,6 +21,7 @@ namespace Ziben {
 
     private:
         bool m_IsBlockedEvents;
+
     }; // class ImGuiLayer
 
 } // namespace Ziben

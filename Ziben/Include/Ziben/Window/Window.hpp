@@ -3,8 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "Ziben/Utility/Singleton.hpp"
-#include "Ziben/Event/Event.hpp"
+#include "Event.hpp"
 
 namespace Ziben {
 
@@ -53,6 +52,7 @@ namespace Ziben {
         static void WindowFocusCallback(HandleType* handle, int focused);
         static void WindowHoverCallback(HandleType* handle, int hovered);
 
+    #if ZIBEN_DEBUG
         static void DebugMessageCallback(
             uint32_t    source,
             uint32_t    type,
@@ -62,6 +62,7 @@ namespace Ziben {
             const char* message,
             const void* userParam
         );
+    #endif
 
     private:
         std::string   m_Title;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.hpp"
-#include "Ziben/Core/ButtonCodes.hpp"
+#include "ButtonCodes.hpp"
 
 namespace Ziben {
 
