@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Event.hpp"
+#include "Ziben/Renderer/GraphicsContext.hpp"
 
 namespace Ziben {
 
@@ -26,14 +27,14 @@ namespace Ziben {
         [[nodiscard]] inline bool IsOpen() const { return !glfwWindowShouldClose(m_Handle); }
         [[nodiscard]] inline bool IsVisible() const { return glfwGetWindowAttrib(m_Handle, GLFW_VISIBLE); }
 
+        void SetVerticalSync(bool enabled);
         void SetEventCallback(const EventCallback& eventFunc);
         void SetEventCallback(EventCallback&& eventFunc);
 
         void Hide();
         void Show();
 
-        void OnEventUpdate();
-        void SwapBuffers();
+        void OnUpdate();
         void Close();
 
     public:
@@ -65,12 +66,13 @@ namespace Ziben {
     #endif
 
     private:
-        std::string   m_Title;
-        int           m_Width;
-        int           m_Height;
-        bool          m_IsVerticalSync;
-        HandleType*   m_Handle;
-        EventCallback m_EventCallback;
+        std::string        m_Title;
+        int                m_Width;
+        int                m_Height;
+        bool               m_IsVerticalSync;
+        HandleType*        m_Handle;
+        GraphicsContext*   m_Context;
+        EventCallback      m_EventCallback;
 
     }; // class Window
 

@@ -8,6 +8,7 @@ else ()
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
 
 add_subdirectory(Source/Utility)
+add_subdirectory(Source/System)
 add_subdirectory(Source/Window)
 add_subdirectory(Source/Renderer)
 add_subdirectory(Source/Scene)

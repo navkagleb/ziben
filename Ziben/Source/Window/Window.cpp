@@ -4,7 +4,7 @@
 #include "KeyEvent.hpp"
 #include "WindowEvent.hpp"
 
-#include "Log.hpp"
+#include "Ziben/System/Log.hpp"
 
 namespace Ziben {
 
@@ -13,7 +13,8 @@ namespace Ziben {
         , m_Width(width)
         , m_Height(height)
         , m_IsVerticalSync(false)
-        , m_Handle(nullptr) {
+        , m_Handle(nullptr)
+        , m_Context(nullptr) {
 
         // Init GLFW
         if (!glfwInit())
@@ -30,14 +31,11 @@ namespace Ziben {
         if (!m_Handle)
             throw std::runtime_error("Ziben::Window::Ctor: m_Handle is nullptr!");
 
-        glfwMakeContextCurrent(m_Handle);
+        m_Context = GraphicsContext::Create(m_Handle);
+        m_Context->Init();
+
         glfwSetWindowUserPointer(m_Handle, this);
-
-        // Init GLEW
-        glewExperimental = GL_TRUE;
-
-        if (glewInit() != GLEW_OK)
-            throw std::runtime_error("Ziben::Window::Ctor: glew crash in init!");
+        SetVerticalSync(true);
 
         // Set glfw callbacks
         glfwSetCursorPosCallback(     m_Handle, MouseMovedCallback     );
@@ -57,31 +55,15 @@ namespace Ziben {
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
         glDebugMessageCallback(DebugMessageCallback, nullptr);
     #endif
-
-        // Print OpenGL info
-        const uint8_t* renderer    = glGetString(GL_RENDERER);
-        const uint8_t* vendor      = glGetString(GL_VENDOR);
-        const uint8_t* version     = glGetString(GL_VERSION);
-        const uint8_t* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
-        int            major;
-        int            minor;
-
-        glGetIntegerv(GL_MAJOR_VERSION, &major);
-        glGetIntegerv(GL_MINOR_VERSION, &minor);
-
-        ZIBEN_CORE_WARN("-----------------------------------------------------------------------------");
-        ZIBEN_CORE_WARN("Vendor:       {0}", vendor);
-        ZIBEN_CORE_WARN("Renderer:     {0}", renderer);
-        ZIBEN_CORE_WARN("Version:      {0}", version);
-        ZIBEN_CORE_WARN("Version:      {0}.{1}", major, minor);
-        ZIBEN_CORE_WARN("GLSL version: {0}", glslVersion);
-        ZIBEN_CORE_WARN("-----------------------------------------------------------------------------");
     }
 
     Window::~Window() {
         glfwDestroyWindow(m_Handle);
         glfwTerminate();
+    }
+
+    void Window::SetVerticalSync(bool enabled) {
+        glfwSwapInterval(m_IsVerticalSync = enabled);
     }
 
     void Window::SetEventCallback(const EventCallback& eventCallback) {
@@ -100,12 +82,9 @@ namespace Ziben {
         glfwShowWindow(m_Handle);
     }
 
-    void Window::OnEventUpdate() {
+    void Window::OnUpdate() {
         glfwPollEvents();
-    }
-
-    void Window::SwapBuffers() {
-        glfwSwapBuffers(m_Handle);
+        m_Context->SwapBuffers();
     }
 
     void Window::Close() {
