@@ -9,7 +9,7 @@ namespace Ziben {
     public:
         static VertexArray* Create();
 
-        static void Bind(VertexArray& vertexArray);
+        static void Bind(const VertexArray& vertexArray);
         static void Unbind();
 
     public:

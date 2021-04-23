@@ -2,6 +2,7 @@
 
 #include "Ziben/System/Log.hpp"
 #include "Ziben/Scene/ImGuiLayer.hpp"
+#include "Ziben/Renderer/Renderer.hpp"
 
 namespace Ziben {
 
@@ -28,12 +29,11 @@ namespace Ziben {
     }
 
     void Application::Run() {
-        glClearColor(0.3f, 0.3f, 0.4f, 0.5f);
-
         while (m_Window->IsOpen()) {
             m_TimeStep.Update(static_cast<float>(glfwGetTime()));
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            RenderCommand::SetClearColor({ 0.3f, 0.3f, 0.4f, 0.5f });
+            RenderCommand::Clear();
 
             ImGuiLayer::Begin();
 

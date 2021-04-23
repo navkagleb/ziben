@@ -6,7 +6,7 @@ namespace Ziben {
         return new VertexArray;
     }
 
-    void VertexArray::Bind(VertexArray& vertexArray) {
+    void VertexArray::Bind(const VertexArray& vertexArray) {
         glBindVertexArray(vertexArray.m_Handle);
     }
 

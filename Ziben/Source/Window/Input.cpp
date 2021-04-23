@@ -14,6 +14,12 @@ namespace Ziben {
         return glfwGetMouseButton(s_Handle, buttonCode) == GLFW_PRESS;
     }
 
+    bool Input::IsButtonPressed(std::initializer_list<ButtonCode> buttonCodes) {
+        return std::any_of(buttonCodes.begin(), buttonCodes.end(), [](ButtonCode buttonCode) {
+            return glfwGetMouseButton(s_Handle, buttonCode) == GLFW_PRESS;
+        });
+    }
+
     glm::vec<2, int> Input::GetMousePosition() {
         glm::vec<2, int> result(0);
 
@@ -28,6 +34,12 @@ namespace Ziben {
 
     bool Input::IsKeyPressed(KeyCode keyCode) {
         return glfwGetKey(s_Handle, keyCode) == GLFW_PRESS;
+    }
+
+    bool Input::IsKeyPressed(std::initializer_list<KeyCode> keyCodes) {
+        return std::any_of(keyCodes.begin(), keyCodes.end(), [](KeyCode keyCode) {
+            return glfwGetKey(s_Handle, keyCode) == GLFW_PRESS;
+        });
     }
 
 } // namespace Ziben

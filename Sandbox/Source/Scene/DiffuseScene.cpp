@@ -74,7 +74,7 @@ void DiffuseScene::OnUpdate(const Ziben::TimeStep& timeStep) {
     m_Model  = glm::rotate(m_Model, glm::radians(m_Angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
-void DiffuseScene::OnRender() const {
+void DiffuseScene::OnRender() {
     Ziben::Shader::Bind(*m_Shader);
 
     glm::mat4 modelView = m_View * m_Model;

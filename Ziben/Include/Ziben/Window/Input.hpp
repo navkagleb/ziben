@@ -15,6 +15,7 @@ namespace Ziben {
 
         // Mouse
         static bool IsButtonPressed(ButtonCode buttonCode);
+        static bool IsButtonPressed(std::initializer_list<ButtonCode> buttonCodes);
 
         static glm::vec<2, int> GetMousePosition();
         static inline int GetMouseX() { return GetMousePosition().x; };
@@ -22,6 +23,7 @@ namespace Ziben {
 
         // Keyboard
         static bool IsKeyPressed(KeyCode keyCode);
+        static bool IsKeyPressed(std::initializer_list<KeyCode> keyCodes);
 
     private:
         static GLFWwindow* s_Handle;
