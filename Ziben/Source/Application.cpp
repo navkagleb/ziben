@@ -1,6 +1,6 @@
-#include "Application.hpp"
+#include "Ziben/Application.hpp"
 
-#include "Log.hpp"
+#include "Ziben/System/Log.hpp"
 #include "Ziben/Scene/ImGuiLayer.hpp"
 
 namespace Ziben {
@@ -33,8 +33,6 @@ namespace Ziben {
         while (m_Window->IsOpen()) {
             m_TimeStep.Update(static_cast<float>(glfwGetTime()));
 
-            m_Window->OnEventUpdate();
-
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             ImGuiLayer::Begin();
@@ -50,7 +48,7 @@ namespace Ziben {
 
             ImGuiLayer::End();
 
-            m_Window->SwapBuffers();
+            m_Window->OnUpdate();
         }
     }
 
@@ -74,7 +72,7 @@ int main(int argc, char** argv) {
     ZIBEN_CORE_INFO("Ziben Core Log!");
     ZIBEN_INFO("Ziben Client Log!");
 
-    auto application = Ziben::CreateApplication(argc, argv);
+    auto application = ::Ziben::CreateApplication(argc, argv);
     application->Run();
 
     delete application;

@@ -5,10 +5,14 @@
 #include "ButtonCodes.hpp"
 #include "KeyCodes.hpp"
 
+struct GLFWwindow;
+
 namespace Ziben {
 
     class Input {
     public:
+        static void Init(GLFWwindow* handle);
+
         // Mouse
         static bool IsButtonPressed(ButtonCode buttonCode);
 
@@ -18,6 +22,9 @@ namespace Ziben {
 
         // Keyboard
         static bool IsKeyPressed(KeyCode keyCode);
+
+    private:
+        static GLFWwindow* s_Handle;
 
     }; // class Input
 

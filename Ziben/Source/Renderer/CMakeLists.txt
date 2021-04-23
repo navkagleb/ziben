@@ -19,6 +19,6 @@ target_include_directories(${TARGET}
         ${PROJECT_SOURCE_DIR}/Ziben/Include/
 )
 
-target_link_libraries(${TARGET} PUBLIC glfw libglew_static glm)
+target_link_libraries(${TARGET} PUBLIC ZibenSystem glfw libglew_static glm)
 
 target_precompile_headers(${TARGET} PUBLIC RendererPch.hpp)
