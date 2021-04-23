@@ -1,4 +1,4 @@
-#include "Application.hpp"
+#include "Ziben/Application.hpp"
 
 #include "Ziben/System/Log.hpp"
 #include "Ziben/Scene/ImGuiLayer.hpp"
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     ZIBEN_CORE_INFO("Ziben Core Log!");
     ZIBEN_INFO("Ziben Client Log!");
 
-    auto application = Ziben::CreateApplication(argc, argv);
+    auto application = ::Ziben::CreateApplication(argc, argv);
     application->Run();
 
     delete application;

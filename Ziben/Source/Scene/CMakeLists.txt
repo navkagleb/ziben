@@ -16,7 +16,6 @@ add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
 
 target_include_directories(${TARGET}
     PUBLIC
-        ${PROJECT_SOURCE_DIR}/External/glew-cmake/include
         ${PROJECT_SOURCE_DIR}/External/imgui
     PRIVATE
         ${PROJECT_SOURCE_DIR}/External/imgui/backends
@@ -26,7 +25,7 @@ target_include_directories(${TARGET}
 
 target_link_libraries(${TARGET}
     PUBLIC
-        ZibenSystem libglew_static glfw
+        ZibenRenderer
     PRIVATE
         -loleaut32 -limm32 -lversion
 )

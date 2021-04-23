@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Window.hpp"
-#include "TimeStep.hpp"
+#include "Ziben/Window/Window.hpp"
+#include "Ziben/Window/TimeStep.hpp"
 #include "Ziben/Scene/SceneManager.hpp"
 #include "Ziben/Scene/LayerStack.hpp"
 

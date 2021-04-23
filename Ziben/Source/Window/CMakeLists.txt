@@ -12,13 +12,11 @@ file(GLOB SOURCE_FILES
 add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
 
 target_include_directories(${TARGET}
-    PUBLIC
-        ${PROJECT_SOURCE_DIR}/External/glew-cmake/include
     PRIVATE
         ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Window
         ${PROJECT_SOURCE_DIR}/Ziben/Include/
 )
 
-target_link_libraries(${TARGET} PUBLIC ZibenUtility ZibenSystem ZibenRenderer ZibenScene spdlog)
+target_link_libraries(${TARGET} PUBLIC ZibenUtility ZibenScene)
 
 target_precompile_headers(${TARGET} PUBLIC WindowPch.hpp)

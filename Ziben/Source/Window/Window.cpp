@@ -1,5 +1,6 @@
 #include "Window.hpp"
 
+#include "Input.hpp"
 #include "MouseEvent.hpp"
 #include "KeyEvent.hpp"
 #include "WindowEvent.hpp"
@@ -31,11 +32,15 @@ namespace Ziben {
         if (!m_Handle)
             throw std::runtime_error("Ziben::Window::Ctor: m_Handle is nullptr!");
 
+        // Init glew
         m_Context = GraphicsContext::Create(m_Handle);
         m_Context->Init();
 
         glfwSetWindowUserPointer(m_Handle, this);
         SetVerticalSync(true);
+
+        // Init input
+        Input::Init(m_Handle);
 
         // Set glfw callbacks
         glfwSetCursorPosCallback(     m_Handle, MouseMovedCallback     );
