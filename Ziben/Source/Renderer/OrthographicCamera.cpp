@@ -22,22 +22,22 @@ namespace Ziben {
     }
 
     void OrthographicCamera::MoveLeft(float offset) {
-        m_Position.x += offset;
-        RecalculateViewMatrix();
-    }
-
-    void OrthographicCamera::MoveRight(float offset) {
         m_Position.x -= offset;
         RecalculateViewMatrix();
     }
 
+    void OrthographicCamera::MoveRight(float offset) {
+        m_Position.x += offset;
+        RecalculateViewMatrix();
+    }
+
     void OrthographicCamera::MoveDown(float offset) {
-        m_Position.y += offset;
+        m_Position.y -= offset;
         RecalculateViewMatrix();
     }
 
     void OrthographicCamera::MoveUp(float offset) {
-        m_Position.y -= offset;
+        m_Position.y += offset;
         RecalculateViewMatrix();
     }
 

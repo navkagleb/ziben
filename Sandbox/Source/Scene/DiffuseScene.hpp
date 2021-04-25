@@ -10,7 +10,7 @@ public:
     DiffuseScene();
 
     void OnEvent(Ziben::Event& event) override;
-    void OnUpdate(const Ziben::TimeStep& timeStep) override;
+    void OnUpdate(const Ziben::TimeStep& ts) override;
     void OnRender() override;
     void OnImGuiRender() override;
 

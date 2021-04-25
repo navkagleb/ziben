@@ -15,11 +15,11 @@ public:
     void OnImGuiRender() override;
 
 private:
-    Ziben::VertexBuffer*      m_VertexBuffer;
-    Ziben::IndexBuffer*       m_IndexBuffer;
-    Ziben::VertexArray*       m_VertexArray;
+    Ziben::VertexArray*       m_TriangleVertexArray;
+    Ziben::VertexArray*       m_SquareVertexArray;
     Ziben::Shader*            m_Shader;
     Ziben::OrthographicCamera m_Camera;
-    glm::vec3                 m_CameraPosition;
+
+    glm::vec3                 m_Position;
 
 }; // class Scene2D

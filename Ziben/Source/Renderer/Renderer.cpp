@@ -12,9 +12,10 @@ namespace Ziben {
 
     }
 
-    void Renderer::Submit(Shader* shader, const VertexArray* vertexArray) {
+    void Renderer::Submit(Shader* shader, const VertexArray* vertexArray, const glm::mat4& transform) {
         Shader::Bind(*shader);
         shader->SetUniform("u_ViewProjectionMatrix", s_ViewProjectionMatrix);
+        shader->SetUniform("u_Transform", transform);
 
         VertexArray::Bind(*vertexArray);
         RenderCommand::DrawIndexed(vertexArray);

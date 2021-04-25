@@ -13,8 +13,9 @@ namespace Ziben {
         , m_IsBlockedEvents(false) {}
 
     void ImGuiLayer::OnEvent(Event& event) {
+        ImGuiIO& io = ImGui::GetIO();
+
         if (!m_IsBlockedEvents) {
-            ImGuiIO& io = ImGui::GetIO();
             event.m_IsHandled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
             event.m_IsHandled |= event.IsInCategory(EventCategoryMouse)    & io.WantCaptureMouse;
         }

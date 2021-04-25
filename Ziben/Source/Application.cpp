@@ -32,7 +32,7 @@ namespace Ziben {
         while (m_Window->IsOpen()) {
             m_TimeStep.Update(static_cast<float>(glfwGetTime()));
 
-            RenderCommand::SetClearColor({ 0.3f, 0.3f, 0.4f, 0.5f });
+            RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
             RenderCommand::Clear();
 
             ImGuiLayer::Begin();

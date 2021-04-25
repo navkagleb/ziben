@@ -78,16 +78,16 @@ void ADSScene::OnEvent(Ziben::Event& event) {
     });
 }
 
-void ADSScene::OnUpdate(const Ziben::TimeStep& timeStep) {
+void ADSScene::OnUpdate(const Ziben::TimeStep& ts) {
     m_Light.Position     = m_View * m_WorldLight;
 
     if (m_Angles.x >= 360.0f)
         m_Angles.x = 0.0f;
-    m_Angles.x += 10.0f * (float)timeStep;
+    m_Angles.x += 10.0f * (float)ts;
 
     if (m_Angles.y >= 360.0f)
         m_Angles.y = 0.0f;
-    m_Angles.y += 30.0f * (float)timeStep;
+    m_Angles.y += 30.0f * (float)ts;
 
     m_Model  = glm::mat4(1.0f);
     m_Model  = glm::rotate(m_Model, glm::radians(m_Angles.x), glm::vec3(1.0f, 0.0f, 0.0f));

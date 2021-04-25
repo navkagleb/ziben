@@ -13,7 +13,7 @@ namespace Ziben {
         virtual void OnEvent(Event& event) {}
         virtual void OnAttach() {}
         virtual void OnDetach() {}
-        virtual void OnUpdate(const TimeStep& timeStep) {}
+        virtual void OnUpdate(const TimeStep& ts) {}
         virtual void OnImGuiRender() {}
 
     protected:
