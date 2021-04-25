@@ -4,6 +4,7 @@
 #include "Ziben/Window/TimeStep.hpp"
 #include "Ziben/Scene/SceneManager.hpp"
 #include "Ziben/Scene/LayerStack.hpp"
+#include "Ziben/Utility/Reference.hpp"
 
 namespace Ziben {
 
@@ -17,7 +18,7 @@ namespace Ziben {
         Application(std::string title, int width, int height);
 
     public:
-        virtual ~Application();
+        virtual ~Application() = default;
 
         [[nodiscard]] inline Window& GetWindow() { return *m_Window; }
         [[nodiscard]] inline SceneManager& GetSceneManager() { return *m_SceneManager; }
@@ -32,9 +33,9 @@ namespace Ziben {
         void OnEvent(Event& event);
 
     private:
-        Window*             m_Window;
-        SceneManager*       m_SceneManager;
-        LayerStack*         m_LayerStack;
+        Scope<Window>       m_Window;
+        Scope<SceneManager> m_SceneManager;
+        Scope<LayerStack>   m_LayerStack;
         ImGuiLayer*         m_ImGuiLayer;
         TimeStep            m_TimeStep;
 

@@ -7,24 +7,24 @@ namespace Ziben {
 
     class VertexArray {
     public:
-        static VertexArray* Create();
+        static Ref<VertexArray> Create();
 
-        static void Bind(const VertexArray& vertexArray);
+        static void Bind(const Ref<VertexArray>& vertexArray);
         static void Unbind();
 
     public:
         VertexArray();
         ~VertexArray();
 
-        [[nodiscard]] const IndexBuffer& GetIndexBuffer() const { return *m_IndexBuffer; }
+        [[nodiscard]] const Ref<IndexBuffer>& GetIndexBuffer() const { return m_IndexBuffer; }
 
-        void PushVertexBuffer(VertexBuffer* vertexBuffer);
-        void SetIndexBuffer(IndexBuffer* indexBuffer);
+        void PushVertexBuffer(const Ref<VertexBuffer>& vertexBuffer);
+        void SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer);
 
     private:
-        HandleType                 m_Handle;
-        std::vector<VertexBuffer*> m_VertexBuffers;
-        IndexBuffer*               m_IndexBuffer;
+        HandleType                     m_Handle;
+        std::vector<Ref<VertexBuffer>> m_VertexBuffers;
+        Ref<IndexBuffer>               m_IndexBuffer;
 
     }; // class VertexArray
 

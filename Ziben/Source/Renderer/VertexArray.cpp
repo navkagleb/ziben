@@ -2,12 +2,12 @@
 
 namespace Ziben {
 
-    VertexArray* VertexArray::Create() {
-        return new VertexArray;
+    Ref<VertexArray> VertexArray::Create() {
+        return std::make_shared<VertexArray>();
     }
 
-    void VertexArray::Bind(const VertexArray& vertexArray) {
-        glBindVertexArray(vertexArray.m_Handle);
+    void VertexArray::Bind(const Ref<VertexArray>& vertexArray) {
+        glBindVertexArray(vertexArray->m_Handle);
     }
 
     void VertexArray::Unbind() {
@@ -26,9 +26,12 @@ namespace Ziben {
         glDeleteVertexArrays(1, &m_Handle);
     }
 
-    void VertexArray::PushVertexBuffer(VertexBuffer* vertexBuffer) {
-        Bind(*this);
-        VertexBuffer::Bind(*vertexBuffer);
+    void VertexArray::PushVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) {
+        // Bind Current VertexArray
+        glBindVertexArray(m_Handle);
+
+        // Bind VertexBuffer
+        VertexBuffer::Bind(vertexBuffer);
 
         m_VertexBuffers.push_back(vertexBuffer);
 
@@ -45,9 +48,12 @@ namespace Ziben {
         }
     }
 
-    void VertexArray::SetIndexBuffer(IndexBuffer* indexBuffer) {
-        Bind(*this);
-        IndexBuffer::Bind(*indexBuffer);
+    void VertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer) {
+        // Bind Current VertexArray
+        glBindVertexArray(m_Handle);
+
+        // Bind IndexBuffer
+        IndexBuffer::Bind(indexBuffer);
 
         m_IndexBuffer = indexBuffer;
     }

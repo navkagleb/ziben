@@ -23,11 +23,6 @@ namespace Ziben {
         m_LayerStack->PushOverlay(m_ImGuiLayer);
     }
 
-    Application::~Application() {
-        delete m_Window;
-        delete m_SceneManager;
-    }
-
     void Application::Run() {
         while (m_Window->IsOpen()) {
             m_TimeStep.Update(static_cast<float>(glfwGetTime()));

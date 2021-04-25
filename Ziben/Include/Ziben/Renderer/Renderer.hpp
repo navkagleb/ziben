@@ -13,9 +13,9 @@ namespace Ziben {
         static void EndScene();
 
         static void Submit(
-            Shader*            shader,
-            const VertexArray* vertexArray,
-            const glm::mat4&   transform = glm::mat4(1.0f)
+            const Ref<Shader>&      shader,
+            const Ref<VertexArray>& vertexArray,
+            const glm::mat4&        transform = glm::mat4(1.0f)
         );
 
     private:

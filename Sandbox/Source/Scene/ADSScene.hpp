@@ -30,15 +30,15 @@ private:
     };
 
 private:
-    Ziben::Shader* m_Shader;
-    Torus          m_Torus;
-    float          m_Angle;
-    glm::mat4      m_Model;
-    glm::mat4      m_View;
-    glm::mat4      m_Projection;
-    Light          m_Light;
-    Material       m_Material;
-    glm::vec4      m_WorldLight;
-    glm::vec3      m_Angles;
+    Ziben::Ref<Ziben::Shader> m_Shader;
+    Torus                     m_Torus;
+    float                     m_Angle;
+    glm::mat4                 m_Model;
+    glm::mat4                 m_View;
+    glm::mat4                 m_Projection;
+    Light                     m_Light;
+    Material                  m_Material;
+    glm::vec4                 m_WorldLight;
+    glm::vec3                 m_Angles;
 
 }; // class ADSScene

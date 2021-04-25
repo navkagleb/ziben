@@ -4,15 +4,15 @@
 
 namespace Ziben {
 
-    Shader* Shader::Create() {
-        return new Shader;
+    Ref<Shader> Shader::Create() {
+        return std::make_shared<Shader>();
     }
 
-    void Shader::Bind(const Shader& shader) {
-        if (!shader.m_IsLinked)
-            shader.Link();
+    void Shader::Bind(const Ref<Shader>& shader) {
+        if (!shader->m_IsLinked)
+            shader->Link();
 
-        glUseProgram(shader.m_Handle);
+        glUseProgram(shader->m_Handle);
     }
 
     void Shader::Unbind() {

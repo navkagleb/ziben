@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "GraphicsCore.hpp"
+#include "Ziben/Utility/Reference.hpp"
 
 namespace Ziben {
 
@@ -82,9 +83,9 @@ namespace Ziben {
 
     class Shader {
     public:
-        static Shader* Create();
+        static Ref<Shader> Create();
 
-        static void Bind(const Shader& shader);
+        static void Bind(const Ref<Shader>& shader);
         static void Unbind();
 
     public:

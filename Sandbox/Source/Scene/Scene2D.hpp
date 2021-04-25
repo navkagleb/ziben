@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Ziben/Utility/Reference.hpp>
 #include <Ziben/Scene/Scene.hpp>
 #include <Ziben/Renderer/OrthographicCamera.hpp>
 #include <Ziben/Renderer/Shader.hpp>
@@ -15,11 +16,12 @@ public:
     void OnImGuiRender() override;
 
 private:
-    Ziben::VertexArray*       m_TriangleVertexArray;
-    Ziben::VertexArray*       m_SquareVertexArray;
-    Ziben::Shader*            m_Shader;
-    Ziben::OrthographicCamera m_Camera;
+    Ziben::Ref<Ziben::VertexArray> m_TriangleVertexArray;
+    Ziben::Ref<Ziben::VertexArray> m_SquareVertexArray;
+    Ziben::Ref<Ziben::Shader>      m_Shader;
+    Ziben::OrthographicCamera      m_Camera;
 
     glm::vec3                 m_Position;
+    glm::vec3                 m_SquareColor;
 
 }; // class Scene2D

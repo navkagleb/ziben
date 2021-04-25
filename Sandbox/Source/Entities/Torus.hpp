@@ -13,7 +13,7 @@ private:
     };
 
 private:
-    Ziben::VertexBuffer* m_VertexBuffer;
-    Ziben::IndexBuffer*  m_IndexBuffer;
+    Ziben::Ref<Ziben::VertexBuffer> m_VertexBuffer;
+    Ziben::Ref<Ziben::IndexBuffer>  m_IndexBuffer;
 
 }; // class Torus

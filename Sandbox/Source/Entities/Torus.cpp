@@ -73,11 +73,7 @@ Torus::Torus(float outerRadius, float innerRadius, std::size_t sideCount, std::s
         }
     }
 
-    m_VertexBuffer = Ziben::VertexBuffer::Create(
-        vertices.data(),
-        vertices.size() * sizeof(Vertex),
-        Ziben::BufferUsage::Static
-    );
+    m_VertexBuffer = Ziben::VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(Vertex));
     m_VertexBuffer->SetLayout({
         { Ziben::ShaderData::Type::Float3, "VertexPosition" },
         { Ziben::ShaderData::Type::Float3, "VertexNormal" }

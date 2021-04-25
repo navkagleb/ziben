@@ -20,7 +20,7 @@ ADSScene::ADSScene()
     m_Shader->Compile("Media/ADS.vert");
     m_Shader->Compile("Media/ADS.frag");
 
-    Ziben::Shader::Bind(*m_Shader);
+    Ziben::Shader::Bind(m_Shader);
 
     m_View = glm::lookAt(
         glm::vec3(0.0f, 0.0f, 2.0f),
@@ -98,6 +98,7 @@ void ADSScene::OnUpdate(const Ziben::TimeStep& ts) {
 void ADSScene::OnRender() {
     glm::mat4 modelView = m_View * m_Model;
 
+    Ziben::Shader::Bind(m_Shader);
 
     m_Shader->SetUniform("u_ModelViewMatrix", modelView);
     m_Shader->SetUniform(

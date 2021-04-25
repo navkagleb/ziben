@@ -1,6 +1,9 @@
 #include "Scene2D.hpp"
 
+#include <imgui.h>
+
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <Ziben/System/Log.hpp>
 #include <Ziben/Window/Input.hpp>
@@ -14,7 +17,8 @@ Scene2D::Scene2D()
     : Ziben::Scene("Scene2D")
     , m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
     , m_Shader(Ziben::Shader::Create())
-    , m_Position(0.0f) {
+    , m_Position(0.0f)
+    , m_SquareColor(0.2f, 0.3f, 0.8f){
 
     float trianglePositions[] = {
         -0.5f, -0.5f, 0.0f,
@@ -31,16 +35,9 @@ Scene2D::Scene2D()
 
     float squarePositions[] = {
         -0.5f, -0.5f, 0.0f,
-         0.2f,  0.3f, 0.8f,
-
         -0.5f,  0.5f, 0.0f,
-         0.2f,  0.3f, 0.8f,
-
          0.5f,  0.5f, 0.0f,
-         0.2f,  0.3f, 0.8f,
-
-         0.5f, -0.5,  0.0f,
-         0.2f,  0.3f, 0.8f,
+         0.5f, -0.5,  0.0f
     };
 
     Ziben::IndexType squareIndices[] = {
@@ -51,27 +48,26 @@ Scene2D::Scene2D()
     m_Shader->Compile("Media/Basic.vert");
     m_Shader->Compile("Media/Basic.frag");
 
-    Ziben::Shader::Bind(*m_Shader);
+    Ziben::Shader::Bind(m_Shader);
 
-    auto* triangleVertexBuffer = Ziben::VertexBuffer::Create(trianglePositions, 3 * 2 * 3 * sizeof(float));
+    auto triangleVertexBuffer = Ziben::VertexBuffer::Create(trianglePositions, 3 * 2 * 3 * sizeof(float));
     triangleVertexBuffer->SetLayout({
         { Ziben::ShaderData::Type::Float3, "VertexPosition" },
         { Ziben::ShaderData::Type::Float3, "VertexColor" },
     });
 
-    auto* triangleIndexBuffer = Ziben::IndexBuffer::Create(triangleIndices, 3);
+    auto triangleIndexBuffer = Ziben::IndexBuffer::Create(triangleIndices, 3);
 
     m_TriangleVertexArray = Ziben::VertexArray::Create();
     m_TriangleVertexArray->PushVertexBuffer(triangleVertexBuffer);
     m_TriangleVertexArray->SetIndexBuffer(triangleIndexBuffer);
 
-    auto* squareVertexBuffer = Ziben::VertexBuffer::Create(squarePositions, 4 * 2 * 3 * sizeof(float));
+    auto squareVertexBuffer = Ziben::VertexBuffer::Create(squarePositions, 4 * 3 * sizeof(float));
     squareVertexBuffer->SetLayout({
-        { Ziben::ShaderData::Type::Float3, "VertexPosition" },
-        { Ziben::ShaderData::Type::Float3, "VertexColor" },
+        { Ziben::ShaderData::Type::Float3, "VertexPosition" }
     });
 
-    auto* squareIndexBuffer = Ziben::IndexBuffer::Create(squareIndices, 6);
+    auto squareIndexBuffer = Ziben::IndexBuffer::Create(squareIndices, 6);
 
     m_SquareVertexArray = Ziben::VertexArray::Create();
     m_SquareVertexArray->PushVertexBuffer(squareVertexBuffer);
@@ -124,12 +120,16 @@ void Scene2D::OnRender() {
     Ziben::Renderer::BeginScene(m_Camera);
 
     {
-        static glm::mat4 scale     = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+        static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+        Ziben::Shader::Bind(m_Shader);
 
         for (int i = 0; i < 40; ++i) {
             for (int j = 0; j < 40; ++j) {
                 glm::vec3 position  = { static_cast<float>(i) * 0.11f, static_cast<float>(j) * 0.11f, 0.0f };
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
+
+                m_Shader->SetUniform("u_Color", m_SquareColor);
 
                 Ziben::Renderer::Submit(m_Shader, m_SquareVertexArray, transform);
             }
@@ -142,5 +142,11 @@ void Scene2D::OnRender() {
 }
 
 void Scene2D::OnImGuiRender() {
+    ImGui::Begin("Scene2D");
 
+    {
+        ImGui::ColorEdit3("SquareColor", glm::value_ptr(m_SquareColor));
+    }
+
+    ImGui::End();
 }

@@ -19,7 +19,7 @@ DiffuseScene::DiffuseScene()
     m_Shader->Compile("Media/Diffuse.vert");
     m_Shader->Compile("Media/Diffuse.frag");
 
-    Ziben::Shader::Bind(*m_Shader);
+    Ziben::Shader::Bind(m_Shader);
 
     m_Angles = glm::vec3(0.0f, 35.0f, 0.0f);
     m_Model  = glm::mat4(1.0f);
@@ -75,7 +75,7 @@ void DiffuseScene::OnUpdate(const Ziben::TimeStep& ts) {
 }
 
 void DiffuseScene::OnRender() {
-    Ziben::Shader::Bind(*m_Shader);
+    Ziben::Shader::Bind(m_Shader);
 
     glm::mat4 modelView = m_View * m_Model;
 
