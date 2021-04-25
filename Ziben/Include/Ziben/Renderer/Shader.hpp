@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "GraphicsCore.hpp"
+#include "Ziben/Utility/Reference.hpp"
 
 namespace Ziben {
 
@@ -82,9 +83,9 @@ namespace Ziben {
 
     class Shader {
     public:
-        static Shader* Create();
+        static Ref<Shader> Create();
 
-        static void Bind(Shader& shader);
+        static void Bind(const Ref<Shader>& shader);
         static void Unbind();
 
     public:
@@ -109,11 +110,11 @@ namespace Ziben {
     private:
         int GetUniformLocation(const std::string& name);
 
-        void Link();
+        void Link() const;
 
     private:
         HandleType                 m_Handle;
-        bool                       m_IsLinked;
+        mutable bool               m_IsLinked;
         std::map<std::string, int> m_UniformLocations;
 
     }; // class Shader

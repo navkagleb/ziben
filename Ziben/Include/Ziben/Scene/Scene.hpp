@@ -11,8 +11,8 @@ namespace Ziben {
         virtual ~Scene() = default;
 
         virtual void OnEvent(Event& event) {}
-        virtual void OnUpdate(const TimeStep& timeStep) {}
-        virtual void OnRender() const {}
+        virtual void OnUpdate(const TimeStep& ts) {}
+        virtual void OnRender() {}
         virtual void OnImGuiRender() {}
 
     private:

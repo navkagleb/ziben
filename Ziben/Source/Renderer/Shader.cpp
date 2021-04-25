@@ -1,16 +1,18 @@
 #include "Shader.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Ziben {
 
-    Shader* Shader::Create() {
-        return new Shader;
+    Ref<Shader> Shader::Create() {
+        return std::make_shared<Shader>();
     }
 
-    void Shader::Bind(Shader& shader) {
-        if (!shader.m_IsLinked)
-            shader.Link();
+    void Shader::Bind(const Ref<Shader>& shader) {
+        if (!shader->m_IsLinked)
+            shader->Link();
 
-        glUseProgram(shader.m_Handle);
+        glUseProgram(shader->m_Handle);
     }
 
     void Shader::Unbind() {
@@ -118,7 +120,7 @@ namespace Ziben {
         glAttachShader(m_Handle, shaderHandle);
     }
 
-    void Shader::Link() {
+    void Shader::Link() const {
         glLinkProgram(m_Handle);
 
         int status;
@@ -171,20 +173,19 @@ namespace Ziben {
     }
 
     void Shader::SetUniform(const std::string& name, const glm::vec3& vec3) {
-        glUniform3f(GetUniformLocation(name), vec3.x, vec3.y, vec3.z);
+        glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vec3));
     }
 
     void Shader::SetUniform(const std::string& name, const glm::vec4& vec4) {
-        glUniform4f(GetUniformLocation(name), vec4.x, vec4.y, vec4.z, vec4.w);
+        glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vec4));
     }
 
     void Shader::SetUniform(const std::string& name, const glm::mat3& mat3) {
-        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, &mat3[0][0]);
+        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat3));
     }
 
     void Shader::SetUniform(const std::string& name, const glm::mat4& mat4) {
-        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mat4[0][0]);
-
+        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat4));
     }
     
     int Shader::GetUniformLocation(const std::string& name) {

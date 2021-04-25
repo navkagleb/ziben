@@ -1,18 +1,19 @@
 #pragma once
 
 #include "GraphicsCore.hpp"
+#include "Ziben/Utility/Reference.hpp"
 
 namespace Ziben {
 
     class IndexBuffer {
     public:
-        static IndexBuffer* Create(
+        static Ref<IndexBuffer> Create(
             const IndexType* indices,
             std::size_t      count,
             BufferUsage      usage = BufferUsage::Static
         );
 
-        static void Bind(IndexBuffer& indexBuffer);
+        static void Bind(const Ref<IndexBuffer>& indexBuffer);
         static void Unbind();
 
     public:

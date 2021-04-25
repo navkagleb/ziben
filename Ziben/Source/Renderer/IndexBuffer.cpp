@@ -2,12 +2,12 @@
 
 namespace Ziben {
 
-    IndexBuffer* IndexBuffer::Create(const IndexType* indices, std::size_t count, BufferUsage usage) {
-        return new IndexBuffer(indices, count, usage);
+    Ref<IndexBuffer> IndexBuffer::Create(const IndexType* indices, std::size_t count, BufferUsage usage) {
+        return std::make_shared<IndexBuffer>(indices, count, usage);
     }
 
-    void IndexBuffer::Bind(IndexBuffer& indexBuffer) {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer.m_Handle);
+    void IndexBuffer::Bind(const Ref<IndexBuffer>& indexBuffer) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->m_Handle);
     }
 
     void IndexBuffer::Unbind() {

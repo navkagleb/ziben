@@ -7,9 +7,9 @@ namespace Ziben {
 
     class VertexBuffer {
     public:
-        static VertexBuffer* Create(const void* data, std::size_t size, BufferUsage usage = BufferUsage::Static);
+        static Ref<VertexBuffer> Create(const void* data, std::size_t size, BufferUsage usage = BufferUsage::Static);
 
-        static void Bind(VertexBuffer& vertexBuffer);
+        static void Bind(const Ref<VertexBuffer>& vertexBuffer);
         static void Unbind();
 
     public:

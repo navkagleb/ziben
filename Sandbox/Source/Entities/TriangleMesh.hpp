@@ -10,6 +10,6 @@ public:
     void OnRender() const;
 
 protected:
-    Ziben::VertexArray* m_VertexArray;
+    Ziben::Ref<Ziben::VertexArray> m_VertexArray;
 
 }; // TriangleMesh

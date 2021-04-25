@@ -2,12 +2,12 @@
 
 namespace Ziben {
 
-    VertexBuffer* VertexBuffer::Create(const void* data, std::size_t size, BufferUsage usage) {
-        return new VertexBuffer(data, size, usage);
+    Ref<VertexBuffer> VertexBuffer::Create(const void* data, std::size_t size, BufferUsage usage) {
+        return std::make_shared<VertexBuffer>(data, size, usage);
     }
 
-    void VertexBuffer::Bind(VertexBuffer& vertexBuffer) {
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer.m_Handle);
+    void VertexBuffer::Bind(const Ref<VertexBuffer>& vertexBuffer) {
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->m_Handle);
     }
 
     void VertexBuffer::Unbind() {
