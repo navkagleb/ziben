@@ -18,20 +18,19 @@ Scene2D::Scene2D()
     , m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
     , m_Shader(Ziben::Shader::Create())
     , m_Position(0.0f)
-    , m_SquareColor(0.2f, 0.3f, 0.8f){
+    , m_SquareColor(0.2f, 0.3f, 0.8f) {
 
     float trianglePositions[] = {
-        -0.5f, -0.5f, 0.0f,
-         1.0f,  0.0f, 0.0f,
-
-         0.0f,  0.5f, 0.0f,
-         0.0f,  1.0f, 0.0f,
-
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.0f, 1.0f
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
     };
 
-    Ziben::IndexType triangleIndices[] = { 0, 1, 2 };
+    Ziben::IndexType triangleIndices[] = {
+        0, 1, 2,
+        2, 3, 0
+    };
 
     float squarePositions[] = {
         -0.5f, -0.5f, 0.0f,
@@ -50,28 +49,31 @@ Scene2D::Scene2D()
 
     Ziben::Shader::Bind(m_Shader);
 
-    auto triangleVertexBuffer = Ziben::VertexBuffer::Create(trianglePositions, 3 * 2 * 3 * sizeof(float));
+    auto triangleVertexBuffer = Ziben::VertexBuffer::Create(trianglePositions, sizeof(trianglePositions));
     triangleVertexBuffer->SetLayout({
         { Ziben::ShaderData::Type::Float3, "VertexPosition" },
-        { Ziben::ShaderData::Type::Float3, "VertexColor" },
+        { Ziben::ShaderData::Type::Float2, "TexCoord" },
     });
 
-    auto triangleIndexBuffer = Ziben::IndexBuffer::Create(triangleIndices, 3);
+    auto triangleIndexBuffer = Ziben::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(Ziben::HandleType));
 
     m_TriangleVertexArray = Ziben::VertexArray::Create();
     m_TriangleVertexArray->PushVertexBuffer(triangleVertexBuffer);
     m_TriangleVertexArray->SetIndexBuffer(triangleIndexBuffer);
 
-    auto squareVertexBuffer = Ziben::VertexBuffer::Create(squarePositions, 4 * 3 * sizeof(float));
+    auto squareVertexBuffer = Ziben::VertexBuffer::Create(squarePositions, sizeof(squarePositions ));
     squareVertexBuffer->SetLayout({
         { Ziben::ShaderData::Type::Float3, "VertexPosition" }
     });
 
-    auto squareIndexBuffer = Ziben::IndexBuffer::Create(squareIndices, 6);
+    auto squareIndexBuffer = Ziben::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(Ziben::HandleType));
 
     m_SquareVertexArray = Ziben::VertexArray::Create();
     m_SquareVertexArray->PushVertexBuffer(squareVertexBuffer);
     m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
+
+    Ziben::Texture2D::Bind(m_Texture = Ziben::Texture2D::Create("Assets/Textures/ChernoLogo.png"));
+    m_Shader->SetUniform("u_Texture", 0);
 }
 
 void Scene2D::OnEvent(Ziben::Event& event) {
@@ -129,12 +131,11 @@ void Scene2D::OnRender() {
                 glm::vec3 position  = { static_cast<float>(i) * 0.11f, static_cast<float>(j) * 0.11f, 0.0f };
                 glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
 
-                m_Shader->SetUniform("u_Color", m_SquareColor);
-
                 Ziben::Renderer::Submit(m_Shader, m_SquareVertexArray, transform);
             }
         }
 
+        Ziben::Texture2D::Bind(m_Texture);
         Ziben::Renderer::Submit(m_Shader, m_TriangleVertexArray);
     }
 

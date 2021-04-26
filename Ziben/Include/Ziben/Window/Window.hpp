@@ -53,18 +53,6 @@ namespace Ziben {
         static void WindowFocusCallback(HandleType* handle, int focused);
         static void WindowHoverCallback(HandleType* handle, int hovered);
 
-    #if ZIBEN_DEBUG
-        static void DebugMessageCallback(
-            uint32_t    source,
-            uint32_t    type,
-            uint32_t    id,
-            uint32_t    severity,
-            int         length,
-            const char* message,
-            const void* userParam
-        );
-    #endif
-
     private:
         std::string        m_Title;
         int                m_Width;

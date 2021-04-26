@@ -2,6 +2,7 @@
 
 #include <Ziben/Scene/Scene.hpp>
 #include <Ziben/Renderer/Shader.hpp>
+#include <Ziben/Renderer/PerspectiveCamera.hpp>
 
 #include "Entities/Torus.hpp"
 
@@ -40,5 +41,6 @@ private:
     Material                  m_Material;
     glm::vec4                 m_WorldLight;
     glm::vec3                 m_Angles;
+    Ziben::PerspectiveCamera  m_Camera;
 
 }; // class ADSScene

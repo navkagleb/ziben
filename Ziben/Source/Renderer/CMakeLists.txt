@@ -1,5 +1,7 @@
 set(TARGET ZibenRenderer)
 
+add_compile_definitions(STB_IMAGE_IMPLEMENTATION)
+
 file(GLOB HEADER_FILES
     ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Renderer/*.hpp
     ${PROJECT_SOURCE_DIR}/Ziben/Source/Renderer/*.hpp
@@ -15,6 +17,9 @@ target_include_directories(${TARGET}
     PUBLIC
         ${PROJECT_SOURCE_DIR}/External/glew-cmake/include
     PRIVATE
+        # stb library
+        ${PROJECT_SOURCE_DIR}/External/stb
+
         ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Renderer
         ${PROJECT_SOURCE_DIR}/Ziben/Include/
 )

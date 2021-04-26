@@ -3,7 +3,7 @@
 namespace Ziben {
 
     Ref<IndexBuffer> IndexBuffer::Create(const IndexType* indices, std::size_t count, BufferUsage usage) {
-        return std::make_shared<IndexBuffer>(indices, count, usage);
+        return CreateRef<IndexBuffer>(indices, count, usage);
     }
 
     void IndexBuffer::Bind(const Ref<IndexBuffer>& indexBuffer) {

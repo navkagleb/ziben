@@ -6,6 +6,7 @@
 #include "Scene/DiffuseScene.hpp"
 #include "Scene/ADSScene.hpp"
 #include "Scene/Scene2D.hpp"
+#include "Scene/CubeScene.hpp"
 
 MenuLayer::MenuLayer()
     : Ziben::Layer("MenuLayer") {}
@@ -29,6 +30,11 @@ void MenuLayer::OnImGuiRender() {
         if (ImGui::Button("2D")) {
             if (!sceneManager.HasActiveScene() || !dynamic_cast<Scene2D*>(sceneManager.GetActiveScene()))
                 SandboxApplication::Get().GetSceneManager().PushScene(new Scene2D);
+        }
+
+        if (ImGui::Button("Cube")) {
+            if (!sceneManager.HasActiveScene() || !dynamic_cast<CubeScene*>(sceneManager.GetActiveScene()))
+                SandboxApplication::Get().GetSceneManager().PushScene(new CubeScene);
         }
     }
 

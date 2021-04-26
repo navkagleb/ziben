@@ -5,7 +5,7 @@
 namespace Ziben {
 
     Ref<Shader> Shader::Create() {
-        return std::make_shared<Shader>();
+        return CreateRef<Shader>();
     }
 
     void Shader::Bind(const Ref<Shader>& shader) {
@@ -39,7 +39,7 @@ namespace Ziben {
         glDeleteProgram(m_Handle);
     }
 
-    void Shader::Compile(const std::string& filename) {
+    void Shader::Compile(const std::string& filepath) {
         namespace fs = std::filesystem;
 
         static std::map<std::string, ShaderType> types = {
@@ -54,18 +54,18 @@ namespace Ziben {
             { ".cs",   ShaderType::Compute        }
         };
 
-        if (!fs::exists(filename))
-            throw std::invalid_argument("No file by provided filename: " + filename);
+        if (!fs::exists(filepath))
+            throw std::invalid_argument("No file by provided filename: " + filepath);
 
-        auto extension = fs::path(filename).extension().string();
+        auto extension = fs::path(filepath).extension().string();
 
         if (!types.contains(extension))
             throw std::invalid_argument("Unrecognized extension: " + extension);
 
-        Compile(filename, types[extension]);
+        Compile(filepath, types[extension]);
     }
 
-    void Shader::Compile(const std::string& filename, ShaderType type) {
+    void Shader::Compile(const std::string& filepath, ShaderType type) {
         if (m_Handle == 0) {
             m_Handle = glCreateProgram();
 
@@ -78,9 +78,9 @@ namespace Ziben {
         if (shaderHandle == 0)
             throw std::runtime_error("Error creating shader!");
 
-        std::ifstream shaderCode(filename);
+        std::ifstream shaderCode(filepath);
 
-        std::ifstream     infile(filename);
+        std::ifstream     infile(filepath);
         std::stringstream result;
 
         result << infile.rdbuf();

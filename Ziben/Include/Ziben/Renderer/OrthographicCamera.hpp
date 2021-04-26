@@ -1,17 +1,18 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include "Camera.hpp"
 
 namespace Ziben {
 
-    class OrthographicCamera {
+    class OrthographicCamera : public Camera {
     public:
         OrthographicCamera(float left, float right, float bottom, float top);
+        ~OrthographicCamera() = default;
 
-        [[nodiscard]] inline const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
-        [[nodiscard]] inline const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
-        [[nodiscard]] inline const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
-        [[nodiscard]] inline const glm::vec3& GetPosition() const { return m_Position; }
+        [[nodiscard]] inline const glm::mat4& GetProjectionMatrix() const override { return m_ProjectionMatrix; }
+        [[nodiscard]] inline const glm::mat4& GetViewMatrix() const override { return m_ViewMatrix; }
+        [[nodiscard]] inline const glm::mat4& GetViewProjectionMatrix() const override { return m_ViewProjectionMatrix; }
+        [[nodiscard]] inline const glm::vec3& GetPosition() const override { return m_Position; }
         [[nodiscard]] inline float GetRotation() const { return m_Rotation; }
 
         void SetPosition(const glm::vec3& position);

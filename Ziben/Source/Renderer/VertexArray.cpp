@@ -3,7 +3,7 @@
 namespace Ziben {
 
     Ref<VertexArray> VertexArray::Create() {
-        return std::make_shared<VertexArray>();
+        return CreateRef<VertexArray>();
     }
 
     void VertexArray::Bind(const Ref<VertexArray>& vertexArray) {

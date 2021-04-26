@@ -1,5 +1,7 @@
 #include "ADSScene.hpp"
 
+#include <imgui.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Ziben/System/Log.hpp>
@@ -7,15 +9,20 @@
 #include <Ziben/Window/WindowEvent.hpp>
 #include <Ziben/Window/MouseEvent.hpp>
 
-#include <imgui.h>
+
+#include "Application/SandboxApplication.hpp"
 
 ADSScene::ADSScene()
     : Ziben::Scene("ADSScene")
     , m_Shader(Ziben::Shader::Create())
     , m_Torus(0.7f, 0.3f, 150, 150)
-    , m_Angle(0.0f) {
-
-    glEnable(GL_DEPTH_TEST);
+    , m_Angle(0.0f)
+    , m_Camera(
+        70.0f,
+        (float)SandboxApplication::Get().GetWindow().GetWidth() / (float)SandboxApplication::Get().GetWindow().GetHeight(),
+        0.3f,
+        100.0f
+    ) {
 
     m_Shader->Compile("Media/ADS.vert");
     m_Shader->Compile("Media/ADS.frag");
@@ -27,6 +34,8 @@ ADSScene::ADSScene()
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 1.0f, 0.0f)
     );
+
+//    m_View = glm::mat4(1.0f);
 
     m_Projection = glm::mat4(1.0f);
     m_WorldLight = glm::vec4(5.0f, 5.0f, 2.0f, 1.0f);

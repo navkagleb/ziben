@@ -4,7 +4,11 @@ namespace Ziben {
 
     glm::mat4 Renderer::s_ViewProjectionMatrix = glm::mat4(1.0f);
 
-    void Renderer::BeginScene(OrthographicCamera& camera) {
+    void Renderer::Init() {
+        RenderCommand::Init();
+    }
+
+    void Renderer::BeginScene(Camera& camera) {
         s_ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 

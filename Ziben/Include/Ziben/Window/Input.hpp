@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
+
 #include <glm/vec2.hpp>
 
 #include "ButtonCodes.hpp"
@@ -17,9 +19,9 @@ namespace Ziben {
         static bool IsButtonPressed(ButtonCode buttonCode);
         static bool IsButtonPressed(std::initializer_list<ButtonCode> buttonCodes);
 
-        static glm::vec<2, int> GetMousePosition();
-        static inline int GetMouseX() { return GetMousePosition().x; };
-        static inline int GetMouseY() { return GetMousePosition().y; };
+        template <typename T = int> static glm::vec<2, T> GetMousePosition();
+        template <typename T = int> static inline int GetMouseX() { return GetMousePosition<T>().x; };
+        template <typename T = int> static inline int GetMouseY() { return GetMousePosition<T>().y; };
 
         // Keyboard
         static bool IsKeyPressed(KeyCode keyCode);
@@ -29,5 +31,15 @@ namespace Ziben {
         static GLFWwindow* s_Handle;
 
     }; // class Input
+
+    template <typename T>
+    glm::vec<2, T> Input::GetMousePosition() {
+        double x;
+        double y;
+
+        glfwGetCursorPos(s_Handle, &x, &y);
+
+        return { x, y };
+    }
 
 } // namespace Ziben

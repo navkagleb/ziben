@@ -3,7 +3,7 @@
 namespace Ziben {
 
     Ref<VertexBuffer> VertexBuffer::Create(const void* data, std::size_t size, BufferUsage usage) {
-        return std::make_shared<VertexBuffer>(data, size, usage);
+        return CreateRef<VertexBuffer>(data, size, usage);
     }
 
     void VertexBuffer::Bind(const Ref<VertexBuffer>& vertexBuffer) {

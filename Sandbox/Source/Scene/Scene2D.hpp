@@ -5,6 +5,7 @@
 #include <Ziben/Renderer/OrthographicCamera.hpp>
 #include <Ziben/Renderer/Shader.hpp>
 #include <Ziben/Renderer/VertexArray.hpp>
+#include <Ziben/Renderer/Texture.hpp>
 
 class Scene2D : public Ziben::Scene {
 public:
@@ -19,6 +20,7 @@ private:
     Ziben::Ref<Ziben::VertexArray> m_TriangleVertexArray;
     Ziben::Ref<Ziben::VertexArray> m_SquareVertexArray;
     Ziben::Ref<Ziben::Shader>      m_Shader;
+    Ziben::Ref<Ziben::Texture2D>   m_Texture;
     Ziben::OrthographicCamera      m_Camera;
 
     glm::vec3                 m_Position;

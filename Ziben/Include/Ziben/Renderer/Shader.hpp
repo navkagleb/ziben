@@ -92,8 +92,8 @@ namespace Ziben {
         Shader();
         ~Shader();
 
-        void Compile(const std::string& filename);
-        void Compile(const std::string& filename, ShaderType type);
+        void Compile(const std::string& filepath);
+        void Compile(const std::string& filepath, ShaderType type);
 
         void BindAttribLocation(uint32_t location, const std::string& name) const;
         void BindFragDataLocation(uint32_t location, const std::string& name) const;

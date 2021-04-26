@@ -9,9 +9,9 @@ namespace Ziben {
     Application* Application::s_Instance = nullptr;
 
     Application::Application(std::string title, int width, int height)
-        : m_Window(new Window(std::move(title), width, height))
-        , m_SceneManager(new SceneManager)
-        , m_LayerStack(new LayerStack)
+        : m_Window(CreateScope<Window>(std::move(title), width, height))
+        , m_SceneManager(CreateScope<SceneManager>())
+        , m_LayerStack(CreateScope<LayerStack>())
         , m_ImGuiLayer(new ImGuiLayer) {
 
         if (s_Instance)
@@ -20,6 +20,9 @@ namespace Ziben {
         s_Instance = this;
 
         m_Window->SetEventCallback([this](Event& event) { OnEvent(event); });
+
+        Renderer::Init();
+
         m_LayerStack->PushOverlay(m_ImGuiLayer);
     }
 

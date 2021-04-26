@@ -14,8 +14,6 @@ DiffuseScene::DiffuseScene()
     , m_Torus(0.4f, 0.2f, 30, 100)
     , m_Shader(Ziben::Shader::Create()) {
 
-    glEnable(GL_DEPTH_TEST);
-
     m_Shader->Compile("Media/Diffuse.vert");
     m_Shader->Compile("Media/Diffuse.frag");
 

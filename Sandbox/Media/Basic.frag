@@ -1,16 +1,16 @@
 #version 460
 
-in vec3 FragVertexColor;
+in vec2 f_TexCoord;
 
-uniform vec3 u_Color;
+uniform sampler2D u_Texture;
 
 layout (location = 0) out vec4 FragColor;
 
 void main() {
-    if (length(FragVertexColor) != 0) {
-        FragColor = vec4(FragVertexColor, 1.0);
+    if (length(f_TexCoord) == 0.0) {
+        FragColor = vec4(0.2, 0.3, 0.8, 1.0);
         return;
     }
 
-    FragColor = vec4(u_Color, 1.0);
+    FragColor = texture(u_Texture, f_TexCoord);
 }

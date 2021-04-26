@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OrthographicCamera.hpp"
+#include "Camera.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "RenderCommand.hpp"
@@ -9,7 +9,9 @@ namespace Ziben {
 
     class Renderer {
     public:
-        static void BeginScene(OrthographicCamera& camera);
+        static void Init();
+
+        static void BeginScene(Camera& camera);
         static void EndScene();
 
         static void Submit(
