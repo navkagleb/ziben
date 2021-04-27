@@ -16,7 +16,7 @@
 Scene2D::Scene2D()
     : Ziben::Scene("Scene2D")
     , m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
-    , m_Shader(Ziben::Shader::Create())
+    , m_Shader(Ziben::Shader::Create("Assets/Shaders/Basic.glsl"))
     , m_Position(0.0f)
     , m_SquareColor(0.2f, 0.3f, 0.8f) {
 
@@ -44,9 +44,6 @@ Scene2D::Scene2D()
         2, 3, 0
     };
 
-    m_Shader->Compile("Media/Basic.vert");
-    m_Shader->Compile("Media/Basic.frag");
-
     Ziben::Shader::Bind(m_Shader);
 
     auto triangleVertexBuffer = Ziben::VertexBuffer::Create(trianglePositions, sizeof(trianglePositions));
@@ -72,7 +69,10 @@ Scene2D::Scene2D()
     m_SquareVertexArray->PushVertexBuffer(squareVertexBuffer);
     m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
 
-    Ziben::Texture2D::Bind(m_Texture = Ziben::Texture2D::Create("Assets/Textures/ChernoLogo.png"));
+    Ziben::Texture2D::Bind(m_CheckerBoardTexture = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png"));
+    m_Shader->SetUniform("u_Texture", 0);
+
+    Ziben::Texture2D::Bind(m_ChernoTexture = Ziben::Texture2D::Create("Assets/Textures/ChernoLogo.png"));
     m_Shader->SetUniform("u_Texture", 0);
 }
 
@@ -135,7 +135,10 @@ void Scene2D::OnRender() {
             }
         }
 
-        Ziben::Texture2D::Bind(m_Texture);
+        Ziben::Texture2D::Bind(m_CheckerBoardTexture);
+        Ziben::Renderer::Submit(m_Shader, m_TriangleVertexArray);
+
+        Ziben::Texture2D::Bind(m_ChernoTexture);
         Ziben::Renderer::Submit(m_Shader, m_TriangleVertexArray);
     }
 

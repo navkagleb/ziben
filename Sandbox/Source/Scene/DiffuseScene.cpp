@@ -12,10 +12,9 @@
 DiffuseScene::DiffuseScene()
     : Ziben::Scene("DiffuseScene")
     , m_Torus(0.4f, 0.2f, 30, 100)
-    , m_Shader(Ziben::Shader::Create()) {
+    , m_Shader(Ziben::Shader::Create("Assets/Shaders/Diffuse.glsl")) {
 
-    m_Shader->Compile("Media/Diffuse.vert");
-    m_Shader->Compile("Media/Diffuse.frag");
+    glEnable(GL_DEPTH_TEST);
 
     Ziben::Shader::Bind(m_Shader);
 

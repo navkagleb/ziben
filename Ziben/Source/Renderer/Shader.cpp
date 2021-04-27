@@ -2,10 +2,85 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Ziben/System/Log.hpp"
+
 namespace Ziben {
 
-    Ref<Shader> Shader::Create() {
-        return CreateRef<Shader>();
+    namespace Internal {
+
+        static std::string ReadFile(const std::string& filepath) {
+            namespace fs = std::filesystem;
+
+            if (!fs::exists(filepath)) {
+                ZIBEN_ERROR("Can't read the file by provided path: {0}", filepath);
+                return {};
+            }
+
+            std::string result;
+            std::ifstream infile(filepath, std::ios_base::in | std::ios_base::binary);
+
+            if (!infile)
+                ZIBEN_ERROR("Can't open the file by provided path: {0}", filepath);
+
+            result.resize(fs::file_size(filepath));
+            infile.read(result.data(), static_cast<std::streamsize>(result.size()));
+
+            infile.close();
+
+            return result;
+        }
+
+        ShaderType GetShaderTypeFromString(const std::string& type) {
+            static const std::map<std::string, ShaderType> types = {
+                { "vertex",         ShaderType::Vertex         },
+                { "fragment",       ShaderType::Fragment       },
+                { "pixel",          ShaderType::Fragment       },
+                { "geometry",       ShaderType::Geometry       },
+                { "tessControl",    ShaderType::TessControl    },
+                { "tessEvaluation", ShaderType::TessEvaluation },
+                { "compute",        ShaderType::Compute        }
+            };
+
+            return types.contains(type) ? types.at(type) : ShaderType::None;
+        }
+
+        static std::map<ShaderType, std::string> ParseShader(const std::string& shaderSource) {
+            using namespace std::string_literals;
+
+            std::map<ShaderType, std::string> result;
+
+            auto token    = "#type"s;
+            auto position = shaderSource.find(token, 0);
+
+            while (position != std::string::npos) {
+                auto eol   = shaderSource.find_first_of("\r\n", position);
+                auto begin = position + token.size() + 1;
+
+                assert(eol != std::string::npos);
+
+                auto type       = shaderSource.substr(begin, eol - begin);
+                auto shaderType = GetShaderTypeFromString(type);
+
+                assert(shaderType != ShaderType::None);
+
+                auto nextLinePosition = shaderSource.find_first_not_of("\r\n", eol);
+
+                assert(nextLinePosition != std::string::npos);
+
+                position = shaderSource.find(token, nextLinePosition);
+
+                result[shaderType] = position == std::string::npos                                     ?
+                                     shaderSource.substr(nextLinePosition)                             :
+                                     shaderSource.substr(nextLinePosition, position - nextLinePosition);
+            }
+
+            return result;
+        }
+
+    } // namespace Internal
+
+    Ref<Shader> Shader::Create(const std::string& filepath) {
+        return CreateRef<Shader>(filepath);
     }
 
     void Shader::Bind(const Ref<Shader>& shader) {
@@ -19,53 +94,29 @@ namespace Ziben {
         glUseProgram(0);
     }
 
-    Shader::Shader()
+    Shader::Shader(const std::string& filepath)
         : m_Handle(0)
-        , m_IsLinked(false) {}
+        , m_IsLinked(false) {
+
+        auto shaderSource  = Internal::ReadFile(filepath);
+        auto shaderSources = Internal::ParseShader(shaderSource);
+
+        Compile(shaderSources);
+    }
 
     Shader::~Shader() {
         if (m_Handle == 0)
             return;
 
-        int shaderCount = 0;
-        glGetProgramiv(m_Handle, GL_ATTACHED_SHADERS, &shaderCount);
-
-        std::vector<HandleType> shaderHandles(shaderCount);
-        glGetAttachedShaders(m_Handle, shaderCount, nullptr, shaderHandles.data());
-
-        for (HandleType shaderHandle : shaderHandles)
-            glDeleteShader(shaderHandle);
-
         glDeleteProgram(m_Handle);
     }
 
-    void Shader::Compile(const std::string& filepath) {
-        namespace fs = std::filesystem;
-
-        static std::map<std::string, ShaderType> types = {
-            { ".vs",   ShaderType::Vertex         },
-            { ".vert", ShaderType::Vertex         },
-            { ".fs",   ShaderType::Fragment       },
-            { ".frag", ShaderType::Fragment       },
-            { ".gs",   ShaderType::Geometry       },
-            { ".geom", ShaderType::Geometry       },
-            { ".tcs",  ShaderType::TessControl    },
-            { ".tes",  ShaderType::TessEvaluation },
-            { ".cs",   ShaderType::Compute        }
-        };
-
-        if (!fs::exists(filepath))
-            throw std::invalid_argument("No file by provided filename: " + filepath);
-
-        auto extension = fs::path(filepath).extension().string();
-
-        if (!types.contains(extension))
-            throw std::invalid_argument("Unrecognized extension: " + extension);
-
-        Compile(filepath, types[extension]);
+    void Shader::Compile(const std::map<ShaderType, std::string>& sources) {
+        for (const auto& [type, source] : sources)
+            Compile(type, source);
     }
 
-    void Shader::Compile(const std::string& filepath, ShaderType type) {
+    void Shader::Compile(ShaderType type, const std::string& source) {
         if (m_Handle == 0) {
             m_Handle = glCreateProgram();
 
@@ -78,19 +129,9 @@ namespace Ziben {
         if (shaderHandle == 0)
             throw std::runtime_error("Error creating shader!");
 
-        std::ifstream shaderCode(filepath);
+        const char* cSource = source.c_str();
 
-        std::ifstream     infile(filepath);
-        std::stringstream result;
-
-        result << infile.rdbuf();
-
-        infile.close();
-
-        std::string shaderCodeString = result.str();
-        const char* shaderCodeCString = shaderCodeString.c_str();
-
-        glShaderSource(shaderHandle, 1, &shaderCodeCString, nullptr);
+        glShaderSource(shaderHandle, 1, &cSource, nullptr);
         glCompileShader(shaderHandle);
 
         int status;
@@ -123,12 +164,23 @@ namespace Ziben {
     void Shader::Link() const {
         glLinkProgram(m_Handle);
 
+        int shaderCount = 0;
+        glGetProgramiv(m_Handle, GL_ATTACHED_SHADERS, &shaderCount);
+
+        std::vector<HandleType> shaderHandles(shaderCount);
+        glGetAttachedShaders(m_Handle, shaderCount, nullptr, shaderHandles.data());
+
         int status;
         glGetProgramiv(m_Handle, GL_LINK_STATUS, &status);
 
         if (status == GL_TRUE) {
             glValidateProgram(m_Handle);
             m_IsLinked = true;
+
+            for (HandleType shaderHandle : shaderHandles) {
+                glDetachShader(m_Handle, shaderHandle);
+                glDeleteShader(shaderHandle);
+            }
 
             return;
         }
@@ -141,6 +193,11 @@ namespace Ziben {
 
             int written;
             glGetProgramInfoLog(m_Handle, logLength, &written, log.data());
+
+            glDeleteProgram(m_Handle);
+
+            for (HandleType shaderHandle : shaderHandles)
+                glDeleteShader(shaderHandle);
 
             throw std::runtime_error(log);
         }

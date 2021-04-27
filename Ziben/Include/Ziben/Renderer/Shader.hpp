@@ -73,6 +73,7 @@ namespace Ziben {
     } // namespace ShaderData
 
     enum class ShaderType : uint16_t {
+        None           = 0,
         Vertex         = GL_VERTEX_SHADER,
         Fragment       = GL_FRAGMENT_SHADER,
         Geometry       = GL_GEOMETRY_SHADER,
@@ -83,17 +84,17 @@ namespace Ziben {
 
     class Shader {
     public:
-        static Ref<Shader> Create();
+        static Ref<Shader> Create(const std::string& filepath);
 
         static void Bind(const Ref<Shader>& shader);
         static void Unbind();
 
     public:
-        Shader();
+        explicit Shader(const std::string& filepath);
         ~Shader();
 
-        void Compile(const std::string& filepath);
-        void Compile(const std::string& filepath, ShaderType type);
+        void Compile(const std::map<ShaderType, std::string>& sources);
+        void Compile(ShaderType type, const std::string& source);
 
         void BindAttribLocation(uint32_t location, const std::string& name) const;
         void BindFragDataLocation(uint32_t location, const std::string& name) const;

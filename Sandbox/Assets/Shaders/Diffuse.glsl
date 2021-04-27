@@ -1,3 +1,4 @@
+#type vertex
 #version 460
 
 layout (location = 0) in vec3 VertexPosition;
@@ -22,4 +23,15 @@ void main() {
     LightIntensity = u_Ld * u_Kd * max(dot(s, tnorm), 0.0);
 
     gl_Position    = u_MVP * vec4(VertexPosition, 1.0);
+}
+
+#type fragment
+#version 460
+
+in vec3 LightIntensity;
+
+layout (location = 0) out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(LightIntensity, 1.0);
 }

@@ -1,4 +1,5 @@
-# version 460
+#type vertex
+#version 460
 
 layout (location = 0) in vec3 VertexPosition;
 layout (location = 1) in vec3 VertexNormal;
@@ -43,4 +44,15 @@ void main() {
 
     LightIntensity = ambient + diffuse + specular;
     gl_Position    = u_MVP * vec4(VertexPosition, 1.0);
+}
+
+#type fragment
+#version 460
+
+in vec3 LightIntensity;
+
+layout (location = 0) out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(LightIntensity, 1.0);
 }

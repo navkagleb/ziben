@@ -23,7 +23,6 @@ add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(${TARGET} PRIVATE ZibenEngine)
 
 file(COPY
-        ${CMAKE_CURRENT_SOURCE_DIR}/Media
         ${CMAKE_CURRENT_SOURCE_DIR}/Assets
     DESTINATION
         ${CMAKE_CURRENT_BINARY_DIR}

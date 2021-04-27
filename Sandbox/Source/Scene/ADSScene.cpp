@@ -14,7 +14,7 @@
 
 ADSScene::ADSScene()
     : Ziben::Scene("ADSScene")
-    , m_Shader(Ziben::Shader::Create())
+    , m_Shader(Ziben::Shader::Create("Assets/Shaders/ADS.glsl"))
     , m_Torus(0.7f, 0.3f, 150, 150)
     , m_Angle(0.0f)
     , m_Camera(
@@ -24,8 +24,7 @@ ADSScene::ADSScene()
         100.0f
     ) {
 
-    m_Shader->Compile("Media/ADS.vert");
-    m_Shader->Compile("Media/ADS.frag");
+    glEnable(GL_DEPTH_TEST);
 
     Ziben::Shader::Bind(m_Shader);
 

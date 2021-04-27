@@ -21,7 +21,7 @@ static float lastY = 0.0f;
 CubeScene::CubeScene()
     : Ziben::Scene("CubeScene")
     , m_Camera(45.0f, (float)SandboxApplication::Get().GetWindow().GetWidth() / (float)SandboxApplication::Get().GetWindow().GetHeight(), 0.03f, 100.0f)
-    , m_Shader(Ziben::Shader::Create())
+    , m_Shader(Ziben::Shader::Create("Assets/Shaders/Basic.glsl"))
     , m_Color(0.2f, 0.3f, 0.8f){
 
     glEnable(GL_DEPTH_TEST);
@@ -68,9 +68,6 @@ CubeScene::CubeScene()
         3, 2, 6,
         6, 7, 3
     };
-
-    m_Shader->Compile("Media/Basic.vert");
-    m_Shader->Compile("Media/Basic.frag");
 
     Ziben::Shader::Bind(m_Shader);
 
