@@ -13,8 +13,8 @@ namespace Ziben {
     enum class EventType : int {
         None = 0,
 
-        WindowResizeEvent,
-        WindowCloseEvent,
+        WindowResizedEvent,
+        WindowClosedEvent,
         WindowMaximizedEvent,
         WindowMinimizedEvent,
         WindowFocusedEvent,

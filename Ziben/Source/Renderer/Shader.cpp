@@ -30,7 +30,16 @@ namespace Ziben {
             return result;
         }
 
-        ShaderType GetShaderTypeFromString(const std::string& type) {
+        static std::string GetFileName(const std::string& filepath) {
+            namespace fs = std::filesystem;
+
+            auto name        = fs::path(filepath).filename().generic_string();
+            auto dotPosition = name.find('.');
+
+            return dotPosition != std::string::npos ? name.substr(0, dotPosition) : name;
+        }
+
+        static ShaderType GetShaderTypeFromString(const std::string& type) {
             static const std::map<std::string, ShaderType> types = {
                 { "vertex",         ShaderType::Vertex         },
                 { "fragment",       ShaderType::Fragment       },
@@ -44,7 +53,7 @@ namespace Ziben {
             return types.contains(type) ? types.at(type) : ShaderType::None;
         }
 
-        static std::map<ShaderType, std::string> ParseShader(const std::string& shaderSource) {
+        static std::map<ShaderType, std::string> PreProcessShader(const std::string& shaderSource) {
             using namespace std::string_literals;
 
             std::map<ShaderType, std::string> result;
@@ -98,10 +107,12 @@ namespace Ziben {
         : m_Handle(0)
         , m_IsLinked(false) {
 
-        auto shaderSource  = Internal::ReadFile(filepath);
-        auto shaderSources = Internal::ParseShader(shaderSource);
+        auto source  = Internal::ReadFile(filepath);
+        auto sources = Internal::PreProcessShader(source);
 
-        Compile(shaderSources);
+        Compile(sources);
+
+        m_Name = Internal::GetFileName(filepath);
     }
 
     Shader::~Shader() {
@@ -112,11 +123,6 @@ namespace Ziben {
     }
 
     void Shader::Compile(const std::map<ShaderType, std::string>& sources) {
-        for (const auto& [type, source] : sources)
-            Compile(type, source);
-    }
-
-    void Shader::Compile(ShaderType type, const std::string& source) {
         if (m_Handle == 0) {
             m_Handle = glCreateProgram();
 
@@ -124,6 +130,64 @@ namespace Ziben {
                 throw std::runtime_error("Unable to create shader program!");
         }
 
+        for (const auto& [type, source] : sources)
+            Compile(type, source);
+    }
+
+    void Shader::BindAttribLocation(uint32_t location, const std::string& name) const {
+        if (!m_IsLinked)
+            glBindAttribLocation(m_Handle, location, name.c_str());
+    }
+
+    void Shader::BindFragDataLocation(uint32_t location, const std::string& name) const {
+        if (!m_IsLinked)
+            glBindFragDataLocation(m_Handle, location, name.c_str());
+    }
+
+    void Shader::SetUniform(const std::string& name, bool value) {
+        glUniform1i(GetUniformLocation(name), value);
+    }
+
+    void Shader::SetUniform(const std::string& name, int value) {
+        glUniform1i(GetUniformLocation(name), value);
+    }
+
+    void Shader::SetUniform(const std::string& name, float value) {
+        glUniform1f(GetUniformLocation(name), value);
+    }
+
+    void Shader::SetUniform(const std::string& name, float x, float y, float z) {
+        glUniform3f(GetUniformLocation(name), x, y, z);
+    }
+
+    void Shader::SetUniform(const std::string& name, const glm::vec3& vec3) {
+        glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vec3));
+    }
+
+    void Shader::SetUniform(const std::string& name, const glm::vec4& vec4) {
+        glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vec4));
+    }
+
+    void Shader::SetUniform(const std::string& name, const glm::mat3& mat3) {
+        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat3));
+    }
+
+    void Shader::SetUniform(const std::string& name, const glm::mat4& mat4) {
+        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat4));
+    }
+    
+    int Shader::GetUniformLocation(const std::string& name) {
+        if (!m_UniformLocations.contains(name)) {
+            int location = glGetUniformLocation(m_Handle, name.c_str());
+
+            if (location >= 0)
+                return m_UniformLocations[name] = location;
+        }
+
+        return m_UniformLocations[name];
+    }
+
+    void Shader::Compile(ShaderType type, const std::string& source) const {
         HandleType shaderHandle = glCreateShader(static_cast<GLenum>(type));
 
         if (shaderHandle == 0)
@@ -203,57 +267,30 @@ namespace Ziben {
         }
     }
 
-    void Shader::BindAttribLocation(uint32_t location, const std::string& name) const {
-        if (!m_IsLinked)
-            glBindAttribLocation(m_Handle, location, name.c_str());
+    bool ShaderLibrary::IsExists(const std::string& name) const {
+        return m_Shaders.contains(name);
     }
 
-    void Shader::BindFragDataLocation(uint32_t location, const std::string& name) const {
-        if (!m_IsLinked)
-            glBindFragDataLocation(m_Handle, location, name.c_str());
+    const Ref<Shader>& ShaderLibrary::Get(const std::string& name) const {
+        assert(IsExists(name));
+        return m_Shaders.at(name);
     }
 
-    void Shader::SetUniform(const std::string& name, bool value) {
-        glUniform1i(GetUniformLocation(name), value);
+    void ShaderLibrary::Push(const Ref<Shader>& shader) {
+        Push(shader->GetName(), shader);
     }
 
-    void Shader::SetUniform(const std::string& name, int value) {
-        glUniform1i(GetUniformLocation(name), value);
+    void ShaderLibrary::Push(const std::string& name, const Ref<Shader>& shader) {
+        assert(!IsExists(name));
+        m_Shaders[name] = shader;
     }
 
-    void Shader::SetUniform(const std::string& name, float value) {
-        glUniform1f(GetUniformLocation(name), value);
+    Ref<Shader> ShaderLibrary::Load(const std::string& filepath) {
+        return m_Shaders[Internal::GetFileName(filepath)] = Shader::Create(filepath);
     }
 
-    void Shader::SetUniform(const std::string& name, float x, float y, float z) {
-        glUniform3f(GetUniformLocation(name), x, y, z);
-    }
-
-    void Shader::SetUniform(const std::string& name, const glm::vec3& vec3) {
-        glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vec3));
-    }
-
-    void Shader::SetUniform(const std::string& name, const glm::vec4& vec4) {
-        glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vec4));
-    }
-
-    void Shader::SetUniform(const std::string& name, const glm::mat3& mat3) {
-        glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat3));
-    }
-
-    void Shader::SetUniform(const std::string& name, const glm::mat4& mat4) {
-        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat4));
-    }
-    
-    int Shader::GetUniformLocation(const std::string& name) {
-        if (!m_UniformLocations.contains(name)) {
-            int location = glGetUniformLocation(m_Handle, name.c_str());
-
-            if (location >= 0)
-                return m_UniformLocations[name] = location;
-        }
-
-        return m_UniformLocations[name];
+    Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath) {
+        return m_Shaders[name] = Shader::Create(filepath);
     }
 
 } // namespace Ziben

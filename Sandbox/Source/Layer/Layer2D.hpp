@@ -1,19 +1,17 @@
 #pragma once
 
-#include <Ziben/Utility/Reference.hpp>
-#include <Ziben/Scene/Scene.hpp>
+#include <Ziben/Scene/Layer.hpp>
 #include <Ziben/Renderer/OrthographicCameraController.hpp>
 #include <Ziben/Renderer/Shader.hpp>
 #include <Ziben/Renderer/VertexArray.hpp>
 #include <Ziben/Renderer/Texture.hpp>
 
-class Scene2D : public Ziben::Scene {
+class Layer2D : public Ziben::Layer {
 public:
-    Scene2D();
+    Layer2D();
 
     void OnEvent(Ziben::Event& event) override;
-    void OnUpdate(const Ziben::TimeStep& timeStep) override;
-    void OnRender() override;
+    void OnUpdate(const Ziben::TimeStep& ts) override;
     void OnImGuiRender() override;
 
 private:
@@ -24,7 +22,6 @@ private:
     Ziben::Ref<Ziben::Texture2D>        m_ChernoTexture;
     Ziben::OrthographicCameraController m_CameraController;
 
-    glm::vec3                           m_Position;
     glm::vec3                           m_SquareColor;
 
-}; // class Scene2D
+}; // class Layer2D;

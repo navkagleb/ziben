@@ -3,6 +3,7 @@
 #include "Ziben/System/Log.hpp"
 #include "Ziben/Scene/ImGuiLayer.hpp"
 #include "Ziben/Renderer/Renderer.hpp"
+#include "Ziben/Window/EventDispatcher.hpp"
 
 namespace Ziben {
 
@@ -12,7 +13,8 @@ namespace Ziben {
         : m_Window(CreateScope<Window>(std::move(title), width, height))
         , m_SceneManager(CreateScope<SceneManager>())
         , m_LayerStack(CreateScope<LayerStack>())
-        , m_ImGuiLayer(new ImGuiLayer) {
+        , m_ImGuiLayer(new ImGuiLayer)
+        , m_IsMinimized(false) {
 
         if (s_Instance)
             ZIBEN_CORE_ERROR("Application::s_Instance is not nullptr!");
@@ -30,8 +32,9 @@ namespace Ziben {
         while (m_Window->IsOpen()) {
             m_TimeStep.Update(static_cast<float>(glfwGetTime()));
 
-            RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
-            RenderCommand::Clear();
+            if (!m_IsMinimized)
+                for (Layer* layer : *m_LayerStack)
+                    layer->OnUpdate(m_TimeStep);
 
             ImGuiLayer::Begin();
 
@@ -50,9 +53,32 @@ namespace Ziben {
         }
     }
 
+    void Application::PushLayer(Layer* layer) {
+        m_LayerStack->PushLayer(layer);
+    }
+
+    void Application::PushOverlay(Layer* layer) {
+        m_LayerStack->PushOverlay(layer);
+    }
+
+    void Application::PopLayer(Layer* layer) {
+        m_LayerStack->PopLayer(layer);
+    }
+
+    void Application::PopOverlay(Layer* layer) {
+        m_LayerStack->PopOverlay(layer);
+    }
+
     void Application::OnEvent(Event& event) {
+        EventDispatcher dispatcher(event);
+
+        dispatcher.Dispatch<WindowClosedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowClosed));
+        dispatcher.Dispatch<WindowResizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowResized));
+        dispatcher.Dispatch<WindowMinimizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowMinimized));
+
         if (m_SceneManager->HasActiveScene())
             m_SceneManager->GetActiveScene()->OnEvent(event);
+
 
         for (auto it = m_LayerStack->ReverseBegin(); it != m_LayerStack->ReverseEnd(); ++it) {
             if (event.IsHandled())
@@ -60,6 +86,23 @@ namespace Ziben {
 
             (*it)->OnEvent(event);
         }
+    }
+
+    bool Application::OnWindowClosed(WindowClosedEvent& event) {
+        return true;
+    }
+
+    bool Application::OnWindowResized(WindowResizedEvent& event) {
+        m_IsMinimized = event.GetWidth() == 0 || event.GetHeight() == 0;
+
+        Renderer::OnWindowResized(event.GetWidth(), event.GetHeight());
+
+        return false;
+    }
+
+    bool Application::OnWindowMinimized(WindowMinimizedEvent& event) {
+        m_IsMinimized = !m_IsMinimized;
+        return false;
     }
 }
 

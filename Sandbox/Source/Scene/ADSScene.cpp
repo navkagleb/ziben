@@ -75,7 +75,7 @@ void ADSScene::OnEvent(Ziben::Event& event) {
         return true;
     });
 
-    dispatcher.Dispatch<Ziben::WindowCloseEvent>([this](Ziben::WindowCloseEvent& event) {
+    dispatcher.Dispatch<Ziben::WindowClosedEvent>([this](Ziben::WindowClosedEvent& event) {
         ZIBEN_INFO("{0}", event.ToString());
         return true;
     });

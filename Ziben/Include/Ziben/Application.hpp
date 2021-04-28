@@ -2,6 +2,7 @@
 
 #include "Ziben/Window/Window.hpp"
 #include "Ziben/Window/TimeStep.hpp"
+#include "Ziben/Window/WindowEvent.hpp"
 #include "Ziben/Scene/SceneManager.hpp"
 #include "Ziben/Scene/LayerStack.hpp"
 #include "Ziben/Utility/Reference.hpp"
@@ -26,11 +27,19 @@ namespace Ziben {
 
         void Run();
 
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* layer);
+        void PopLayer(Layer* layer);
+        void PopOverlay(Layer* layer);
+
     private:
         static Application* s_Instance;
 
     private:
         void OnEvent(Event& event);
+        bool OnWindowClosed(WindowClosedEvent& event);
+        bool OnWindowResized(WindowResizedEvent& event);
+        bool OnWindowMinimized(WindowMinimizedEvent& event);
 
     private:
         Scope<Window>       m_Window;
@@ -38,6 +47,7 @@ namespace Ziben {
         Scope<LayerStack>   m_LayerStack;
         ImGuiLayer*         m_ImGuiLayer;
         TimeStep            m_TimeStep;
+        bool                m_IsMinimized;
 
     }; // class Application
 

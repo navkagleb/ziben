@@ -7,8 +7,8 @@
 
 namespace Ziben {
 
-    GraphicsContext* GraphicsContext::Create(GLFWwindow* handle) {
-        return new GraphicsContext(handle);
+     Scope<GraphicsContext> GraphicsContext::Create(GLFWwindow* handle) {
+        return CreateScope<GraphicsContext>(handle);
     }
 
     GraphicsContext::GraphicsContext(GLFWwindow* handle)

@@ -21,34 +21,9 @@ namespace Ziben {
         RecalculateViewMatrix();
     }
 
-    void OrthographicCamera::MoveLeft(float offset) {
-        m_Position.x -= offset;
-        RecalculateViewMatrix();
-    }
-
-    void OrthographicCamera::MoveRight(float offset) {
-        m_Position.x += offset;
-        RecalculateViewMatrix();
-    }
-
-    void OrthographicCamera::MoveDown(float offset) {
-        m_Position.y -= offset;
-        RecalculateViewMatrix();
-    }
-
-    void OrthographicCamera::MoveUp(float offset) {
-        m_Position.y += offset;
-        RecalculateViewMatrix();
-    }
-
-    void OrthographicCamera::RotateLeft(float angle) {
-        m_Rotation -= angle;
-        RecalculateViewMatrix();
-    }
-
-    void OrthographicCamera::RotateRight(float angle) {
-        m_Rotation += angle;
-        RecalculateViewMatrix();
+    void OrthographicCamera::SetProjection(float left, float right, float bottom, float top) {
+        m_ProjectionMatrix     = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+        m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
 
     void OrthographicCamera::RecalculateViewMatrix() {

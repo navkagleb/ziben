@@ -93,8 +93,9 @@ namespace Ziben {
         explicit Shader(const std::string& filepath);
         ~Shader();
 
+        [[nodiscard]] inline const std::string& GetName() const { return m_Name; }
+
         void Compile(const std::map<ShaderType, std::string>& sources);
-        void Compile(ShaderType type, const std::string& source);
 
         void BindAttribLocation(uint32_t location, const std::string& name) const;
         void BindFragDataLocation(uint32_t location, const std::string& name) const;
@@ -111,13 +112,34 @@ namespace Ziben {
     private:
         int GetUniformLocation(const std::string& name);
 
+        void Compile(ShaderType type, const std::string& source) const;
         void Link() const;
 
     private:
         HandleType                 m_Handle;
         mutable bool               m_IsLinked;
         std::map<std::string, int> m_UniformLocations;
+        std::string                m_Name;
 
     }; // class Shader
+
+    class ShaderLibrary {
+    public:
+        ShaderLibrary() = default;
+        ~ShaderLibrary() = default;
+
+        [[nodiscard]] bool IsExists(const std::string& name) const;
+        [[nodiscard]] const Ref<Shader>& Get(const std::string& name) const;
+
+        void Push(const Ref<Shader>& shader);
+        void Push(const std::string& name, const Ref<Shader>& shader);
+
+        Ref<Shader> Load(const std::string& filepath);
+        Ref<Shader> Load(const std::string& name, const std::string& filepath);
+
+    private:
+        std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+
+    }; // class ShaderLibrary
 
 } // namespace Ziben

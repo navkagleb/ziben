@@ -1,12 +1,14 @@
 #pragma once
 
+#include "Ziben/Utility/Reference.hpp"
+
 struct GLFWwindow;
 
 namespace Ziben {
 
     class GraphicsContext {
     public:
-        static GraphicsContext* Create(GLFWwindow* handle);
+        static Scope<GraphicsContext> Create(GLFWwindow* handle);
 
     public:
         explicit GraphicsContext(GLFWwindow* handle);

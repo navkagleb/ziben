@@ -1,4 +1,4 @@
-#include "Scene2D.hpp"
+#include "Layer2D.hpp"
 
 #include <imgui.h>
 
@@ -13,17 +13,16 @@
 
 #include "Application/SandboxApplication.hpp"
 
-Scene2D::Scene2D()
-    : Ziben::Scene("Scene2D")
-    , m_CameraController(1280.0f / 720.0f, true)
+Layer2D::Layer2D()
+    : Ziben::Layer("Scene2D")
+    , m_CameraController(1280.0f / 720.0f)
     , m_Shader(Ziben::Shader::Create("Assets/Shaders/Basic.glsl"))
-    , m_Position(0.0f)
     , m_SquareColor(0.2f, 0.3f, 0.8f) {
 
     float trianglePositions[] = {
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
         -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
     };
 
@@ -35,8 +34,8 @@ Scene2D::Scene2D()
     float squarePositions[] = {
         -0.5f, -0.5f, 0.0f,
         -0.5f,  0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
-         0.5f, -0.5,  0.0f
+        0.5f,  0.5f, 0.0f,
+        0.5f, -0.5,  0.0f
     };
 
     Ziben::IndexType squareIndices[] = {
@@ -76,7 +75,9 @@ Scene2D::Scene2D()
     m_Shader->SetUniform("u_Texture", 0);
 }
 
-void Scene2D::OnEvent(Ziben::Event& event) {
+void Layer2D::OnEvent(Ziben::Event& event) {
+    m_CameraController.OnEvent(event);
+
     Ziben::EventDispatcher dispatcher(event);
 
     dispatcher.Dispatch<Ziben::KeyPressedEvent>([&](Ziben::KeyPressedEvent& event) {
@@ -87,26 +88,13 @@ void Scene2D::OnEvent(Ziben::Event& event) {
 
         return true;
     });
-
-    m_CameraController.OnEvent(event);
 }
 
-void Scene2D::OnUpdate(const Ziben::TimeStep& ts) {
+void Layer2D::OnUpdate(const Ziben::TimeStep& ts) {
+    // Update
     m_CameraController.OnUpdate(ts);
 
-    // Triangle
-    if (Ziben::Input::IsKeyPressed(Ziben::Key::J))
-        m_Position.x -= 2.5f * (float)ts;
-    else if (Ziben::Input::IsKeyPressed(Ziben::Key::L))
-        m_Position.x += 2.5f * (float)ts;
-
-    if (Ziben::Input::IsKeyPressed(Ziben::Key::K))
-        m_Position.y -= 2.5f * (float)ts;
-    else if (Ziben::Input::IsKeyPressed(Ziben::Key::I))
-        m_Position.y += 2.5f * (float)ts;
-}
-
-void Scene2D::OnRender() {
+    // Render
     Ziben::RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
     Ziben::RenderCommand::Clear();
 
@@ -136,7 +124,7 @@ void Scene2D::OnRender() {
     Ziben::Renderer::EndScene();
 }
 
-void Scene2D::OnImGuiRender() {
+void Layer2D::OnImGuiRender() {
     ImGui::Begin("Scene2D");
 
     {

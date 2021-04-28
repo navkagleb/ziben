@@ -82,6 +82,10 @@ namespace Ziben {
 //        glEnable(GL_DEPTH_TEST);
     }
 
+    void RenderCommand::SetViewport(int x, int y, int width, int height) {
+        glViewport(x, y, width, height);
+    }
+
     void RenderCommand::SetClearColor(const glm::vec4& color) {
         glClearColor(color.r, color.g, color.b, color.a);
     }

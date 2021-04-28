@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Event.hpp"
+#include "Ziben/Utility/Reference.hpp"
 #include "Ziben/Renderer/GraphicsContext.hpp"
 
 namespace Ziben {
@@ -54,13 +55,13 @@ namespace Ziben {
         static void WindowHoverCallback(HandleType* handle, int hovered);
 
     private:
-        std::string        m_Title;
-        int                m_Width;
-        int                m_Height;
-        bool               m_IsVerticalSync;
-        HandleType*        m_Handle;
-        GraphicsContext*   m_Context;
-        EventCallback      m_EventCallback;
+        std::string            m_Title;
+        int                    m_Width;
+        int                    m_Height;
+        bool                   m_IsVerticalSync;
+        HandleType*            m_Handle;
+        Scope<GraphicsContext> m_Context;
+        EventCallback          m_EventCallback;
 
     }; // class Window
 

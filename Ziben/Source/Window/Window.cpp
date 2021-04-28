@@ -14,8 +14,7 @@ namespace Ziben {
         , m_Width(width)
         , m_Height(height)
         , m_IsVerticalSync(false)
-        , m_Handle(nullptr)
-        , m_Context(nullptr) {
+        , m_Handle(nullptr) {
 
         // Init GLFW
         if (!glfwInit())
@@ -193,7 +192,7 @@ namespace Ziben {
         instance.m_Width  = width;
         instance.m_Height = height;
 
-        WindowResizeEvent event(width, height);
+        WindowResizedEvent event(width, height);
         instance.m_EventCallback(event);
     }
 
@@ -203,7 +202,7 @@ namespace Ziben {
         if (!instance.m_EventCallback)
             throw std::runtime_error("Ziben::Window::WindowCloseCallback: m_EventCallback is not init!");
 
-        WindowCloseEvent event;
+        WindowClosedEvent event;
         instance.m_EventCallback(event);
     }
 

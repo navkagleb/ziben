@@ -4,32 +4,32 @@
 
 namespace Ziben {
 
-    class WindowResizeEvent : public Event {
+    class WindowResizedEvent : public Event {
     public:
-        WindowResizeEvent(int width, int height);
-        ~WindowResizeEvent() override = default;
+        WindowResizedEvent(int width, int height);
+        ~WindowResizedEvent() override = default;
 
         [[nodiscard]] inline int GetWidth() const { return m_Width; }
         [[nodiscard]] inline int GetHeight() const { return m_Height; }
         [[nodiscard]] std::string ToString() const override;
 
-        EVENT_CLASS_TYPE(WindowResizeEvent)
+        EVENT_CLASS_TYPE(WindowResizedEvent)
         EVENT_CLASS_CATEGORY(EventCategoryWindow)
 
     private:
         int m_Width;
         int m_Height;
 
-    }; // class WindowResizeEvent
+    }; // class WindowResizedEvent
 
-    class WindowCloseEvent : public Event {
+    class WindowClosedEvent : public Event {
     public:
-        WindowCloseEvent() = default;
-        ~WindowCloseEvent() override = default;
+        WindowClosedEvent() = default;
+        ~WindowClosedEvent() override = default;
 
         [[nodiscard]] inline std::string ToString() const override { return GetName(); }
 
-        EVENT_CLASS_TYPE(WindowCloseEvent)
+        EVENT_CLASS_TYPE(WindowClosedEvent)
         EVENT_CLASS_CATEGORY(EventCategoryWindow)
 
 

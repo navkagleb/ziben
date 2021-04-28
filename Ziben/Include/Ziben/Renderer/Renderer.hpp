@@ -10,6 +10,7 @@ namespace Ziben {
     class Renderer {
     public:
         static void Init();
+        static void OnWindowResized(int width, int height);
 
         static void BeginScene(Camera& camera);
         static void EndScene();
@@ -21,7 +22,12 @@ namespace Ziben {
         );
 
     private:
-        static glm::mat4 s_ViewProjectionMatrix;
+        struct RendererData {
+            glm::mat4 ViewProjectionMatrix = glm::mat4(1.0f);
+        };
+
+    private:
+        static RendererData& GetData();
 
     }; // class Renderer
 

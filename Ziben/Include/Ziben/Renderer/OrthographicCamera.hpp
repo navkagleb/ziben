@@ -18,13 +18,7 @@ namespace Ziben {
         void SetPosition(const glm::vec3& position);
         void SetRotation(float rotation);
 
-        void MoveLeft(float offset);
-        void MoveRight(float offset);
-        void MoveDown(float offset);
-        void MoveUp(float offset);
-
-        void RotateLeft(float angle);
-        void RotateRight(float angle);
+        void SetProjection(float left, float right, float bottom, float top);
 
     private:
         void RecalculateViewMatrix();
