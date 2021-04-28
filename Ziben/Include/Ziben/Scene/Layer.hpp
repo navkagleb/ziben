@@ -10,9 +10,9 @@ namespace Ziben {
         explicit Layer(std::string name = "Layer");
         virtual ~Layer() = default;
 
-        virtual void OnEvent(Event& event) {}
         virtual void OnAttach() {}
         virtual void OnDetach() {}
+        virtual void OnEvent(Event& event) {}
         virtual void OnUpdate(const TimeStep& ts) {}
         virtual void OnImGuiRender() {}
 

@@ -3,13 +3,14 @@
 #include "Camera.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
-#include "RenderCommand.hpp"
 
 namespace Ziben {
 
     class Renderer {
     public:
         static void Init();
+        static void Shutdown();
+
         static void OnWindowResized(int width, int height);
 
         static void BeginScene(Camera& camera);
@@ -22,12 +23,12 @@ namespace Ziben {
         );
 
     private:
-        struct RendererData {
+        struct RendererStorage {
             glm::mat4 ViewProjectionMatrix = glm::mat4(1.0f);
         };
 
     private:
-        static RendererData& GetData();
+        static RendererStorage& GetStorage();
 
     }; // class Renderer
 

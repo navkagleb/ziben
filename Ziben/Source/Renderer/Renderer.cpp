@@ -1,9 +1,17 @@
 #include "Renderer.hpp"
 
+#include "RenderCommand.hpp"
+#include "Renderer2D.hpp"
+
 namespace Ziben {
 
     void Renderer::Init() {
         RenderCommand::Init();
+        Renderer2D::Init();
+    }
+
+    void Renderer::Shutdown() {
+        Renderer2D::Shutdown();
     }
 
     void Renderer::OnWindowResized(int width, int height) {
@@ -11,7 +19,7 @@ namespace Ziben {
     }
 
     void Renderer::BeginScene(Camera& camera) {
-        GetData().ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+        GetStorage().ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 
     void Renderer::EndScene() {
@@ -20,16 +28,16 @@ namespace Ziben {
 
     void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform) {
         Shader::Bind(shader);
-        shader->SetUniform("u_ViewProjectionMatrix", GetData().ViewProjectionMatrix);
+        shader->SetUniform("u_ViewProjectionMatrix", GetStorage().ViewProjectionMatrix);
         shader->SetUniform("u_Transform", transform);
 
         VertexArray::Bind(vertexArray);
         RenderCommand::DrawIndexed(vertexArray);
     }
 
-    Renderer::RendererData& Renderer::GetData() {
-        static RendererData data;
-        return data;
+    Renderer::RendererStorage& Renderer::GetStorage() {
+        static RendererStorage storage;
+        return storage;
     }
 
 } // namespace Ziben

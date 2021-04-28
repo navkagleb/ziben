@@ -9,6 +9,7 @@
 #include <Ziben/Window/Input.hpp>
 #include <Ziben/Window/EventDispatcher.hpp>
 #include <Ziben/Window/KeyEvent.hpp>
+#include "Ziben/Renderer/RenderCommand.hpp"
 #include <Ziben/Renderer/Renderer.hpp>
 
 #include "Application/SandboxApplication.hpp"
