@@ -7,6 +7,8 @@ else ()
     add_compile_definitions(ZIBEN_RELEASE)
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
 
+add_compile_definitions(ZIBEN_PROFILING)
+
 add_subdirectory(Source/Utility)
 add_subdirectory(Source/System)
 add_subdirectory(Source/Window)
@@ -24,7 +26,12 @@ file(GLOB SOURCE_FILES
 
 add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
 
-target_include_directories(${TARGET} PUBLIC ${PROJECT_SOURCE_DIR}/Ziben/Include)
+target_include_directories(${TARGET}
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/Ziben/Include
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/Ziben/Source
+)
 
 target_link_libraries(${TARGET} PUBLIC ZibenWindow)
 

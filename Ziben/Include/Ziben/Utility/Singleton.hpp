@@ -6,7 +6,7 @@
 namespace Ziben {
 
     template <typename T>
-    class Singleton {
+    class Singleton final {
     public:
         template <typename... Args>
         static T& Create(Args&&... args);
