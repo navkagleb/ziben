@@ -37,7 +37,10 @@ namespace Ziben {
         GetStorage()->QuadVertexArray->PushVertexBuffer(vertexBuffer);
         GetStorage()->QuadVertexArray->SetIndexBuffer(indexBuffer);
 
-        GetStorage()->FlatColorShader = Shader::Create("Assets/Shaders/FlatColorShader.glsl");
+        uint32_t whiteTextureData = 0xffffffff;
+
+        GetStorage()->WhiteTexture = Texture2D::Create(1, 1);
+        GetStorage()->WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
 
         GetStorage()->TextureShader   = Shader::Create("Assets/Shaders/TextureShader.glsl");
         Shader::Bind(GetStorage()->TextureShader);
@@ -49,9 +52,6 @@ namespace Ziben {
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera) {
-        Shader::Bind(GetStorage()->FlatColorShader);
-        GetStorage()->FlatColorShader->SetUniform("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
-
         Shader::Bind(GetStorage()->TextureShader);
         GetStorage()->TextureShader->SetUniform("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
     }
@@ -61,42 +61,47 @@ namespace Ziben {
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
-        DrawQuad({ position.x, position.y, 0.0f }, size, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, GetStorage()->WhiteTexture, color);
     }
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
-        auto& shader          = GetStorage()->FlatColorShader;
-        auto& vertexArray     = GetStorage()->QuadVertexArray;
-
-        glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
-        glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-        Shader::Bind(shader);
-        shader->SetUniform("u_Color", color);
-        shader->SetUniform("u_Transform", translation * scaling);
-
-        VertexArray::Bind(vertexArray);
-        RenderCommand::DrawIndexed(vertexArray);
+        DrawQuad(position, size, GetStorage()->WhiteTexture, color);
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture);
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, glm::vec4(1.0f));
     }
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
-        auto& shader          = GetStorage()->TextureShader;
-        auto& vertexArray     = GetStorage()->QuadVertexArray;
+        DrawQuad(position, size, texture, glm::vec4(1.0f));
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec2&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        const glm::vec4&      color) {
+
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, color);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec3&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        const glm::vec4&      color) {
 
         glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
         glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-        Shader::Bind(shader);
-        shader->SetUniform("u_Transform", translation * scaling);
-
+        Shader::Bind(GetStorage()->TextureShader);
         Texture2D::Bind(texture);
 
-        VertexArray::Bind(vertexArray);
-        RenderCommand::DrawIndexed(vertexArray);
+        GetStorage()->TextureShader->SetUniform("u_Transform", translation * scaling);
+        GetStorage()->TextureShader->SetUniform("u_Color", color);
+
+        VertexArray::Bind(GetStorage()->QuadVertexArray);
+        RenderCommand::DrawIndexed(GetStorage()->QuadVertexArray);
     }
 
     Scope<Renderer2D::Renderer2DStorage>& Renderer2D::GetStorage() {

@@ -42,7 +42,7 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.2f, 0.8f, 0.3f, 1.0f });
         Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
 
-        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f },  { 10.0f, 10.0f }, m_Texture);
+        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f },  { 10.0f, 10.0f }, m_Texture, { 0.34f, 0.25f, 0.51f, 0.9f });
     }
 
     Ziben::Renderer2D::EndScene();
