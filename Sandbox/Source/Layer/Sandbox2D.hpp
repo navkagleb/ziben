@@ -18,9 +18,7 @@ public:
 
 private:
     Ziben::OrthographicCameraController m_CameraController;
-
-    Ziben::Ref<Ziben::VertexArray>      m_VertexArray;
-    Ziben::Ref<Ziben::Shader>           m_Shader;
+    Ziben::Ref<Ziben::Texture2D>        m_Texture;
 
     glm::vec4                           m_SquareColor;
 

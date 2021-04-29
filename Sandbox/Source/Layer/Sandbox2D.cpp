@@ -17,30 +17,7 @@ Sandbox2D::Sandbox2D()
     , m_SquareColor(0.2f, 0.3f, 0.8f, 1.0f) {}
 
 void Sandbox2D::OnAttach() {
-    float positions[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
-    };
-
-    Ziben::IndexType indices[] = {
-        0, 1, 2,
-        2, 3, 0
-    };
-
-    auto vertexBuffer = Ziben::VertexBuffer::Create(positions, sizeof(positions ));
-    vertexBuffer->SetLayout({
-                                { Ziben::ShaderData::Type::Float3, "VertexPosition" }
-                            });
-
-    auto indexBuffer = Ziben::IndexBuffer::Create(indices, sizeof(indices) / sizeof(Ziben::HandleType));
-
-    m_VertexArray = Ziben::VertexArray::Create();
-    m_VertexArray->PushVertexBuffer(vertexBuffer);
-    m_VertexArray->SetIndexBuffer(indexBuffer);
-
-    m_Shader = Ziben::Shader::Create("Assets/Shaders/FlatColorShader.glsl");
+    m_Texture = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png");
 }
 
 void Sandbox2D::OnDetach() {
@@ -62,7 +39,10 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
     Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
     {
-        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.2f, 0.8f, 0.3f, 1.0f });
+        Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.2f, 0.8f, 0.3f, 1.0f });
+        Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
+
+        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f },  { 10.0f, 10.0f }, m_Texture);
     }
 
     Ziben::Renderer2D::EndScene();

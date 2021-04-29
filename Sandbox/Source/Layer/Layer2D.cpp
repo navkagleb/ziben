@@ -17,7 +17,7 @@
 Layer2D::Layer2D()
     : Ziben::Layer("Scene2D")
     , m_CameraController(1280.0f / 720.0f)
-    , m_Shader(Ziben::Shader::Create("Assets/Shaders/Basic.glsl"))
+    , m_Shader(Ziben::Shader::Create("Assets/Shaders/TextureShader.glsl"))
     , m_SquareColor(0.2f, 0.3f, 0.8f) {
 
     float trianglePositions[] = {
