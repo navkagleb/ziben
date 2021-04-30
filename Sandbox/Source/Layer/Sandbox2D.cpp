@@ -14,7 +14,9 @@
 Sandbox2D::Sandbox2D()
     : Ziben::Layer("Sandbox2D")
     , m_CameraController(1280.0f / 720.0f)
-    , m_SquareColor(0.2f, 0.3f, 0.8f, 1.0f) {}
+    , m_SquareColor(0.2f, 0.3f, 0.8f, 1.0f)
+    , m_SquareAngle(0.0f)
+    , m_ColorDirection(1.0f) {}
 
 void Sandbox2D::OnAttach() {
     m_Texture = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png");
@@ -33,6 +35,12 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
 
     // Update
     m_CameraController.OnUpdate(ts);
+    m_SquareAngle += 40.0f * (float)ts;
+
+    m_SquareColor.g += m_ColorDirection * 0.3f * (float)ts;
+
+    if (m_SquareColor.g > 1.0f || m_SquareColor.g < 0.0f)
+        m_ColorDirection *= -1.0f;
 
     // Render
     {
@@ -45,9 +53,9 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         ZIBEN_PROFILE_SCOPE("Renderer Draw");
         Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-        Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
+        Ziben::Renderer2D::DrawRotatedQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, glm::radians(m_SquareAngle), m_SquareColor);
         Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
-        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f },  { 10.0f, 10.0f }, m_Texture, { 0.34f, 0.25f, 0.51f, 0.9f });
+        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, 10.0f);
 
         Ziben::Renderer2D::EndScene();
     }

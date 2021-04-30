@@ -86,16 +86,16 @@ namespace Ziben {
         const glm::vec2&      position,
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
-        const glm::vec4&      color) {
+        const glm::vec4&      tintColor) {
 
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tintColor);
     }
 
     void Renderer2D::DrawQuad(
         const glm::vec3&      position,
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
-        const glm::vec4&      color) {
+        const glm::vec4&      tintColor) {
 
         ZIBEN_PROFILE_FUNCTION();
 
@@ -106,7 +106,143 @@ namespace Ziben {
         Texture2D::Bind(texture);
 
         GetStorage()->TextureShader->SetUniform("u_Transform", translation * scaling);
-        GetStorage()->TextureShader->SetUniform("u_Color", color);
+        GetStorage()->TextureShader->SetUniform("u_TilingFactor", 1.0f);
+        GetStorage()->TextureShader->SetUniform("u_Color", tintColor);
+
+        VertexArray::Bind(GetStorage()->QuadVertexArray);
+        RenderCommand::DrawIndexed(GetStorage()->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec2&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        float                 tilingFactor) {
+
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec3&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        float                 tilingFactor) {
+
+        ZIBEN_PROFILE_FUNCTION();
+
+        glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
+        glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        Shader::Bind(GetStorage()->TextureShader);
+        Texture2D::Bind(texture);
+
+        GetStorage()->TextureShader->SetUniform("u_Transform", translation * scaling);
+        GetStorage()->TextureShader->SetUniform("u_TilingFactor", tilingFactor);
+        GetStorage()->TextureShader->SetUniform("u_Color", glm::vec4(1.0f));
+
+        VertexArray::Bind(GetStorage()->QuadVertexArray);
+        RenderCommand::DrawIndexed(GetStorage()->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec2& position,
+        const glm::vec2& size,
+        float            angle,
+        const glm::vec4& color) {
+
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, GetStorage()->WhiteTexture, color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec3& position,
+        const glm::vec2& size,
+        float            angle,
+        const glm::vec4& color) {
+
+        DrawRotatedQuad(position, size, angle, GetStorage()->WhiteTexture, color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec2&      position,
+        const glm::vec2&      size,
+        float                 angle,
+        const Ref<Texture2D>& texture) {
+
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, texture, glm::vec4(1.0f));
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec3&      position,
+        const glm::vec2&      size,
+        float                 angle,
+        const Ref<Texture2D>& texture) {
+
+        DrawRotatedQuad(position, size, angle, texture, glm::vec4(1.0f));
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec2&      position,
+        const glm::vec2&      size,
+        float                 angle,
+        const Ref<Texture2D>& texture,
+        const glm::vec4&      tintColor) {
+
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, texture, tintColor);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec3&      position,
+        const glm::vec2&      size,
+        float                 angle,
+        const Ref<Texture2D>& texture,
+        const glm::vec4&      tintColor) {
+
+        ZIBEN_PROFILE_FUNCTION();
+
+        glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
+        glm::mat4 rotation    = glm::rotate(glm::mat4(1.0f), angle, { 0.0f, 0.0f, 1.0f });
+        glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        Shader::Bind(GetStorage()->TextureShader);
+        Texture2D::Bind(texture);
+
+        GetStorage()->TextureShader->SetUniform("u_Transform", translation * rotation * scaling);
+        GetStorage()->TextureShader->SetUniform("u_TilingFactor", 1.0f);
+        GetStorage()->TextureShader->SetUniform("u_Color", tintColor);
+
+        VertexArray::Bind(GetStorage()->QuadVertexArray);
+        RenderCommand::DrawIndexed(GetStorage()->QuadVertexArray);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec2&      position,
+        const glm::vec2&      size,
+        float                 angle,
+        const Ref<Texture2D>& texture,
+        float                 tilingFactor) {
+
+        DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, texture, tilingFactor);
+    }
+
+    void Renderer2D::DrawRotatedQuad(
+        const glm::vec3&      position,
+        const glm::vec2&      size,
+        float                 angle,
+        const Ref<Texture2D>& texture,
+        float                 tilingFactor) {
+
+        ZIBEN_PROFILE_FUNCTION();
+
+        glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
+        glm::mat4 rotation    = glm::rotate(glm::mat4(1.0f), angle, { 0.0f, 0.0f, 1.0f });
+        glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        Shader::Bind(GetStorage()->TextureShader);
+        Texture2D::Bind(texture);
+
+        GetStorage()->TextureShader->SetUniform("u_Transform", translation * rotation * scaling);
+        GetStorage()->TextureShader->SetUniform("u_TilingFactor", tilingFactor);
+        GetStorage()->TextureShader->SetUniform("u_Color", glm::vec4(1.0f));
 
         VertexArray::Bind(GetStorage()->QuadVertexArray);
         RenderCommand::DrawIndexed(GetStorage()->QuadVertexArray);

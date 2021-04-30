@@ -21,5 +21,7 @@ private:
     Ziben::Ref<Ziben::Texture2D>        m_Texture;
 
     glm::vec4                           m_SquareColor;
+    float                               m_SquareAngle;
+    float                               m_ColorDirection;
 
 }; // class Layer2D;
