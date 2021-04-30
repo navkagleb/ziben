@@ -16,6 +16,9 @@ file(GLOB SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Scene/*.cpp
 )
 
+#set(ZIBEN_PROFILE TRUE CACHE INTERNAL "")
+add_compile_definitions(ZIBEN_PROFILE)
+
 include_directories(Source)
 
 add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})

@@ -29,26 +29,36 @@ void Sandbox2D::OnEvent(Ziben::Event& event) {
 }
 
 void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
+    ZIBEN_PROFILE_FUNCTION();
+
     // Update
-    m_CameraController.OnUpdate(ts);
-
-    // Render
-    Ziben::RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
-    Ziben::RenderCommand::Clear();
-
-    Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
     {
-        Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { 0.2f, 0.8f, 0.3f, 1.0f });
-        Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
-
-        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f },  { 10.0f, 10.0f }, m_Texture, { 0.34f, 0.25f, 0.51f, 0.9f });
+        ZIBEN_PROFILE_SCOPE("CameraController::OnUpdate");
+        m_CameraController.OnUpdate(ts);
     }
 
-    Ziben::Renderer2D::EndScene();
+    // Render
+    {
+        ZIBEN_PROFILE_SCOPE("Renderer Prepare");
+        Ziben::RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
+        Ziben::RenderCommand::Clear();
+    }
+
+    {
+        ZIBEN_PROFILE_SCOPE("Renderer Draw");
+        Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
+
+        Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
+        Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
+        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f },  { 10.0f, 10.0f }, m_Texture, { 0.34f, 0.25f, 0.51f, 0.9f });
+
+        Ziben::Renderer2D::EndScene();
+    }
 }
 
 void Sandbox2D::OnImGuiRender() {
+    ZIBEN_PROFILE_FUNCTION();
+
     ImGui::Begin("Scene2D");
 
     {

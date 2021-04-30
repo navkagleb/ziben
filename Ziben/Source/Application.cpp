@@ -5,8 +5,6 @@
 #include "Ziben/Renderer/Renderer.hpp"
 #include "Ziben/Window/EventDispatcher.hpp"
 
-#include "Utility/Profiling/ProfilingEngine.hpp"
-
 namespace Ziben {
 
     Application* Application::s_Instance = nullptr;
@@ -111,22 +109,23 @@ namespace Ziben {
 // Entry Point!
 int main(int argc, char** argv) {
     Ziben::Log::Create();
+    Ziben::Profile::ProfileEngine::Create();
 
-#ifdef ZIBEN_PROFILING
-    Ziben::Profiling::ProfilingEngine::Create();
-#endif
-
-    ZIBEN_CORE_INFO("Ziben Core Log!");
-    ZIBEN_INFO("Ziben Client Log!");
-
+    // Startup
+    ZIBEN_PROFILE_BEGIN_SESSION("Startup", "ZibenProfile_Startup.json");
     auto application = ::Ziben::CreateApplication(argc, argv);
+    ZIBEN_PROFILE_END_SESSION();
+
+    // Runtime
+    ZIBEN_PROFILE_BEGIN_SESSION("Runtime", "ZibenProfile_Runtime.json");
     application->Run();
+    ZIBEN_PROFILE_END_SESSION();
 
+    // Shutdown
+    ZIBEN_PROFILE_BEGIN_SESSION("Shutdown", "ZibenProfile_Shutdown.json");
     delete application;
+    ZIBEN_PROFILE_END_SESSION();
 
-#ifdef ZIBEN_PROFILING
-    Ziben::Profiling::ProfilingEngine::Destroy();
-#endif
-
+    Ziben::Profile::ProfileEngine::Destroy();
     Ziben::Log::Destroy();
 }
