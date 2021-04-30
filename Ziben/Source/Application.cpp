@@ -10,11 +10,13 @@ namespace Ziben {
     Application* Application::s_Instance = nullptr;
 
     Application::Application(std::string title, int width, int height)
-        : m_Window(CreateScope<Window>(std::move(title), width, height))
+        : m_Window(Window::Create(std::move(title), width, height))
         , m_SceneManager(CreateScope<SceneManager>())
         , m_LayerStack(CreateScope<LayerStack>())
         , m_ImGuiLayer(new ImGuiLayer)
         , m_IsMinimized(false) {
+
+        ZIBEN_PROFILE_FUNCTION();
 
         if (s_Instance)
             ZIBEN_CORE_ERROR("Application::s_Instance is not nullptr!");
@@ -25,16 +27,32 @@ namespace Ziben {
 
         Renderer::Init();
 
-        m_LayerStack->PushOverlay(m_ImGuiLayer);
+        PushOverlay(m_ImGuiLayer);
+    }
+
+    Application::~Application() {
+        ZIBEN_PROFILE_FUNCTION();
+
+        Renderer::Shutdown();
+        m_Window->Shutdown();
     }
 
     void Application::Run() {
+        ZIBEN_PROFILE_FUNCTION();
+
         while (m_Window->IsOpen()) {
+            ZIBEN_PROFILE_SCOPE("RunLoop");
+
             m_TimeStep.Update(static_cast<float>(glfwGetTime()));
 
-            if (!m_IsMinimized)
-                for (Layer* layer : *m_LayerStack)
-                    layer->OnUpdate(m_TimeStep);
+            if (!m_IsMinimized) {
+                {
+                    ZIBEN_PROFILE_SCOPE("LayerStack OnUpdate");
+
+                    for (Layer* layer : *m_LayerStack)
+                        layer->OnUpdate(m_TimeStep);
+                }
+            }
 
             ImGuiLayer::Begin();
 
@@ -44,8 +62,12 @@ namespace Ziben {
                 m_SceneManager->GetActiveScene()->OnImGuiRender();
             }
 
-            for (Layer* layer : *m_LayerStack)
-                layer->OnImGuiRender();
+            {
+                ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+                for (Layer* layer : *m_LayerStack)
+                    layer->OnImGuiRender();
+            }
 
             ImGuiLayer::End();
 
@@ -54,22 +76,36 @@ namespace Ziben {
     }
 
     void Application::PushLayer(Layer* layer) {
+        ZIBEN_PROFILE_FUNCTION();
+
         m_LayerStack->PushLayer(layer);
+        layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* layer) {
+        ZIBEN_PROFILE_FUNCTION();
+
         m_LayerStack->PushOverlay(layer);
+        layer->OnAttach();
     }
 
     void Application::PopLayer(Layer* layer) {
+        ZIBEN_PROFILE_FUNCTION();
+
         m_LayerStack->PopLayer(layer);
+        layer->OnDetach();
     }
 
     void Application::PopOverlay(Layer* layer) {
+        ZIBEN_PROFILE_FUNCTION();
+
         m_LayerStack->PopOverlay(layer);
+        layer->OnDetach();
     }
 
     void Application::OnEvent(Event& event) {
+        ZIBEN_PROFILE_FUNCTION();
+
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<WindowClosedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowClosed));
@@ -89,10 +125,13 @@ namespace Ziben {
     }
 
     bool Application::OnWindowClosed(WindowClosedEvent& event) {
+        ZIBEN_CORE_ERROR("WindowClosedEvent");
         return true;
     }
 
     bool Application::OnWindowResized(WindowResizedEvent& event) {
+        ZIBEN_PROFILE_FUNCTION();
+
         m_IsMinimized = event.GetWidth() == 0 || event.GetHeight() == 0;
 
         Renderer::OnWindowResized(event.GetWidth(), event.GetHeight());

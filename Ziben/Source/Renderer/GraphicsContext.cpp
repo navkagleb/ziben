@@ -15,6 +15,8 @@ namespace Ziben {
         : m_Handle(handle) {}
 
     void GraphicsContext::Init() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glfwMakeContextCurrent(m_Handle);
 
         glewExperimental = GL_TRUE;
@@ -43,6 +45,8 @@ namespace Ziben {
     }
 
     void GraphicsContext::SwapBuffers() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glfwSwapBuffers(m_Handle);
     }
 

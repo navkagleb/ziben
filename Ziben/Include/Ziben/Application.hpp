@@ -19,7 +19,7 @@ namespace Ziben {
         Application(std::string title, int width, int height);
 
     public:
-        virtual ~Application() = default;
+        virtual ~Application();
 
         [[nodiscard]] inline Window& GetWindow() { return *m_Window; }
         [[nodiscard]] inline SceneManager& GetSceneManager() { return *m_SceneManager; }

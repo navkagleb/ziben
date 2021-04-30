@@ -47,12 +47,12 @@ namespace Ziben {
     template <typename T>
     inline T& Singleton<T>::Get() {
         if (!s_Instance) {
-            std::stringstream ss;
-            ss << "Ziben::Singleton::GetRef: s_Instance(";
-            ss << typeid(T).name();
-            ss << ") is nullptr!";
+//            std::stringstream ss;
+//            ss << "Ziben::Singleton::GetRef: s_Instance(";
+//            ss << typeid(T).name();
+//            ss << ") is nullptr!";
 
-            throw std::runtime_error(ss.str());
+            throw std::runtime_error("");
         }
 
         return *s_Instance;

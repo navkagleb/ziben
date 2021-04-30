@@ -9,6 +9,10 @@
 
 namespace Ziben {
 
+    Scope<Window> Window::Create(std::string title, int width, int height) {
+        return CreateScope<Window>(std::move(title), width, height);
+    }
+
     Window::Window(std::string title, int width, int height)
         : m_Title(std::move(title))
         , m_Width(width)
@@ -16,9 +20,15 @@ namespace Ziben {
         , m_IsVerticalSync(false)
         , m_Handle(nullptr) {
 
+        ZIBEN_PROFILE_FUNCTION();
+
         // Init GLFW
-        if (!glfwInit())
-            throw std::runtime_error("Ziben::Window::Ctor: glfw crash in init!");
+        {
+            ZIBEN_PROFILE_SCOPE("glfwInit");
+
+            if (!glfwInit())
+                throw std::runtime_error("Ziben::Window::Ctor: glfw crash in init!");
+        }
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4                       );
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6                       );
@@ -26,7 +36,11 @@ namespace Ziben {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE                 );
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT,  GL_TRUE                 );
 
-        m_Handle = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+        {
+            ZIBEN_PROFILE_SCOPE("glfwCreateWindow");
+
+            m_Handle = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+        }
 
         if (!m_Handle)
             throw std::runtime_error("Ziben::Window::Ctor: m_Handle is nullptr!");
@@ -56,11 +70,14 @@ namespace Ziben {
     }
 
     Window::~Window() {
-        glfwDestroyWindow(m_Handle);
-        glfwTerminate();
+        ZIBEN_PROFILE_FUNCTION();
+
+        Shutdown();
     }
 
     void Window::SetVerticalSync(bool enabled) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glfwSwapInterval(m_IsVerticalSync = enabled);
     }
 
@@ -81,13 +98,20 @@ namespace Ziben {
     }
 
     void Window::OnUpdate() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glfwPollEvents();
         m_Context->SwapBuffers();
     }
 
-    void Window::Close() {
-        glfwSetWindowShouldClose(m_Handle, GLFW_TRUE);
-        WindowCloseCallback(m_Handle);
+    void Window::Shutdown() {
+        ZIBEN_PROFILE_FUNCTION();
+
+//        glfwSetWindowShouldClose(m_Handle, GLFW_TRUE);
+//        WindowCloseCallback(m_Handle);
+
+        glfwDestroyWindow(m_Handle);
+        glfwTerminate();
     }
 
     void Window::MouseMovedCallback(HandleType* handle, double x, double y) {

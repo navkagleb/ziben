@@ -6,6 +6,8 @@
 namespace Ziben {
 
     void Renderer::Init() {
+        ZIBEN_PROFILE_FUNCTION();
+
         RenderCommand::Init();
         Renderer2D::Init();
     }

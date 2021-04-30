@@ -7,10 +7,14 @@ namespace Ziben {
     }
 
     void VertexBuffer::Bind(const Ref<VertexBuffer>& vertexBuffer) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->m_Handle);
     }
 
     void VertexBuffer::Unbind() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
@@ -19,12 +23,16 @@ namespace Ziben {
         , m_Size(size)
         , m_Usage(usage) {
 
+        ZIBEN_PROFILE_FUNCTION();
+
         glGenBuffers(1, &m_Handle);
         glBindBuffer(GL_ARRAY_BUFFER, m_Handle);
         glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Size), data, static_cast<GLenum>(m_Usage));
     }
 
     VertexBuffer::~VertexBuffer() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glDeleteBuffers(1, &m_Handle);
     }
 

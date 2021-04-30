@@ -18,6 +18,9 @@ namespace Ziben {
         friend class Input;
 
     public:
+        static Scope<Window> Create(std::string title, int width, int height);
+
+    public:
         Window(std::string title, int width, int height);
         ~Window();
 
@@ -36,7 +39,7 @@ namespace Ziben {
         void Show();
 
         void OnUpdate();
-        void Close();
+        void Shutdown();
 
     public:
         explicit inline operator HandleType*() const { return m_Handle; }

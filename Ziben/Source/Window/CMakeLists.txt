@@ -17,6 +17,6 @@ target_include_directories(${TARGET}
         ${PROJECT_SOURCE_DIR}/Ziben/Include/
 )
 
-target_link_libraries(${TARGET} PUBLIC ZibenUtility ZibenScene)
+target_link_libraries(${TARGET} PUBLIC ZibenScene)
 
 target_precompile_headers(${TARGET} PUBLIC WindowPch.hpp)

@@ -68,6 +68,8 @@ namespace Ziben {
     } // namespace Internal
 
     void RenderCommand::Init() {
+        ZIBEN_PROFILE_FUNCTION();
+
     #ifdef ZIBEN_DEBUG
         glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);

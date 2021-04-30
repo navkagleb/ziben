@@ -19,10 +19,14 @@ namespace Ziben {
     }
 
     void Texture2D::Bind(const Ref<Texture2D>& texture2D, uint32_t slot) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindTextureUnit(slot, texture2D->m_Handle);
     }
 
     void Texture2D::Unbind() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindTextureUnit(0, 0);
     }
 
@@ -31,12 +35,19 @@ namespace Ziben {
         , m_InternalFormat(0)
         , m_DataFormat(0) {
 
-        int width;
-        int height;
-        int channels;
+        ZIBEN_PROFILE_FUNCTION();
+
+        int      width;
+        int      height;
+        int      channels;
+        stbi_uc* data = nullptr;
 
         stbi_set_flip_vertically_on_load(true);
-        stbi_uc* data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+
+        {
+            ZIBEN_PROFILE_SCOPE("Texture2D::Texture2D(const std::string&): stbi_load");
+            data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+        }
 
         assert(data);
 
@@ -83,6 +94,8 @@ namespace Ziben {
         , m_InternalFormat(GL_RGBA8)
         , m_DataFormat(GL_RGBA) {
 
+        ZIBEN_PROFILE_FUNCTION();
+
         glCreateTextures(GL_TEXTURE_2D, 1, &m_Handle);
         glTextureStorage2D(m_Handle, 1, m_InternalFormat, static_cast<GLsizei>(m_Width), static_cast<GLsizei>(m_Height));
 
@@ -94,11 +107,15 @@ namespace Ziben {
     }
 
     Texture2D::~Texture2D() {
+        ZIBEN_PROFILE_FUNCTION();
+
         if (m_Handle != 0)
             glDeleteTextures(1, &m_Handle);
     }
 
     void Texture2D::SetData(void* data, uint32_t size) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glTextureSubImage2D(
             m_Handle,                          // Target
             0,                                 // Level

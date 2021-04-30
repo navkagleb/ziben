@@ -2,9 +2,6 @@
 
 namespace Ziben::Profile {
 
-    ProfileEngine_Impl::ProfileEngine_Impl()
-        : m_ProfileCount(0) {}
-
     void ProfileEngine_Impl::BeginSession(const std::string& name, const std::string& filename) {
         m_CurrentSession = name;
         m_OutputStream.open(filename);
@@ -13,35 +10,40 @@ namespace Ziben::Profile {
     }
 
     void ProfileEngine_Impl::EndSession() {
-        WriteFooter();
+        std::lock_guard lock(m_Mutex);
 
-        m_OutputStream.close();
-        m_CurrentSession.clear();
-        m_ProfileCount = 0;
+        if (!m_CurrentSession.empty()) {
+            WriteFooter();
+
+            m_OutputStream.close();
+            m_CurrentSession.clear();
+        }
     }
 
     void ProfileEngine_Impl::WriteProfile(const ProfileResult& result) {
-        if (m_ProfileCount++ > 0)
-            m_OutputStream << ",";
+        std::stringstream json;
 
-        std::string name = result.Name;
-        std::replace(name.begin(), name.end(), '"', '\'');
+        json << std::setprecision(3) << std::fixed;
+        json << ",{";
+        json << R"("cat":"function",)";
+        json << R"("dur":)" << result.ElapsedTime.count() << ',';
+        json << R"("name":")" << result.Name << "\",";
+        json << R"("ph":"X",)";
+        json << R"("pid":0,)";
+        json << R"("tid":)" << result.ThreadID << ",";
+        json << R"("ts":)" << result.Start.count();
+        json << "}";
 
-        m_OutputStream << "{";
-        m_OutputStream << R"("cat":"function",)";
-        m_OutputStream << R"("dur":)" << (result.End - result.Start) << ',';
-        m_OutputStream << R"("name":")" << name << "\",";
-        m_OutputStream << R"("ph":"X",)";
-        m_OutputStream << R"("pid":0,)";
-        m_OutputStream << R"("tid":)" << result.ThreadID << ",";
-        m_OutputStream << R"("ts":)" << result.Start;
-        m_OutputStream << "}";
+        std::lock_guard lock(m_Mutex);
 
-        m_OutputStream.flush();
+        if (!m_CurrentSession.empty()) {
+            m_OutputStream << json.str();
+            m_OutputStream.flush();
+        }
     }
 
     void ProfileEngine_Impl::WriteHeader() {
-        m_OutputStream << R"({"otherData": {}, "traceEvents":[)";
+        m_OutputStream << R"({"otherData":{},"traceEvents":[{})";
         m_OutputStream.flush();
     }
 

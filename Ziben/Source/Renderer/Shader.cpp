@@ -9,6 +9,8 @@ namespace Ziben {
     namespace Internal {
 
         static std::string ReadFile(const std::string& filepath) {
+            ZIBEN_PROFILE_FUNCTION();
+
             namespace fs = std::filesystem;
 
             if (!fs::exists(filepath)) {
@@ -54,6 +56,8 @@ namespace Ziben {
         }
 
         static std::map<ShaderType, std::string> PreProcessShader(const std::string& shaderSource) {
+            ZIBEN_PROFILE_FUNCTION();
+
             using namespace std::string_literals;
 
             std::map<ShaderType, std::string> result;
@@ -93,6 +97,8 @@ namespace Ziben {
     }
 
     void Shader::Bind(const Ref<Shader>& shader) {
+        ZIBEN_PROFILE_FUNCTION();
+
         if (!shader->m_IsLinked)
             shader->Link();
 
@@ -100,12 +106,16 @@ namespace Ziben {
     }
 
     void Shader::Unbind() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUseProgram(0);
     }
 
     Shader::Shader(const std::string& filepath)
         : m_Handle(0)
         , m_IsLinked(false) {
+
+        ZIBEN_PROFILE_FUNCTION();
 
         auto source  = Internal::ReadFile(filepath);
         auto sources = Internal::PreProcessShader(source);
@@ -116,6 +126,8 @@ namespace Ziben {
     }
 
     Shader::~Shader() {
+        ZIBEN_PROFILE_FUNCTION();
+
         if (m_Handle == 0)
             return;
 
@@ -123,6 +135,8 @@ namespace Ziben {
     }
 
     void Shader::Compile(const std::map<ShaderType, std::string>& sources) {
+        ZIBEN_PROFILE_FUNCTION();
+
         if (m_Handle == 0) {
             m_Handle = glCreateProgram();
 
@@ -145,38 +159,56 @@ namespace Ziben {
     }
 
     void Shader::SetUniform(const std::string& name, bool value) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniform1i(GetUniformLocation(name), value);
     }
 
     void Shader::SetUniform(const std::string& name, int value) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniform1i(GetUniformLocation(name), value);
     }
 
     void Shader::SetUniform(const std::string& name, float value) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniform1f(GetUniformLocation(name), value);
     }
 
     void Shader::SetUniform(const std::string& name, float x, float y, float z) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniform3f(GetUniformLocation(name), x, y, z);
     }
 
     void Shader::SetUniform(const std::string& name, const glm::vec3& vec3) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vec3));
     }
 
     void Shader::SetUniform(const std::string& name, const glm::vec4& vec4) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vec4));
     }
 
     void Shader::SetUniform(const std::string& name, const glm::mat3& mat3) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniformMatrix3fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat3));
     }
 
     void Shader::SetUniform(const std::string& name, const glm::mat4& mat4) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat4));
     }
     
     int Shader::GetUniformLocation(const std::string& name) {
+        ZIBEN_PROFILE_FUNCTION();
+
         if (!m_UniformLocations.contains(name)) {
             int location = glGetUniformLocation(m_Handle, name.c_str());
 
@@ -188,6 +220,8 @@ namespace Ziben {
     }
 
     void Shader::Compile(ShaderType type, const std::string& source) const {
+        ZIBEN_PROFILE_FUNCTION();
+
         HandleType shaderHandle = glCreateShader(static_cast<GLenum>(type));
 
         if (shaderHandle == 0)
@@ -226,6 +260,8 @@ namespace Ziben {
     }
 
     void Shader::Link() const {
+        ZIBEN_PROFILE_FUNCTION();
+
         glLinkProgram(m_Handle);
 
         int shaderCount = 0;

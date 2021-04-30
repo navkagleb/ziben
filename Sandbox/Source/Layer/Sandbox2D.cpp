@@ -32,10 +32,7 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
     ZIBEN_PROFILE_FUNCTION();
 
     // Update
-    {
-        ZIBEN_PROFILE_SCOPE("CameraController::OnUpdate");
-        m_CameraController.OnUpdate(ts);
-    }
+    m_CameraController.OnUpdate(ts);
 
     // Render
     {

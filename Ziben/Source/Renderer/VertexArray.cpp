@@ -7,10 +7,14 @@ namespace Ziben {
     }
 
     void VertexArray::Bind(const Ref<VertexArray>& vertexArray) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindVertexArray(vertexArray->m_Handle);
     }
 
     void VertexArray::Unbind() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindVertexArray(0);
     }
 
@@ -18,11 +22,14 @@ namespace Ziben {
         : m_Handle(0)
         , m_IndexBuffer(nullptr) {
 
+        ZIBEN_PROFILE_FUNCTION();
+
         glGenVertexArrays(1, &m_Handle);
-        glBindVertexArray(m_Handle);
     }
 
     VertexArray::~VertexArray() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glDeleteVertexArrays(1, &m_Handle);
     }
 

@@ -22,6 +22,8 @@ namespace Ziben {
     }
 
     void ImGuiLayer::OnAttach() {
+        ZIBEN_PROFILE_FUNCTION();
+
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
 
@@ -41,6 +43,8 @@ namespace Ziben {
     }
 
     void ImGuiLayer::OnDetach() {
+        ZIBEN_PROFILE_FUNCTION();
+
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
@@ -61,12 +65,16 @@ namespace Ziben {
     }
 
     void ImGuiLayer::Begin() {
+        ZIBEN_PROFILE_FUNCTION();
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
     void ImGuiLayer::End() {
+        ZIBEN_PROFILE_FUNCTION();
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }

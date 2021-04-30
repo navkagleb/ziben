@@ -7,5 +7,6 @@
 #include <fstream>
 #include <filesystem>
 #include <string>
+#include <unordered_map>
 
 #include "Ziben/Profiling/ProfileEngine.hpp"

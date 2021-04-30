@@ -7,10 +7,14 @@ namespace Ziben {
     }
 
     void IndexBuffer::Bind(const Ref<IndexBuffer>& indexBuffer) {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->m_Handle);
     }
 
     void IndexBuffer::Unbind() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
@@ -18,6 +22,8 @@ namespace Ziben {
         : m_Handle(0)
         , m_Count(count)
         , m_Usage(usage) {
+
+        ZIBEN_PROFILE_FUNCTION();
 
         glGenBuffers(1, &m_Handle);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Handle);
@@ -30,6 +36,8 @@ namespace Ziben {
     }
 
     IndexBuffer::~IndexBuffer() {
+        ZIBEN_PROFILE_FUNCTION();
+
         glDeleteBuffers(1, &m_Handle);
     }
 

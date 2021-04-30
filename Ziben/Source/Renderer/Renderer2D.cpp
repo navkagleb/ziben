@@ -11,6 +11,8 @@ namespace Ziben {
     };
 
     void Renderer2D::Init() {
+        ZIBEN_PROFILE_FUNCTION();
+
         GetStorage()->QuadVertexArray = VertexArray::Create();
 
         float positions[] = {
@@ -48,16 +50,20 @@ namespace Ziben {
     }
 
     void Renderer2D::Shutdown() {
+        ZIBEN_PROFILE_FUNCTION();
+
         GetStorage().reset();
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera) {
+        ZIBEN_PROFILE_FUNCTION();
+
         Shader::Bind(GetStorage()->TextureShader);
         GetStorage()->TextureShader->SetUniform("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
     }
 
     void Renderer2D::EndScene() {
-
+        ZIBEN_PROFILE_FUNCTION();
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
@@ -90,6 +96,8 @@ namespace Ziben {
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
         const glm::vec4&      color) {
+
+        ZIBEN_PROFILE_FUNCTION();
 
         glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
         glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });

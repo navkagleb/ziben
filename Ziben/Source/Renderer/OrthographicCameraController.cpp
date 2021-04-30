@@ -18,6 +18,8 @@ namespace Ziben {
     }
 
     void OrthographicCameraController::OnEvent(Event& event) {
+        ZIBEN_PROFILE_FUNCTION();
+
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<MouseScrolledEvent>(ZIBEN_BIND_EVENT_FUNC(OnMouseScrolled));
@@ -25,6 +27,8 @@ namespace Ziben {
     }
 
     void OrthographicCameraController::OnUpdate(const TimeStep& ts) {
+        ZIBEN_PROFILE_FUNCTION();
+
         // Movement
         if (Input::IsKeyPressed(Ziben::Key::A))
             m_CameraPosition.x -= m_CameraTranslationSpeed * (float)ts;
@@ -52,6 +56,8 @@ namespace Ziben {
     }
 
     bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event) {
+        ZIBEN_PROFILE_FUNCTION();
+
         m_ZoomLevel -= static_cast<float>(event.GetOffsetY()) * 0.25f;
         m_ZoomLevel  = std::max(m_ZoomLevel, 0.25f);
 
@@ -66,6 +72,8 @@ namespace Ziben {
     }
 
     bool OrthographicCameraController::OnWindowResized(WindowResizedEvent& event) {
+        ZIBEN_PROFILE_FUNCTION();
+
         m_AspectRation = static_cast<float>(event.GetWidth()) / static_cast<float>(event.GetHeight());
 
         m_Camera.SetProjection(
