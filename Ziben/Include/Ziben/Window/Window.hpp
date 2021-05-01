@@ -39,7 +39,7 @@ namespace Ziben {
         void Show();
 
         void OnUpdate();
-        void Shutdown();
+        void Close();
 
     public:
         explicit inline operator HandleType*() const { return m_Handle; }

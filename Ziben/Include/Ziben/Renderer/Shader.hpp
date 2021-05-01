@@ -102,6 +102,7 @@ namespace Ziben {
 
         void SetUniform(const std::string& name, bool value);
         void SetUniform(const std::string& name, int value);
+        void SetUniform(const std::string& name, int* values, uint32_t count);
         void SetUniform(const std::string& name, float value);
         void SetUniform(const std::string& name, float x, float y, float z);
         void SetUniform(const std::string& name, const glm::vec3& vec3);

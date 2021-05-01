@@ -72,7 +72,8 @@ namespace Ziben {
     Window::~Window() {
         ZIBEN_PROFILE_FUNCTION();
 
-        Shutdown();
+        glfwDestroyWindow(m_Handle);
+        glfwTerminate();
     }
 
     void Window::SetVerticalSync(bool enabled) {
@@ -104,14 +105,11 @@ namespace Ziben {
         m_Context->SwapBuffers();
     }
 
-    void Window::Shutdown() {
+    void Window::Close() {
         ZIBEN_PROFILE_FUNCTION();
 
-//        glfwSetWindowShouldClose(m_Handle, GLFW_TRUE);
-//        WindowCloseCallback(m_Handle);
-
-        glfwDestroyWindow(m_Handle);
-        glfwTerminate();
+        glfwSetWindowShouldClose(m_Handle, GLFW_TRUE);
+        WindowCloseCallback(m_Handle);
     }
 
     void Window::MouseMovedCallback(HandleType* handle, double x, double y) {

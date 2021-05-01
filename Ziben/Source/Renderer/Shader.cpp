@@ -170,6 +170,12 @@ namespace Ziben {
         glUniform1i(GetUniformLocation(name), value);
     }
 
+    void Shader::SetUniform(const std::string& name, int* values, uint32_t count) {
+        ZIBEN_PROFILE_FUNCTION();
+
+        glUniform1iv(GetUniformLocation(name), static_cast<GLsizei>(count), values);
+    }
+
     void Shader::SetUniform(const std::string& name, float value) {
         ZIBEN_PROFILE_FUNCTION();
 

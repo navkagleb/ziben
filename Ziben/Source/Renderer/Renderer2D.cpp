@@ -4,6 +4,8 @@
 
 #include "RenderCommand.hpp"
 
+#include "Ziben/System.hpp"
+
 namespace Ziben {
 
     void Renderer2D::Init() {
@@ -14,7 +16,9 @@ namespace Ziben {
         GetStorage().QuadVertexBuffer->SetLayout({
             { ShaderData::Type::Float3, "VertexPosition" },
             { ShaderData::Type::Float4, "Color"          },
-            { ShaderData::Type::Float2, "TexCoord"       }
+            { ShaderData::Type::Float2, "TexCoord"       },
+            { ShaderData::Type::Float,  "TexIndex"       },
+            { ShaderData::Type::Float,  "TilingFactor"   }
         });
 
         GetStorage().QuadVertexBufferBase = new QuadVertex[Storage::MaxVertexCount];
@@ -50,9 +54,14 @@ namespace Ziben {
         GetStorage().WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
 
         // Texture Shader
-        GetStorage().TextureShader = Shader::Create("Assets/Shaders/TextureShader.glsl");
-        Shader::Bind(GetStorage().TextureShader);
-        GetStorage().TextureShader->SetUniform("u_Texture", 0);
+        std::array<int, Storage::MaxTextureSlots> samples = { 0 };
+        std::iota(samples.begin(), samples.end(), 0);
+
+        Shader::Bind(GetStorage().TextureShader = Shader::Create("Assets/Shaders/TextureShader.glsl"));
+        GetStorage().TextureShader->SetUniform("u_Textures", samples.data(), samples.size());
+
+        // TextureSlots
+        GetStorage().TextureSlots.front() = GetStorage().WhiteTexture;
     }
 
     void Renderer2D::Shutdown() {
@@ -66,6 +75,7 @@ namespace Ziben {
         GetStorage().TextureShader->SetUniform("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
 
         GetStorage().QuadIndexCount          = 0;
+        GetStorage().TextureSlotIndex        = 1;
         GetStorage().QuadVertexBufferPointer = GetStorage().QuadVertexBufferBase;
     }
 
@@ -81,23 +91,26 @@ namespace Ziben {
     }
 
     void Renderer2D::Flush() {
+        for (uint32_t i = 0; i < GetStorage().TextureSlotIndex; ++i)
+            Texture2D::Bind(GetStorage().TextureSlots[i], i);
+
         RenderCommand::DrawIndexed(GetStorage().QuadVertexArray, GetStorage().QuadIndexCount);
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color) {
-        DrawQuad({ position.x, position.y, 0.0f }, size, GetStorage().WhiteTexture, color);
+        DrawQuad({ position.x, position.y, 0.0f }, size, GetStorage().WhiteTexture, color, 1.0f);
     }
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color) {
-        DrawQuad(position, size, GetStorage().WhiteTexture, color);
+        DrawQuad(position, size, GetStorage().WhiteTexture, color, 1.0f);
     }
 
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture, glm::vec4(1.0f));
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, glm::vec4(1.0f), 1.0f);
     }
 
     void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture) {
-        DrawQuad(position, size, texture, glm::vec4(1.0f));
+        DrawQuad(position, size, texture, glm::vec4(1.0f), 1.0f);
     }
 
     void Renderer2D::DrawQuad(
@@ -106,7 +119,7 @@ namespace Ziben {
         const Ref<Texture2D>& texture,
         const glm::vec4&      tintColor) {
 
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tintColor);
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tintColor, 1.0f);
     }
 
     void Renderer2D::DrawQuad(
@@ -115,72 +128,88 @@ namespace Ziben {
         const Ref<Texture2D>& texture,
         const glm::vec4&      tintColor) {
 
-        ZIBEN_PROFILE_FUNCTION();
+        DrawQuad(position, size, texture, tintColor, 1.0f);
+    }
 
-        GetStorage().QuadVertexBufferPointer->Position = position;
-        GetStorage().QuadVertexBufferPointer->Color    = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord = { 0.0f, 0.0f };
+    void Renderer2D::DrawQuad(
+        const glm::vec2&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        float                 tilingFactor) {
+
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, glm::vec4(1.0f), tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec3&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        float                 tilingFactor) {
+
+        DrawQuad(position, size, texture, glm::vec4(1.0f), tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec2&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        const glm::vec4&      tintColor,
+        float                 tilingFactor) {
+
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tintColor, tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec3&      position,
+        const glm::vec2&      size,
+        const Ref<Texture2D>& texture,
+        const glm::vec4&      tintColor,
+        float                 tilingFactor) {
+
+        float textureIndex = -1.0f;
+
+        for (std::size_t i = 1; i < GetStorage().TextureSlotIndex; ++i) {
+            if (*GetStorage().TextureSlots[i] == *texture) {
+                textureIndex = static_cast<float>(i);
+                break;
+            }
+        }
+
+        if (textureIndex == -1.0f) {
+            textureIndex                                             = static_cast<float>(GetStorage().TextureSlotIndex);
+            GetStorage().TextureSlots[GetStorage().TextureSlotIndex] = texture;
+            GetStorage().TextureSlotIndex++;
+        }
+
+        GetStorage().QuadVertexBufferPointer->Position     = position;
+        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
+        GetStorage().QuadVertexBufferPointer->TexCoord     = { 0.0f, 0.0f };
+        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
+        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
         GetStorage().QuadVertexBufferPointer++;
 
-        GetStorage().QuadVertexBufferPointer->Position = { position.x + size.x, position.y, position.z };
-        GetStorage().QuadVertexBufferPointer->Color    = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord = { 1.0f, 0.0f };
+        GetStorage().QuadVertexBufferPointer->Position     = { position.x + size.x, position.y, position.z };
+        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
+        GetStorage().QuadVertexBufferPointer->TexCoord     = { 1.0f, 0.0f };
+        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
+        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
         GetStorage().QuadVertexBufferPointer++;
 
-        GetStorage().QuadVertexBufferPointer->Position = { position.x + size.x, position.y + size.y, position.z };
-        GetStorage().QuadVertexBufferPointer->Color    = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord = { 1.0f, 1.0f };
+        GetStorage().QuadVertexBufferPointer->Position     = { position.x + size.x, position.y + size.y, position.z };
+        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
+        GetStorage().QuadVertexBufferPointer->TexCoord     = { 1.0f, 1.0f };
+        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
+        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
         GetStorage().QuadVertexBufferPointer++;
 
-        GetStorage().QuadVertexBufferPointer->Position = { position.x, position.y + size.y, position.z };
-        GetStorage().QuadVertexBufferPointer->Color    = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord = { 0.0f, 1.0f };
+        GetStorage().QuadVertexBufferPointer->Position     = { position.x, position.y + size.y, position.z };
+        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
+        GetStorage().QuadVertexBufferPointer->TexCoord     = { 0.0f, 1.0f };
+        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
+        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
         GetStorage().QuadVertexBufferPointer++;
 
         GetStorage().QuadIndexCount += 6;
-
-//        glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
-//        glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-//
-//        Shader::Bind(GetStorage().TextureShader);
-//        Texture2D::Bind(texture);
-//
-//        GetStorage().TextureShader->SetUniform("u_Transform", translation * scaling);
-//        GetStorage().TextureShader->SetUniform("u_TilingFactor", 1.0f);
-//
-//        VertexArray::Bind(GetStorage().QuadVertexArray);
-//        RenderCommand::DrawIndexed(GetStorage().QuadVertexArray);
-    }
-
-    void Renderer2D::DrawQuad(
-        const glm::vec2&      position,
-        const glm::vec2&      size,
-        const Ref<Texture2D>& texture,
-        float                 tilingFactor) {
-
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tilingFactor);
-    }
-
-    void Renderer2D::DrawQuad(
-        const glm::vec3&      position,
-        const glm::vec2&      size,
-        const Ref<Texture2D>& texture,
-        float                 tilingFactor) {
-
-        ZIBEN_PROFILE_FUNCTION();
-
-        glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
-        glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
-        Shader::Bind(GetStorage().TextureShader);
-        Texture2D::Bind(texture);
-
-        GetStorage().TextureShader->SetUniform("u_Transform", translation * scaling);
-        GetStorage().TextureShader->SetUniform("u_TilingFactor", tilingFactor);
-        GetStorage().TextureShader->SetUniform("u_Color", glm::vec4(1.0f));
-
-        VertexArray::Bind(GetStorage().QuadVertexArray);
-        RenderCommand::DrawIndexed(GetStorage().QuadVertexArray);
     }
 
     void Renderer2D::DrawRotatedQuad(

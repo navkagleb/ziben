@@ -5,6 +5,8 @@
 #include "Ziben/Renderer/Renderer.hpp"
 #include "Ziben/Window/EventDispatcher.hpp"
 
+#include <iostream>
+
 namespace Ziben {
 
     Application* Application::s_Instance = nullptr;
@@ -34,7 +36,6 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
 
         Renderer::Shutdown();
-        m_Window->Shutdown();
     }
 
     void Application::Run() {

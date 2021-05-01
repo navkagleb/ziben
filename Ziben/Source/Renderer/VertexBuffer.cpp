@@ -58,7 +58,7 @@ namespace Ziben {
 
     void VertexBuffer::SetData(const void* data, std::size_t size) const {
         glBindBuffer(GL_ARRAY_BUFFER, m_Handle);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, static_cast<GLsizeiptr>(size), data);
     }
 
 } // namespace Ziben

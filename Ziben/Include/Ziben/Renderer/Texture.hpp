@@ -41,6 +41,10 @@ namespace Ziben {
 
         void SetData(void* data, uint32_t size) override;
 
+    public:
+        bool operator !=(const Texture2D& other) const;
+        bool operator ==(const Texture2D& other) const;
+
     private:
         HandleType m_Handle;
         uint32_t   m_Width;

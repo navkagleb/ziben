@@ -129,4 +129,12 @@ namespace Ziben {
         );
     }
 
+    bool Texture2D::operator !=(const Texture2D& other) const {
+        return m_Handle != other.m_Handle;
+    }
+
+    bool Texture2D::operator ==(const Texture2D& other) const {
+        return m_Handle == other.m_Handle;
+    }
+
 } // namespace Ziben

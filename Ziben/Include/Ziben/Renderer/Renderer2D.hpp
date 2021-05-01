@@ -13,6 +13,8 @@ namespace Ziben {
             glm::vec3 Position;
             glm::vec4 Color;
             glm::vec2 TexCoord;
+            float     TexIndex;
+            float     TilingFactor;
         };
 
     public:
@@ -37,6 +39,9 @@ namespace Ziben {
         static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor);
         static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tilingFactor);
 
+        static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
+        static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
+
         static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angle, const glm::vec4& color);
         static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angle, const glm::vec4& color);
 
@@ -51,18 +56,22 @@ namespace Ziben {
 
     private:
         struct Storage {
-            static constexpr uint32_t MaxQuadCount   = 10'000;
-            static constexpr uint32_t MaxVertexCount = MaxQuadCount * 4;
-            static constexpr uint32_t MaxIndexCount  = MaxQuadCount * 6;
+            static constexpr uint32_t MaxQuadCount    = 10'000;
+            static constexpr uint32_t MaxVertexCount  = MaxQuadCount * 4;
+            static constexpr uint32_t MaxIndexCount   = MaxQuadCount * 6;
+            static constexpr uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
 
-            Ref<VertexArray>  QuadVertexArray;
-            Ref<VertexBuffer> QuadVertexBuffer;
-            Ref<Shader>       TextureShader;
-            Ref<Texture2D>    WhiteTexture;
+            Ref<VertexArray>                            QuadVertexArray;
+            Ref<VertexBuffer>                           QuadVertexBuffer;
+            Ref<Shader>                                 TextureShader;
+            Ref<Texture2D>                              WhiteTexture;
 
-            uint32_t          QuadIndexCount          = 0;
-            QuadVertex*       QuadVertexBufferBase    = nullptr;
-            QuadVertex*       QuadVertexBufferPointer = nullptr;
+            uint32_t                                    QuadIndexCount          = 0;
+            QuadVertex*                                 QuadVertexBufferBase    = nullptr;
+            QuadVertex*                                 QuadVertexBufferPointer = nullptr;
+
+            std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots            = { nullptr };
+            uint32_t                                    TextureSlotIndex        = 1; // 0 - WhiteTexture
         };
 
     private:
