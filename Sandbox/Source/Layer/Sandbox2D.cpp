@@ -53,9 +53,9 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         ZIBEN_PROFILE_SCOPE("Renderer Draw");
         Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-        Ziben::Renderer2D::DrawRotatedQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, glm::radians(m_SquareAngle), m_SquareColor);
+        Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
         Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
-        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, 10.0f);
+//        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, 10.0f);
 
         Ziben::Renderer2D::EndScene();
     }

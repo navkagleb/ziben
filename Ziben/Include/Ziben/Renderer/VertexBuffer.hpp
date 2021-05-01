@@ -7,12 +7,14 @@ namespace Ziben {
 
     class VertexBuffer {
     public:
+        static Ref<VertexBuffer> Create(std::size_t size);
         static Ref<VertexBuffer> Create(const void* data, std::size_t size, BufferUsage usage = BufferUsage::Static);
 
         static void Bind(const Ref<VertexBuffer>& vertexBuffer);
         static void Unbind();
 
     public:
+        explicit VertexBuffer(std::size_t size);
         VertexBuffer(const void* data, std::size_t size, BufferUsage usage);
         ~VertexBuffer();
 
@@ -21,6 +23,7 @@ namespace Ziben {
         [[nodiscard]] inline const VertexBufferLayout& GetLayout() const { return m_Layout; }
 
         void SetLayout(const VertexBufferLayout& layout);
+        void SetData(const void* data, std::size_t size) const;
 
     private:
         HandleType         m_Handle;

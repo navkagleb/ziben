@@ -2,29 +2,32 @@
 #version 460
 
 layout (location = 0) in vec3 VertexPosition;
-layout (location = 1) in vec2 TexCoord;
+layout (location = 1) in vec4 Color;
+layout (location = 2) in vec2 TexCoord;
 
-out vec2 f_TexCoord;
+out vec4 v_Color;
+out vec2 v_TexCoord;
 
 uniform mat4 u_ViewProjectionMatrix;
-uniform mat4 u_Transform;
 
 void main() {
-    f_TexCoord  = TexCoord;
-    gl_Position = u_ViewProjectionMatrix * u_Transform * vec4(VertexPosition, 1.0);
+    v_Color     = Color;
+    v_TexCoord  = TexCoord;
+    gl_Position = u_ViewProjectionMatrix * vec4(VertexPosition, 1.0);
 }
 
 #type fragment
 #version 460
 
-in vec2 f_TexCoord;
+in vec4 v_Color;
+in vec2 v_TexCoord;
 
 uniform sampler2D u_Texture;
 uniform float     u_TilingFactor;
-uniform vec4      u_Color;
 
 layout (location = 0) out vec4 FragColor;
 
 void main() {
-    FragColor = texture(u_Texture, f_TexCoord * u_TilingFactor) * u_Color;
+    // FragColor = texture(u_Texture, f_TexCoord * u_TilingFactor) * v_Color;
+    FragColor = v_Color;
 }

@@ -96,10 +96,10 @@ namespace Ziben {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void RenderCommand::DrawIndexed(const Ref<VertexArray>& vertexArray) {
+    void RenderCommand::DrawIndexed(const Ref<VertexArray>& vertexArray, std::size_t indexCount) {
         glDrawElements(
             GL_TRIANGLES,
-            static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount()),
+            static_cast<GLsizei>(indexCount ? vertexArray->GetIndexBuffer()->GetCount() : indexCount),
             GL_UNSIGNED_INT,
             nullptr
         );
