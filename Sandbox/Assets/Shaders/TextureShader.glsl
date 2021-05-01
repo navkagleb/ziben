@@ -19,7 +19,7 @@ void main() {
     v_TexCoord     = TexCoord;
     v_TexIndex     = TexIndex;
     v_TilingFactor = TilingFactor;
-    gl_Position    = u_ViewProjectionMatrix * vec4(VertexPosition, 1.0);
+    gl_Position   = u_ViewProjectionMatrix * vec4(VertexPosition, 1.0);
 }
 
 #type fragment

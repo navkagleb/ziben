@@ -77,6 +77,7 @@ namespace Ziben {
             uint32_t                                    TextureSlotIndex        = 1; // 0 - WhiteTexture
 
             std::array<glm::vec4, 4>                    QuadVertexPositions     = { glm::vec4(0.0f) };
+            std::array<glm::vec2, 4>                    QuadTexCoords           = { glm::vec2(0.0f) };
         };
 
     private:

@@ -9,5 +9,6 @@
 #include <string>
 #include <unordered_map>
 #include <numeric>
+#include <algorithm>
 
 #include "Ziben/Profiling/ProfileEngine.hpp"

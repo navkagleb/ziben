@@ -17,7 +17,7 @@ namespace Ziben {
             { ShaderData::Type::Float3, "VertexPosition" },
             { ShaderData::Type::Float4, "Color"          },
             { ShaderData::Type::Float2, "TexCoord"       },
-            { ShaderData::Type::Float,  "TexIndex"       },
+            { ShaderData::Type::Float,  "TexIndex"      },
             { ShaderData::Type::Float,  "TilingFactor"   }
         });
 
@@ -64,11 +64,16 @@ namespace Ziben {
         GetStorage().TextureSlots.front() = GetStorage().WhiteTexture;
 
         // Quad VertexPositions
-        GetStorage().QuadVertexPositions[0] = { -0.5f, -0.5, 0.0f, 1.0f };
-        GetStorage().QuadVertexPositions[1] = {  0.5f, -0.5, 0.0f, 1.0f };
-        GetStorage().QuadVertexPositions[2] = {  0.5f,  0.5, 0.0f, 1.0f };
-        GetStorage().QuadVertexPositions[3] = { -0.5f,  0.5, 0.0f, 1.0f };
+        GetStorage().QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+        GetStorage().QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
+        GetStorage().QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+        GetStorage().QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
+        // Quad TexCoords
+        GetStorage().QuadTexCoords[0] = { 0.0f,  0.0f };
+        GetStorage().QuadTexCoords[1] = { 1.0f,  0.0f };
+        GetStorage().QuadTexCoords[2] = { 1.0f,  1.0f };
+        GetStorage().QuadTexCoords[3] = { 0.0f,  1.0f };
     }
 
     void Renderer2D::Shutdown() {
@@ -173,52 +178,37 @@ namespace Ziben {
         const glm::vec4&      tintColor,
         float                 tilingFactor) {
 
-        float textureIndex = -1.0f;
+        ZIBEN_PROFILE_FUNCTION();
 
-        for (std::size_t i = 1; i < GetStorage().TextureSlotIndex; ++i) {
-            if (*GetStorage().TextureSlots[i] == *texture) {
-                textureIndex = static_cast<float>(i);
-                break;
+        uint32_t textureIndex;
+
+        auto texturePosition = std::find_if(
+            GetStorage().TextureSlots.begin(),
+            GetStorage().TextureSlots.begin() + GetStorage().TextureSlotIndex,
+            [&](const Ref<Texture2D>& textureSlot) {
+                return *textureSlot == *texture;
             }
-        }
+        );
 
-        if (textureIndex == -1.0f) {
-            textureIndex                                             = static_cast<float>(GetStorage().TextureSlotIndex);
-            GetStorage().TextureSlots[GetStorage().TextureSlotIndex] = texture;
-            GetStorage().TextureSlotIndex++;
+        if (texturePosition != GetStorage().TextureSlots.begin() + GetStorage().TextureSlotIndex) {
+            textureIndex = std::distance(GetStorage().TextureSlots.begin(), texturePosition);
+        } else {
+            textureIndex                                               = GetStorage().TextureSlotIndex;
+            GetStorage().TextureSlots[GetStorage().TextureSlotIndex++] = texture;
         }
 
         glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
         glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
         glm::mat4 transform   = translation * scaling;
 
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[0];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 0.0f, 0.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
-
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[1];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 1.0f, 0.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
-
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[2];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 1.0f, 1.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
-
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[3];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 0.0f, 1.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
+        for (uint32_t i = 0; i < 4; ++i) {
+            GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[i];
+            GetStorage().QuadVertexBufferPointer->Color        = tintColor;
+            GetStorage().QuadVertexBufferPointer->TexCoord     = GetStorage().QuadTexCoords[i];
+            GetStorage().QuadVertexBufferPointer->TexIndex     = static_cast<float>(textureIndex);
+            GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
+            GetStorage().QuadVertexBufferPointer++;
+        }
 
         GetStorage().QuadIndexCount += 6;
     }
@@ -320,19 +310,21 @@ namespace Ziben {
 
         ZIBEN_PROFILE_FUNCTION();
 
-        float textureIndex = -1.0f;
+        uint32_t textureIndex;
 
-        for (std::size_t i = 1; i < GetStorage().TextureSlotIndex; ++i) {
-            if (*GetStorage().TextureSlots[i] == *texture) {
-                textureIndex = static_cast<float>(i);
-                break;
+        auto texturePosition = std::find_if(
+            GetStorage().TextureSlots.begin(),
+            GetStorage().TextureSlots.begin() + GetStorage().TextureSlotIndex,
+            [&](const Ref<Texture2D>& textureSlot) {
+                return *textureSlot == *texture;
             }
-        }
+        );
 
-        if (textureIndex == -1.0f) {
-            textureIndex                                             = static_cast<float>(GetStorage().TextureSlotIndex);
-            GetStorage().TextureSlots[GetStorage().TextureSlotIndex] = texture;
-            GetStorage().TextureSlotIndex++;
+        if (texturePosition != GetStorage().TextureSlots.begin() + GetStorage().TextureSlotIndex) {
+            textureIndex = std::distance(GetStorage().TextureSlots.begin(), texturePosition);
+        } else {
+            textureIndex                                               = GetStorage().TextureSlotIndex;
+            GetStorage().TextureSlots[GetStorage().TextureSlotIndex++] = texture;
         }
 
         glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
@@ -340,33 +332,14 @@ namespace Ziben {
         glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
         glm::mat4 transform   = translation * rotation * scaling;
 
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[0];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 0.0f, 0.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
-
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[1];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 1.0f, 0.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
-
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[2];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 1.0f, 1.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
-
-        GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[3];
-        GetStorage().QuadVertexBufferPointer->Color        = tintColor;
-        GetStorage().QuadVertexBufferPointer->TexCoord     = { 0.0f, 1.0f };
-        GetStorage().QuadVertexBufferPointer->TexIndex     = textureIndex;
-        GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
-        GetStorage().QuadVertexBufferPointer++;
+        for (uint32_t i = 0; i < 4; ++i) {
+            GetStorage().QuadVertexBufferPointer->Position     = transform * GetStorage().QuadVertexPositions[i];
+            GetStorage().QuadVertexBufferPointer->Color        = tintColor;
+            GetStorage().QuadVertexBufferPointer->TexCoord     = GetStorage().QuadTexCoords[i];
+            GetStorage().QuadVertexBufferPointer->TexIndex     = static_cast<float>(textureIndex);
+            GetStorage().QuadVertexBufferPointer->TilingFactor = tilingFactor;
+            GetStorage().QuadVertexBufferPointer++;
+        }
 
         GetStorage().QuadIndexCount += 6;
     }
