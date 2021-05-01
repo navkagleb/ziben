@@ -54,6 +54,9 @@ namespace Ziben {
         static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, float tilingFactor);
         static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, float tilingFactor);
 
+        static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
+        static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
+
     private:
         struct Storage {
             static constexpr uint32_t MaxQuadCount    = 10'000;
@@ -72,6 +75,8 @@ namespace Ziben {
 
             std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots            = { nullptr };
             uint32_t                                    TextureSlotIndex        = 1; // 0 - WhiteTexture
+
+            std::array<glm::vec4, 4>                    QuadVertexPositions     = { glm::vec4(0.0f) };
         };
 
     private:
