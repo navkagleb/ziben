@@ -166,6 +166,6 @@ int main(int argc, char** argv) {
     delete application;
     ZIBEN_PROFILE_END_SESSION();
 
-    Ziben::Profile::ProfileEngine::Destroy();
-    Ziben::Log::Destroy();
+//    Ziben::Profile::ProfileEngine::Destroy();
+//    Ziben::Log::Destroy();
 }

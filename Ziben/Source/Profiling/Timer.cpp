@@ -2,6 +2,8 @@
 
 #include "ProfileEngine.hpp"
 
+#include <iostream>
+
 namespace Ziben::Profile {
 
     Timer::Timer(const char* name)
@@ -16,10 +18,7 @@ namespace Ziben::Profile {
         auto endTimePoint = chr::steady_clock::now();
         auto threadID     = std::hash<std::thread::id>()(std::this_thread::get_id());
 
-//        intmax_t start    = chr::time_point_cast<chr::microseconds>(m_StartTimePoint).time_since_epoch().count();
-//        intmax_t end      = chr::time_point_cast<chr::microseconds>(endTimePoint).time_since_epoch().count();
-
-        ProfileEngine::Get().WriteProfile({
+        ProfileEngine::GetRef().WriteProfile({
             m_Name,
             FloatingPointMicroseconds(m_StartTimePoint.time_since_epoch()),
             std::chrono::duration_cast<IntegralMicroseconds>(endTimePoint - m_StartTimePoint),
