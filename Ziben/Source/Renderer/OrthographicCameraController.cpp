@@ -6,16 +6,15 @@
 namespace Ziben {
 
     OrthographicCameraController::OrthographicCameraController(float aspectRation, bool isRotated)
-        : m_AspectRation(aspectRation)
+        : m_AspectRatio(aspectRation)
         , m_ZoomLevel(1.0f)
         , m_IsRotated(isRotated)
-        , m_Camera(-m_AspectRation * m_ZoomLevel, m_AspectRation * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel)
+        , m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel)
+        , m_Bounds({ -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel })
         , m_CameraPosition(0.0f)
         , m_CameraRotation(0.0f)
         , m_CameraTranslationSpeed(2.0f)
-        , m_CameraRotationSpeed(50.0f) {
-
-    }
+        , m_CameraRotationSpeed(50.0f) {}
 
     void OrthographicCameraController::OnEvent(Event& event) {
         ZIBEN_PROFILE_FUNCTION();
@@ -60,13 +59,9 @@ namespace Ziben {
 
         m_ZoomLevel -= static_cast<float>(event.GetOffsetY()) * 0.25f;
         m_ZoomLevel  = std::max(m_ZoomLevel, 0.25f);
+        m_Bounds     = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
 
-        m_Camera.SetProjection(
-            -m_AspectRation * m_ZoomLevel,
-             m_AspectRation * m_ZoomLevel,
-            -m_ZoomLevel,
-             m_ZoomLevel
-        );
+        m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
 
         return false;
     }
@@ -74,14 +69,10 @@ namespace Ziben {
     bool OrthographicCameraController::OnWindowResized(WindowResizedEvent& event) {
         ZIBEN_PROFILE_FUNCTION();
 
-        m_AspectRation = static_cast<float>(event.GetWidth()) / static_cast<float>(event.GetHeight());
+        m_AspectRatio = static_cast<float>(event.GetWidth()) / static_cast<float>(event.GetHeight());
+        m_Bounds      = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
 
-        m_Camera.SetProjection(
-            -m_AspectRation * m_ZoomLevel,
-            m_AspectRation * m_ZoomLevel,
-            -m_ZoomLevel,
-            m_ZoomLevel
-        );
+        m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
 
         return false;
     }

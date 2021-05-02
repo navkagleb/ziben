@@ -6,6 +6,8 @@
 #include <Ziben/Renderer/VertexArray.hpp>
 #include <Ziben/Renderer/Texture.hpp>
 
+#include "Entities/ParticleSystem.hpp"
+
 class Sandbox2D : public Ziben::Layer {
 public:
     Sandbox2D();
@@ -23,5 +25,8 @@ private:
     glm::vec4                           m_SquareColor;
     float                               m_SquareAngle;
     float                               m_ColorDirection;
+
+    ParticleSystem                      m_ParticleSystem;
+    ParticleProps                       m_Particle;
 
 }; // class Layer2D;

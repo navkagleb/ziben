@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <Ziben/System/Log.hpp>
+#include <Ziben/Window/Input.hpp>
 #include <Ziben/Window/EventDispatcher.hpp>
 #include <Ziben/Renderer/RenderCommand.hpp>
 #include <Ziben/Renderer/Renderer2D.hpp>
@@ -16,10 +17,23 @@ Sandbox2D::Sandbox2D()
     , m_CameraController(1280.0f / 720.0f)
     , m_SquareColor(0.2f, 0.3f, 0.8f, 1.0f)
     , m_SquareAngle(0.0f)
-    , m_ColorDirection(1.0f) {}
+    , m_ColorDirection(1.0f)
+    , m_ParticleSystem(10'000) {}
 
 void Sandbox2D::OnAttach() {
-    m_Texture = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png");
+    ZIBEN_PROFILE_FUNCTION();
+
+    // Init Texture
+    m_Texture                    = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png");
+
+    // Init Particle
+    m_Particle.ColorBegin        = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
+    m_Particle.ColorEnd          = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
+    m_Particle.SizeBegin         = 0.5f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 0.0f;
+    m_Particle.LifeTime          = 1.5f;
+    m_Particle.Velocity          = { 0.0f, 0.0f };
+    m_Particle.VelocityVariation = { 3.0f, 1.0f };
+    m_Particle.Position          = { 0.0f, 0.0f };
 }
 
 void Sandbox2D::OnDetach() {
@@ -72,6 +86,30 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         }
 
         Ziben::Renderer2D::EndScene();
+    }
+
+    {
+        ZIBEN_PROFILE_SCOPE("Sandbox ParticleSystem");
+
+        if (Ziben::Input::IsButtonPressed(Ziben::Button::Left))
+        {
+            auto position       = Ziben::Input::GetMousePosition<float>();
+            auto width          = SandboxApplication::Get().GetWindow().GetWidth();
+            auto height         = SandboxApplication::Get().GetWindow().GetHeight();
+            auto bounds         = m_CameraController.GetBounds();
+            auto cameraPosition = m_CameraController.GetCamera().GetPosition();
+
+            position.x = position.x / static_cast<float>(width) * bounds.GetWidth() - bounds.GetWidth() * 0.5f;
+            position.y = bounds.GetHeight() * 0.5f - (position.y / static_cast<float>(height)) * bounds.GetHeight();
+
+            m_Particle.Position = { position.x + cameraPosition.x, position.y + cameraPosition.y };
+
+            for (int i = 0; i < 6; ++i)
+                m_ParticleSystem.Push(m_Particle);
+        }
+
+        m_ParticleSystem.OnUpdate(ts);
+        m_ParticleSystem.OnRender(m_CameraController.GetCamera());
     }
 }
 

@@ -1,11 +1,10 @@
 #include "Ziben/Application.hpp"
 
+#include "Ziben/Utility/Random.hpp"
 #include "Ziben/System/Log.hpp"
 #include "Ziben/Scene/ImGuiLayer.hpp"
 #include "Ziben/Renderer/Renderer.hpp"
 #include "Ziben/Window/EventDispatcher.hpp"
-
-#include <iostream>
 
 namespace Ziben {
 
@@ -150,6 +149,7 @@ namespace Ziben {
 int main(int argc, char** argv) {
     Ziben::Log::Create();
     Ziben::Profile::ProfileEngine::Create();
+    Ziben::Random::Create();
 
     // Startup
     ZIBEN_PROFILE_BEGIN_SESSION("Startup", "ZibenProfile_Startup.json");
