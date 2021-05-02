@@ -43,6 +43,8 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         m_ColorDirection *= -1.0f;
 
     // Render
+    Ziben::Renderer2D::ResetStatistics();
+
     {
         ZIBEN_PROFILE_SCOPE("Sandbox Renderer Prepare");
 
@@ -58,8 +60,16 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
         Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
         Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, 10.0f);
+        Ziben::Renderer2D::DrawRotatedQuad({ 0.5f, 0.3f }, { 0.3, 0.3f }, glm::radians(45.0f), { 0.2f, 0.8f, 0.3f, 0.6f });
         Ziben::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.1f }, { 1.0f, 1.0f }, glm::radians(m_SquareAngle), m_Texture, 20.0f);
 
+        for (int i = -10; i < 10; ++i) {
+            for (int j = -10; j < 10; ++j) {
+                glm::vec2 position = { static_cast<float>(j) / 2.0f + 0.25f, static_cast<float>(i) / 2.0f + 0.25f };
+                glm::vec4 color = { static_cast<float>(j + 5) / 10.0f, 0.4f, static_cast<float>(i + 5) / 10.0f, 0.7f };
+                Ziben::Renderer2D::DrawQuad(position, { 0.45f, 0.45f }, color);
+            }
+        }
 
         Ziben::Renderer2D::EndScene();
     }
@@ -71,6 +81,15 @@ void Sandbox2D::OnImGuiRender() {
     ImGui::Begin("Scene2D");
 
     {
+
+        const auto& statistics = Ziben::Renderer2D::GetStatistics();
+
+        ImGui::Text("Renderer2D Statistics: ");
+        ImGui::Text("Draw Calls: %d",   statistics.DrawCalls);
+        ImGui::Text("Quad Count: %d",   statistics.QuadCount);
+        ImGui::Text("Vertex Count: %d", statistics.QuadCount * 4);
+        ImGui::Text("Index Count: %d",  statistics.QuadCount * 6);
+
         ImGui::ColorEdit4("SquareColor", glm::value_ptr(m_SquareColor));
     }
 

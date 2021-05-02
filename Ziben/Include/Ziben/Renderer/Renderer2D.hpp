@@ -57,31 +57,55 @@ namespace Ziben {
         static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
         static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
 
+    public:
+        struct Statistics {
+            uint32_t DrawCalls = 0;
+            uint32_t QuadCount = 0;
+        };
+
+        static Statistics& GetStatistics();
+
+        static void ResetStatistics();
+
     private:
-        struct Storage {
-            static constexpr uint32_t MaxQuadCount    = 10'000;
-            static constexpr uint32_t MaxVertexCount  = MaxQuadCount * 4;
-            static constexpr uint32_t MaxIndexCount   = MaxQuadCount * 6;
-            static constexpr uint32_t MaxTextureSlots = 32; // TODO: RenderCaps
+        static constexpr uint32_t                 s_MaxQuadCount        = 20'000;
+        static constexpr uint32_t                 s_MaxVertexCount      = s_MaxQuadCount * 4;
+        static constexpr uint32_t                 s_MaxIndexCount       = s_MaxQuadCount * 6;
+        static constexpr uint32_t                 s_MaxTextureSlots     = 32; // TODO: RenderCaps
 
-            Ref<VertexArray>                            QuadVertexArray;
-            Ref<VertexBuffer>                           QuadVertexBuffer;
-            Ref<Shader>                                 TextureShader;
-            Ref<Texture2D>                              WhiteTexture;
+        static constexpr std::array<glm::vec4, 4> s_QuadVertexPositions = {
+            glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f),
+            glm::vec4( 0.5f, -0.5f, 0.0f, 1.0f),
+            glm::vec4( 0.5f,  0.5f, 0.0f, 1.0f),
+            glm::vec4(-0.5f,  0.5f, 0.0f, 1.0f)
+        };
 
-            uint32_t                                    QuadIndexCount          = 0;
-            QuadVertex*                                 QuadVertexBufferBase    = nullptr;
-            QuadVertex*                                 QuadVertexBufferPointer = nullptr;
-
-            std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots            = { nullptr };
-            uint32_t                                    TextureSlotIndex        = 1; // 0 - WhiteTexture
-
-            std::array<glm::vec4, 4>                    QuadVertexPositions     = { glm::vec4(0.0f) };
-            std::array<glm::vec2, 4>                    QuadTexCoords           = { glm::vec2(0.0f) };
+        static constexpr std::array<glm::vec2, 4> s_QuadTexCoords       = {
+            glm::vec2(0.0f,  0.0f),
+            glm::vec2(1.0f,  0.0f),
+            glm::vec2(1.0f,  1.0f),
+            glm::vec2(0.0f,  1.0f)
         };
 
     private:
-        static Storage& GetStorage();
+        struct Data {
+            Ref<VertexArray>                              QuadVertexArray;
+            Ref<VertexBuffer>                             QuadVertexBuffer;
+            Ref<Shader>                                   TextureShader;
+            Ref<Texture2D>                                WhiteTexture;
+
+            uint32_t                                      QuadIndexCount          = 0;
+            QuadVertex*                                   QuadVertexBufferBase    = nullptr;
+            QuadVertex*                                   QuadVertexBufferPointer = nullptr;
+
+            std::array<Ref<Texture2D>, s_MaxTextureSlots> TextureSlots            = { nullptr };
+            uint32_t                                      TextureSlotIndex        = 1; // 0 - WhiteTexture
+        };
+
+    private:
+        static Data& GetData();
+
+        static void FlushAndReset();
 
     }; // class Renderer2D
 
