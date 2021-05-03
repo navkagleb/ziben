@@ -20,9 +20,12 @@ namespace Ziben {
     public:
         explicit OrthographicCameraController(float aspectRatio, bool isRotated = false);
 
-        [[nodiscard]] const OrthographicCameraBounds& GetBounds() const { return m_Bounds; }
+        [[nodiscard]] inline float GetZoomLevel() const { return m_ZoomLevel; }
+        [[nodiscard]] inline const OrthographicCameraBounds& GetBounds() const { return m_Bounds; }
         [[nodiscard]] inline OrthographicCamera& GetCamera() { return m_Camera; }
         [[nodiscard]] inline const OrthographicCamera& GetCamera() const { return m_Camera; }
+
+        void SetZoomLevel(float level = 1.0f);
 
         void OnEvent(Event& event);
         void OnUpdate(const TimeStep& ts);
@@ -30,6 +33,8 @@ namespace Ziben {
     private:
         bool OnMouseScrolled(MouseScrolledEvent& event);
         bool OnWindowResized(WindowResizedEvent& event);
+
+        void UpdateCamera();
 
     private:
         float                    m_AspectRatio;
@@ -44,6 +49,7 @@ namespace Ziben {
 
         float                    m_CameraTranslationSpeed;
         float                    m_CameraRotationSpeed;
+
     }; // class OrthographicCameraController
 
 } // namespace Ziben

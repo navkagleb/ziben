@@ -3,6 +3,8 @@
 #include "Ziben/Window/EventDispatcher.hpp"
 #include "Ziben/Window/Input.hpp"
 
+#include "Ziben/System.hpp"
+
 namespace Ziben {
 
     OrthographicCameraController::OrthographicCameraController(float aspectRation, bool isRotated)
@@ -15,6 +17,11 @@ namespace Ziben {
         , m_CameraRotation(0.0f)
         , m_CameraTranslationSpeed(2.0f)
         , m_CameraRotationSpeed(50.0f) {}
+
+    void OrthographicCameraController::SetZoomLevel(float level) {
+        m_ZoomLevel = level;
+        UpdateCamera();
+    }
 
     void OrthographicCameraController::OnEvent(Event& event) {
         ZIBEN_PROFILE_FUNCTION();
@@ -57,11 +64,8 @@ namespace Ziben {
     bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event) {
         ZIBEN_PROFILE_FUNCTION();
 
-        m_ZoomLevel -= static_cast<float>(event.GetOffsetY()) * 0.25f;
-        m_ZoomLevel  = std::max(m_ZoomLevel, 0.25f);
-        m_Bounds     = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
-
-        m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
+        m_ZoomLevel = std::max(m_ZoomLevel - static_cast<float>(event.GetOffsetY()) * 0.25f, 0.25f);
+        UpdateCamera();
 
         return false;
     }
@@ -70,11 +74,14 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
 
         m_AspectRatio = static_cast<float>(event.GetWidth()) / static_cast<float>(event.GetHeight());
-        m_Bounds      = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
-
-        m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
+        UpdateCamera();
 
         return false;
+    }
+
+    void OrthographicCameraController::UpdateCamera() {
+        m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+        m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
     }
 
 } // namespace Ziben

@@ -7,10 +7,40 @@
 #include <Ziben/System/Log.hpp>
 #include <Ziben/Window/Input.hpp>
 #include <Ziben/Window/EventDispatcher.hpp>
+#include <Ziben/Window/KeyEvent.hpp>
 #include <Ziben/Renderer/RenderCommand.hpp>
 #include <Ziben/Renderer/Renderer2D.hpp>
 
 #include "Application/SandboxApplication.hpp"
+
+const uint32_t Sandbox2D::s_MapWidth  = 25;
+const uint32_t Sandbox2D::s_MapHeight = 25;
+const char* Sandbox2D::s_MapTiles     =
+    "WWWWWWWWWWWWWWWWWWWWWWWWW"
+    "WWWWWWWWWWWWWWWWWWWWWWWWW"
+    "WWWWWWDDDDDDWWWWWWWWWWWWW"
+    "WWWWDDDDDDDDDWWWWWWWWWWWW"
+    "WWWDDDDDDDDDDDWWWWWWWWWWW"
+    "WWWDDDDDDDDDDDDDDDWWWWWWW"
+    "WWWDDDDDDDDDDDDDDDDWWWWWW"
+    "WWWWDDDDDDDDDDDDDDDWWWWWW"
+    "WWDDDDDDDDDDDDDDDDDWWWWWW"
+    "WWDDDDDDDDDDDDDDDDDWWWWWW"
+    "WDDDDDDDDDDDDDDDDDDWWWWWW"
+    "WDDDDDDDDDDDDDDDDDDDWWWWW"
+    "WDDDDDDDDDDWWWDDDDDDWWWWW"
+    "WDDDDDDDWWWWWWDDDDDDDWWWW"
+    "WWDDDDDDDWWWWDDDDDDDDWWWW"
+    "WWDDDDDDDDDWWDDDDDDDDDWWW"
+    "WWWDDDDDDDDDDDDDDDDDDDWWW"
+    "WWWWDDDDDDDDDDDDDDDDDDWWW"
+    "WWWWWWDDDDDDDDDDDDDDDDWWW"
+    "WWWWWWWDDDDDDDDDDDDDDWWWW"
+    "WWWWWWWWWWDDDDDDDDDWWWWWW"
+    "WWWWWWWWWWWWWWWWWWWWWWWWW"
+    "WWWWWWWWWWWWWWWWWWWWWWWWW"
+    "WWWWWWWWWWWWWWWWWWWWWWWWW"
+    "WWWWWWWWWWWWWWWWWWWWWWWWW";
 
 Sandbox2D::Sandbox2D()
     : Ziben::Layer("Sandbox2D")
@@ -18,7 +48,7 @@ Sandbox2D::Sandbox2D()
     , m_SquareColor(0.0f)
     , m_SquareAngle(0.0f)
     , m_ColorDirection(1.0f)
-    , m_ParticleSystem(10'000) {}
+    , m_ParticleSystem(5'000) {}
 
 void Sandbox2D::OnAttach() {
     ZIBEN_PROFILE_FUNCTION();
@@ -29,6 +59,9 @@ void Sandbox2D::OnAttach() {
     m_Bush                       = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 2, 3 }, { 128, 128 });
     m_Tree                       = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 0, 1 }, { 128, 128 }, { 1, 2 });
 
+    m_Tiles['W']                 = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 11, 11 }, { 128, 128 });
+    m_Tiles['D']                 = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 1, 11 }, { 128, 128 });
+
     // Init Particle
     m_Particle.ColorBegin        = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
     m_Particle.ColorEnd          = { 254 / 255.0f, 109 / 255.0f, 41 / 255.0f, 1.0f };
@@ -37,6 +70,8 @@ void Sandbox2D::OnAttach() {
     m_Particle.Velocity          = { 0.0f, 0.0f };
     m_Particle.VelocityVariation = { 3.0f, 1.0f };
     m_Particle.Position          = { 0.0f, 0.0f };
+
+    m_CameraController.SetZoomLevel(15a.0f);
 }
 
 void Sandbox2D::OnDetach() {
@@ -45,6 +80,18 @@ void Sandbox2D::OnDetach() {
 
 void Sandbox2D::OnEvent(Ziben::Event& event) {
     m_CameraController.OnEvent(event);
+
+    Ziben::EventDispatcher dispatcher(event);
+
+    dispatcher.Dispatch<Ziben::KeyPressedEvent>([&](Ziben::KeyPressedEvent& event) {
+        auto& window = SandboxApplication::Get().GetWindow();
+
+        if (event.GetKeyCode() == Ziben::Key::V) {
+            window.SetVerticalSync(!window.IsVerticalSync());
+        }
+
+        return true;
+    });
 }
 
 void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
@@ -94,6 +141,28 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
 #endif
 
     {
+        ZIBEN_PROFILE_SCOPE("Sandbox Render");
+
+        Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
+
+        for (uint32_t y = 0; y < s_MapHeight; ++y) {
+            for (uint32_t x = 0; x < s_MapWidth; ++x) {
+                char tileType = s_MapTiles[x + y * s_MapWidth];
+                auto texture  = m_Bush;
+
+                if (m_Tiles.contains(tileType))
+                    texture = m_Tiles[tileType];
+
+                Ziben::Renderer2D::DrawQuad({ static_cast<float>(x) - s_MapWidth / 2.0f, s_MapHeight / 2.0f - static_cast<float>(y) }, { 1.0f, 1.0f }, texture);
+            }
+        }
+
+        Ziben::Renderer2D::DrawQuad({ -4.0f, 2.0f, 0.1f }, { 1.0f, 2.0f }, m_Tree);
+
+        Ziben::Renderer2D::EndScene();
+    }
+
+    {
         ZIBEN_PROFILE_SCOPE("Sandbox ParticleSystem");
 
         if (Ziben::Input::IsButtonPressed(Ziben::Button::Left))
@@ -115,17 +184,6 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
 
         m_ParticleSystem.OnUpdate(ts);
         m_ParticleSystem.OnRender(m_CameraController.GetCamera());
-    }
-
-    {
-        ZIBEN_PROFILE_SCOPE("Sandbox Render");
-
-        Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-        Ziben::Renderer2D::DrawQuad({ 1.0f, 0.0f }, { 1.0f, 1.0f }, m_Bush);
-        Ziben::Renderer2D::DrawQuad(glm::vec2(0.0f), { 1.0f, 2.0f }, m_Tree);
-
-        Ziben::Renderer2D::EndScene();
     }
 }
 

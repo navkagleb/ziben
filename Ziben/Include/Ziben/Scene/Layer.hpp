@@ -10,6 +10,8 @@ namespace Ziben {
         explicit Layer(std::string name = "Layer");
         virtual ~Layer() = default;
 
+        [[nodiscard]] const std::string& GetName() const { return m_Name; }
+
         virtual void OnAttach() {}
         virtual void OnDetach() {}
         virtual void OnEvent(Event& event) {}

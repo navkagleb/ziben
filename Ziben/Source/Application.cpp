@@ -115,7 +115,6 @@ namespace Ziben {
         if (m_SceneManager->HasActiveScene())
             m_SceneManager->GetActiveScene()->OnEvent(event);
 
-
         for (auto it = m_LayerStack->ReverseBegin(); it != m_LayerStack->ReverseEnd(); ++it) {
             if (event.IsHandled())
                 break;

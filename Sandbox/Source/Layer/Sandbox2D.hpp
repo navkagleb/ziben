@@ -20,17 +20,25 @@ public:
     void OnImGuiRender() override;
 
 private:
-    Ziben::OrthographicCameraController m_CameraController;
-    Ziben::Ref<Ziben::Texture2D>        m_CheckerBoardTexture;
-    Ziben::Ref<Ziben::Texture2D>        m_SpriteSheetTexture;
-    Ziben::Ref<Ziben::SubTexture2D>     m_Bush;
-    Ziben::Ref<Ziben::SubTexture2D>     m_Tree;
+    static const uint32_t s_MapWidth;
+    static const uint32_t s_MapHeight;
+    static const char*    s_MapTiles;
 
-    glm::vec4                           m_SquareColor;
-    float                               m_SquareAngle;
-    float                               m_ColorDirection;
+private:
+    Ziben::OrthographicCameraController                       m_CameraController;
+    Ziben::Ref<Ziben::Texture2D>                              m_CheckerBoardTexture;
+    Ziben::Ref<Ziben::Texture2D>                              m_SpriteSheetTexture;
 
-    ParticleSystem                      m_ParticleSystem;
-    ParticleProps                       m_Particle;
+    Ziben::Ref<Ziben::SubTexture2D>                           m_Bush;
+    Ziben::Ref<Ziben::SubTexture2D>                           m_Tree;
+
+    glm::vec4                                                 m_SquareColor;
+    float                                                     m_SquareAngle;
+    float                                                     m_ColorDirection;
+
+    ParticleSystem                                            m_ParticleSystem;
+    ParticleProps                                             m_Particle;
+
+    std::unordered_map<char, Ziben::Ref<Ziben::SubTexture2D>> m_Tiles;
 
 }; // class Layer2D;

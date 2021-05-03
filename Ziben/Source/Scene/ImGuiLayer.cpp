@@ -15,10 +15,10 @@ namespace Ziben {
     void ImGuiLayer::OnEvent(Event& event) {
         ImGuiIO& io = ImGui::GetIO();
 
-        if (!m_IsBlockedEvents) {
-            event.m_IsHandled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
-            event.m_IsHandled |= event.IsInCategory(EventCategoryMouse)    & io.WantCaptureMouse;
-        }
+//        if (!m_IsBlockedEvents) {
+//            event.m_IsHandled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+//            event.m_IsHandled |= event.IsInCategory(EventCategoryMouse)    & io.WantCaptureMouse;
+//        }
     }
 
     void ImGuiLayer::OnAttach() {
