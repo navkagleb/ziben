@@ -118,7 +118,7 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
     }
 
     {
-        ZIBEN_PROFILE_SCOPE("Sandbox SpiteSheet");
+        ZIBEN_PROFILE_SCOPE("Sandbox Render");
 
         Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
 

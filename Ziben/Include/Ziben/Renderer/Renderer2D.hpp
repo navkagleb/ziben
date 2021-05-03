@@ -11,11 +11,11 @@ namespace Ziben {
     class Renderer2D {
     public:
         struct QuadVertex {
-            glm::vec3 Position;
-            glm::vec4 Color;
-            glm::vec2 TexCoord;
-            float     TexIndex;
-            float     TilingFactor;
+            glm::vec3 Position     = glm::vec3(0.0f);
+            glm::vec4 Color        = glm::vec4(0.0f);
+            glm::vec2 TexCoord     = glm::vec2(0.0f);
+            float     TexIndex     = 0.0f;
+            float     TilingFactor = 1.0f;
         };
 
     public:

@@ -20,9 +20,9 @@ namespace Ziben {
     public:
         explicit OrthographicCameraController(float aspectRatio, bool isRotated = false);
 
+        [[nodiscard]] const OrthographicCameraBounds& GetBounds() const { return m_Bounds; }
         [[nodiscard]] inline OrthographicCamera& GetCamera() { return m_Camera; }
         [[nodiscard]] inline const OrthographicCamera& GetCamera() const { return m_Camera; }
-        [[nodiscard]] const OrthographicCameraBounds& GetBounds() const { return m_Bounds; }
 
         void OnEvent(Event& event);
         void OnUpdate(const TimeStep& ts);
@@ -36,8 +36,8 @@ namespace Ziben {
         float                    m_ZoomLevel;
         bool                     m_IsRotated;
 
-        OrthographicCamera       m_Camera;
         OrthographicCameraBounds m_Bounds;
+        OrthographicCamera       m_Camera;
 
         glm::vec3                m_CameraPosition;
         float                    m_CameraRotation;

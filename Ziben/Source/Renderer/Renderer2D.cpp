@@ -38,7 +38,7 @@ namespace Ziben {
             offset += 4;
         }
 
-        auto quadIndexBuffer  = IndexBuffer::Create(quadIndices, s_MaxIndexCount);
+        auto quadIndexBuffer = IndexBuffer::Create(quadIndices, s_MaxIndexCount);
 
         delete[] quadIndices;
 

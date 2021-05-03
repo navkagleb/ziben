@@ -14,14 +14,14 @@ void ParticleSystem::OnUpdate(const Ziben::TimeStep& ts) {
         if (!particle.Active)
             continue;
 
-        if (particle.LifeRemaining <= 0.0f) {
+        if (particle.LifeRemaining < 0.0f) {
             particle.Active = false;
             continue;
         }
 
         particle.LifeRemaining -= (float)ts;
         particle.Position      += particle.Velocity * (float)ts;
-        particle.Rotation      += 0.01f * (float)ts;
+        particle.Rotation      += 90.0f * (float)ts;
     }
 }
 
@@ -32,8 +32,8 @@ void ParticleSystem::OnRender(const Ziben::OrthographicCamera& camera) {
         if (!particle.Active)
             continue;
 
-        float    life   = particle.LifeRemaining / particle.LifeTime;
-        float    size   = glm::lerp(particle.SizeEnd, particle.SizeBegin, life);
+        float     life  = std::max(0.0f, particle.LifeRemaining / particle.LifeTime);
+        float     size  = glm::lerp(particle.SizeEnd, particle.SizeBegin, life);
         glm::vec4 color = glm::lerp(particle.ColorEnd, particle.ColorBegin, life);
 
         Ziben::Renderer2D::DrawRotatedQuad(
