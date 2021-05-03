@@ -143,7 +143,8 @@ namespace Ziben {
         m_IsMinimized = !m_IsMinimized;
         return false;
     }
-}
+
+} // namespace Ziben
 
 // Entry Point!
 int main(int argc, char** argv) {

@@ -119,8 +119,8 @@ namespace Ziben {
         const glm::vec2&      position,
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
-        const glm::vec4&      tintColor) {
-
+        const glm::vec4&      tintColor
+    ) {
         DrawQuad({ position.x, position.y, 0.0f }, size, texture, tintColor, 1.0f);
     }
 
@@ -128,8 +128,8 @@ namespace Ziben {
         const glm::vec3&      position,
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
-        const glm::vec4&      tintColor) {
-
+        const glm::vec4&      tintColor
+    ) {
         DrawQuad(position, size, texture, tintColor, 1.0f);
     }
 
@@ -137,8 +137,8 @@ namespace Ziben {
         const glm::vec2&      position,
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         DrawQuad({ position.x, position.y, 0.0f }, size, texture, glm::vec4(1.0f), tilingFactor);
     }
 
@@ -146,8 +146,8 @@ namespace Ziben {
         const glm::vec3&      position,
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         DrawQuad(position, size, texture, glm::vec4(1.0f), tilingFactor);
     }
 
@@ -156,8 +156,8 @@ namespace Ziben {
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
         const glm::vec4&      tintColor,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         DrawQuad({ position.x, position.y, 0.0f }, size, texture, tintColor, tilingFactor);
     }
 
@@ -166,8 +166,8 @@ namespace Ziben {
         const glm::vec2&      size,
         const Ref<Texture2D>& texture,
         const glm::vec4&      tintColor,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         ZIBEN_PROFILE_FUNCTION();
 
         if (GetData().QuadIndexCount >= s_MaxIndexCount)
@@ -186,7 +186,7 @@ namespace Ziben {
         if (texturePosition != GetData().TextureSlots.begin() + GetData().TextureSlotIndex) {
             textureIndex = std::distance(GetData().TextureSlots.begin(), texturePosition);
         } else {
-            textureIndex                                               = GetData().TextureSlotIndex;
+            textureIndex                                         = GetData().TextureSlotIndex;
             GetData().TextureSlots[GetData().TextureSlotIndex++] = texture;
         }
 
@@ -208,12 +208,113 @@ namespace Ziben {
         ++GetStatistics().QuadCount;
     }
 
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture) {
+        DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, glm::vec4(1.0f), 1.0f);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture) {
+        DrawQuad(position, size, subTexture, glm::vec4(1.0f), 1.0f);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec2&         position,
+        const glm::vec2&         size,
+        const Ref<SubTexture2D>& subTexture,
+        const glm::vec4&         tintColor
+    ) {
+        DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, tintColor, 1.0f);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec3&         position,
+        const glm::vec2&         size,
+        const Ref<SubTexture2D>& subTexture,
+        const glm::vec4&         tintColor
+    ) {
+        DrawQuad(position, size, subTexture, tintColor, 1.0f);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec2&         position,
+        const glm::vec2&         size,
+        const Ref<SubTexture2D>& subTexture,
+        float                    tilingFactor
+    ) {
+        DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, glm::vec4(1.0f), tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec3&         position,
+        const glm::vec2&         size,
+        const Ref<SubTexture2D>& subTexture,
+        float                    tilingFactor
+    ) {
+        DrawQuad(position, size, subTexture, glm::vec4(1.0f), tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec2&         position,
+        const glm::vec2&         size,
+        const Ref<SubTexture2D>& subTexture,
+        const glm::vec4&         tintColor,
+        float                    tilingFactor
+    ) {
+        DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, tintColor, tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(
+        const glm::vec3&         position,
+        const glm::vec2&         size,
+        const Ref<SubTexture2D>& subTexture,
+        const glm::vec4&         tintColor,
+        float                    tilingFactor
+    ) {
+        ZIBEN_PROFILE_FUNCTION();
+
+        if (GetData().QuadIndexCount >= s_MaxIndexCount)
+            FlushAndReset();
+
+        uint32_t textureIndex;
+
+        auto texturePosition = std::find_if(
+            GetData().TextureSlots.begin(),
+            GetData().TextureSlots.begin() + GetData().TextureSlotIndex,
+            [&](const Ref<Texture2D>& textureSlot) {
+                return *textureSlot == *subTexture->GetTexture();
+            }
+        );
+
+        if (texturePosition != GetData().TextureSlots.begin() + GetData().TextureSlotIndex) {
+            textureIndex = std::distance(GetData().TextureSlots.begin(), texturePosition);
+        } else {
+            textureIndex                                         = GetData().TextureSlotIndex;
+            GetData().TextureSlots[GetData().TextureSlotIndex++] = subTexture->GetTexture();
+        }
+
+        glm::mat4 translation = glm::translate(glm::mat4(1.0f), position);
+        glm::mat4 scaling     = glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        glm::mat4 transform   = translation * scaling;
+
+        for (uint32_t i = 0; i < 4; ++i) {
+            GetData().QuadVertexBufferPointer->Position     = transform * s_QuadVertexPositions[i];
+            GetData().QuadVertexBufferPointer->Color        = tintColor;
+            GetData().QuadVertexBufferPointer->TexCoord     = subTexture->GetTexCoords()[i];
+            GetData().QuadVertexBufferPointer->TexIndex     = static_cast<float>(textureIndex);
+            GetData().QuadVertexBufferPointer->TilingFactor = tilingFactor;
+            GetData().QuadVertexBufferPointer++;
+        }
+
+        GetData().QuadIndexCount += 6;
+
+        ++GetStatistics().QuadCount;
+    }
+    
     void Renderer2D::DrawRotatedQuad(
         const glm::vec2& position,
         const glm::vec2& size,
         float            angle,
-        const glm::vec4& color) {
-
+        const glm::vec4& color
+    ) {
         DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, GetData().WhiteTexture, color, 1.0f);
     }
 
@@ -221,8 +322,8 @@ namespace Ziben {
         const glm::vec3& position,
         const glm::vec2& size,
         float            angle,
-        const glm::vec4& color) {
-
+        const glm::vec4& color
+    ) {
         DrawRotatedQuad(position, size, angle, GetData().WhiteTexture, color, 1.0f);
     }
 
@@ -230,8 +331,8 @@ namespace Ziben {
         const glm::vec2&      position,
         const glm::vec2&      size,
         float                 angle,
-        const Ref<Texture2D>& texture) {
-
+        const Ref<Texture2D>& texture
+    ) {
         DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, texture, glm::vec4(1.0f), 1.0f);
     }
 
@@ -239,8 +340,8 @@ namespace Ziben {
         const glm::vec3&      position,
         const glm::vec2&      size,
         float                 angle,
-        const Ref<Texture2D>& texture) {
-
+        const Ref<Texture2D>& texture
+    ) {
         DrawRotatedQuad(position, size, angle, texture, glm::vec4(1.0f), 1.0f);
     }
 
@@ -249,8 +350,8 @@ namespace Ziben {
         const glm::vec2&      size,
         float                 angle,
         const Ref<Texture2D>& texture,
-        const glm::vec4&      tintColor) {
-
+        const glm::vec4&      tintColor
+    ) {
         DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, texture, tintColor, 1.0f);
     }
 
@@ -259,8 +360,8 @@ namespace Ziben {
         const glm::vec2&      size,
         float                 angle,
         const Ref<Texture2D>& texture,
-        const glm::vec4&      tintColor) {
-
+        const glm::vec4&      tintColor
+    ) {
         DrawRotatedQuad(position, size, angle, texture, tintColor, 1.0f);
     }
 
@@ -269,8 +370,8 @@ namespace Ziben {
         const glm::vec2&      size,
         float                 angle,
         const Ref<Texture2D>& texture,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, texture, glm::vec4(1.0f), tilingFactor);
     }
 
@@ -279,8 +380,8 @@ namespace Ziben {
         const glm::vec2&      size,
         float                 angle,
         const Ref<Texture2D>& texture,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         DrawRotatedQuad(position, size, angle, texture, glm::vec4(1.0f), tilingFactor);
     }
 
@@ -290,8 +391,8 @@ namespace Ziben {
         float                 angle,
         const Ref<Texture2D>& texture,
         const glm::vec4&      tintColor,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         DrawRotatedQuad({ position.x, position.y, 0.0f }, size, angle, texture, tintColor, tilingFactor);
     }
 
@@ -301,8 +402,8 @@ namespace Ziben {
         float                 angle,
         const Ref<Texture2D>& texture,
         const glm::vec4&      tintColor,
-        float                 tilingFactor) {
-
+        float                 tilingFactor
+    ) {
         ZIBEN_PROFILE_FUNCTION();
 
         if (GetData().QuadIndexCount >= s_MaxIndexCount)
@@ -321,7 +422,7 @@ namespace Ziben {
         if (texturePosition != GetData().TextureSlots.begin() + GetData().TextureSlotIndex) {
             textureIndex = std::distance(GetData().TextureSlots.begin(), texturePosition);
         } else {
-            textureIndex                                               = GetData().TextureSlotIndex;
+            textureIndex                                         = GetData().TextureSlotIndex;
             GetData().TextureSlots[GetData().TextureSlotIndex++] = texture;
         }
 

@@ -15,7 +15,7 @@
 Sandbox2D::Sandbox2D()
     : Ziben::Layer("Sandbox2D")
     , m_CameraController(1280.0f / 720.0f)
-    , m_SquareColor(0.2f, 0.3f, 0.8f, 1.0f)
+    , m_SquareColor(0.0f)
     , m_SquareAngle(0.0f)
     , m_ColorDirection(1.0f)
     , m_ParticleSystem(10'000) {}
@@ -24,7 +24,10 @@ void Sandbox2D::OnAttach() {
     ZIBEN_PROFILE_FUNCTION();
 
     // Init Texture
-    m_Texture                    = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png");
+    m_CheckerBoardTexture        = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png");
+    m_SpriteSheetTexture         = Ziben::Texture2D::Create("Assets/Textures/SpriteSheet.png");
+    m_Bush                       = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 2, 3 }, { 128, 128 });
+    m_Tree                       = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 0, 1 }, { 128, 128 }, { 1, 2 });
 
     // Init Particle
     m_Particle.ColorBegin        = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
@@ -66,6 +69,7 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         Ziben::RenderCommand::Clear();
     }
 
+#if 0
     {
         ZIBEN_PROFILE_SCOPE("Sandbox Render Draw");
 
@@ -73,9 +77,9 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
 
         Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
         Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
-        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_Texture, 10.0f);
+        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerBoardTexture, 10.0f);
         Ziben::Renderer2D::DrawRotatedQuad({ 0.5f, 0.3f }, { 0.3, 0.3f }, glm::radians(45.0f), { 0.2f, 0.8f, 0.3f, 0.6f });
-        Ziben::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.1f }, { 1.0f, 1.0f }, glm::radians(m_SquareAngle), m_Texture, 20.0f);
+        Ziben::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.1f }, { 1.0f, 1.0f }, glm::radians(m_SquareAngle), m_CheckerBoardTexture, 20.0f);
 
         for (int i = -10; i < 10; ++i) {
             for (int j = -10; j < 10; ++j) {
@@ -87,6 +91,7 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
 
         Ziben::Renderer2D::EndScene();
     }
+#endif
 
     {
         ZIBEN_PROFILE_SCOPE("Sandbox ParticleSystem");
@@ -111,6 +116,17 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         m_ParticleSystem.OnUpdate(ts);
         m_ParticleSystem.OnRender(m_CameraController.GetCamera());
     }
+
+    {
+        ZIBEN_PROFILE_SCOPE("Sandbox SpiteSheet");
+
+        Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
+
+        Ziben::Renderer2D::DrawQuad({ 1.0f, 0.0f }, { 1.0f, 1.0f }, m_Bush);
+        Ziben::Renderer2D::DrawQuad(glm::vec2(0.0f), { 1.0f, 2.0f }, m_Tree);
+
+        Ziben::Renderer2D::EndScene();
+    }
 }
 
 void Sandbox2D::OnImGuiRender() {
@@ -119,7 +135,6 @@ void Sandbox2D::OnImGuiRender() {
     ImGui::Begin("Scene2D");
 
     {
-
         const auto& statistics = Ziben::Renderer2D::GetStatistics();
 
         ImGui::Text("Renderer2D Statistics: ");
@@ -129,6 +144,8 @@ void Sandbox2D::OnImGuiRender() {
         ImGui::Text("Index Count: %d",  statistics.QuadCount * 6);
 
         ImGui::ColorEdit4("SquareColor", glm::value_ptr(m_SquareColor));
+        ImGui::ColorEdit4("ParticleBeginColor", glm::value_ptr(m_Particle.ColorBegin));
+        ImGui::ColorEdit4("ParticleEndColor", glm::value_ptr(m_Particle.ColorEnd));
     }
 
     ImGui::End();

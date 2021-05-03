@@ -5,6 +5,7 @@
 #include <Ziben/Renderer/Shader.hpp>
 #include <Ziben/Renderer/VertexArray.hpp>
 #include <Ziben/Renderer/Texture.hpp>
+#include <Ziben/Renderer/SubTexture2D.hpp>
 
 #include "Entities/ParticleSystem.hpp"
 
@@ -20,7 +21,10 @@ public:
 
 private:
     Ziben::OrthographicCameraController m_CameraController;
-    Ziben::Ref<Ziben::Texture2D>        m_Texture;
+    Ziben::Ref<Ziben::Texture2D>        m_CheckerBoardTexture;
+    Ziben::Ref<Ziben::Texture2D>        m_SpriteSheetTexture;
+    Ziben::Ref<Ziben::SubTexture2D>     m_Bush;
+    Ziben::Ref<Ziben::SubTexture2D>     m_Tree;
 
     glm::vec4                           m_SquareColor;
     float                               m_SquareAngle;
