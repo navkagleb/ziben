@@ -8,6 +8,12 @@ namespace Ziben {
 
     void FrameBuffer::Bind(const Ref<FrameBuffer>& frameBuffer) {
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->m_Handle);
+        glViewport(
+            0,
+            0,
+            static_cast<GLsizei>(frameBuffer->m_Specification.Width),
+            static_cast<GLsizei>(frameBuffer->m_Specification.Height)
+        );
     }
 
     void FrameBuffer::Unbind() {
@@ -26,9 +32,18 @@ namespace Ziben {
     FrameBuffer::~FrameBuffer() {
         if (m_Handle)
             glDeleteFramebuffers(1, &m_Handle);
+
+        if (m_ColorAttachment)
+            glDeleteTextures(1, &m_ColorAttachment);
+
+        if (m_DepthAttachment)
+            glDeleteTextures(1, &m_DepthAttachment);
     }
 
     void FrameBuffer::Invalidate() {
+        if (m_Handle)
+            (*this).~FrameBuffer();
+
         glCreateFramebuffers(1, &m_Handle);
         glBindFramebuffer(GL_FRAMEBUFFER, m_Handle);
 
@@ -61,5 +76,13 @@ namespace Ziben {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
+
+    void FrameBuffer::Resize(uint32_t width, uint32_t height) {
+        m_Specification.Width = width;
+        m_Specification.Height = height;
+
+        Invalidate();
+    }
+
 
 } // namespace Ziben

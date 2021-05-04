@@ -28,6 +28,7 @@ namespace Ziben {
         [[nodiscard]] inline const FrameBufferSpecification& GetSpecification() const { return m_Specification; }
 
         void Invalidate();
+        void Resize(uint32_t width, uint32_t height);
 
     private:
         HandleType               m_Handle;

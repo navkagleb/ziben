@@ -189,23 +189,25 @@ namespace Ziben {
 
         ImGui::End();
 
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
         ImGui::Begin("Viewport");
 
         {
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
             if (m_ViewportSize != *(glm::vec2*)&viewportPanelSize) {
-                m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.x };
-                m_FrameBuffer->Resize(m_ViewportSize);
+                m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+                m_FrameBuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
+
+                m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
             }
 
-
-
             uintmax_t textureHandle = m_FrameBuffer->GetColorAttachmentHandle();
-            ImGui::Image((void*)textureHandle, ImVec2(1280.0f, 720.0f), ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::Image((void*)textureHandle, viewportPanelSize, ImVec2(0, 1), ImVec2(1, 0));
         }
 
         ImGui::End();
+        ImGui::PopStyleVar();
 
         ImGui::End();
     }

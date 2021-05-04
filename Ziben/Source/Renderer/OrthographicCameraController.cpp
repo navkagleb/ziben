@@ -61,6 +61,11 @@ namespace Ziben {
         m_CameraTranslationSpeed = 2.0f * m_ZoomLevel;
     }
 
+    void OrthographicCameraController::OnResize(float width, float height) {
+        m_AspectRatio = width / height;
+        UpdateCamera();
+    }
+
     bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event) {
         ZIBEN_PROFILE_FUNCTION();
 
@@ -73,8 +78,7 @@ namespace Ziben {
     bool OrthographicCameraController::OnWindowResized(WindowResizedEvent& event) {
         ZIBEN_PROFILE_FUNCTION();
 
-        m_AspectRatio = static_cast<float>(event.GetWidth()) / static_cast<float>(event.GetHeight());
-        UpdateCamera();
+        OnResize(static_cast<float>(event.GetWidth()), static_cast<float>(event.GetHeight()));
 
         return false;
     }

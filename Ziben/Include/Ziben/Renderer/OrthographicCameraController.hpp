@@ -30,6 +30,8 @@ namespace Ziben {
         void OnEvent(Event& event);
         void OnUpdate(const TimeStep& ts);
 
+        void OnResize(float width, float height);
+
     private:
         bool OnMouseScrolled(MouseScrolledEvent& event);
         bool OnWindowResized(WindowResizedEvent& event);
