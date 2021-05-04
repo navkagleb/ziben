@@ -1,0 +1,37 @@
+#pragma once
+
+#include <Ziben/Scene/Layer.hpp>
+#include <Ziben/Renderer/OrthographicCameraController.hpp>
+#include <Ziben/Renderer/Shader.hpp>
+#include <Ziben/Renderer/VertexArray.hpp>
+#include <Ziben/Renderer/Texture.hpp>
+#include <Ziben/Renderer/SubTexture2D.hpp>
+#include <Ziben/Renderer/FrameBuffer.hpp>
+
+namespace Ziben {
+
+    class EditorLayer : public Layer {
+    public:
+        EditorLayer();
+
+        void OnAttach() override;
+        void OnDetach() override;
+        void OnEvent(Event& event) override;
+        void OnUpdate(const TimeStep& ts) override;
+        void OnImGuiRender() override;
+
+    private:
+        OrthographicCameraController m_CameraController;
+        Ref<FrameBuffer>             m_FrameBuffer;
+        Ref<Texture2D>               m_CheckerBoardTexture;
+        Ref<Texture2D>               m_SpriteSheetTexture;
+        Ref<SubTexture2D>            m_Tree;
+
+        glm::vec4                    m_SquareColor;
+        float                        m_SquareAngle;
+
+        glm::vec2                    m_ViewportSize;
+
+    }; // class EditorLayer
+
+} // namespace Ziben

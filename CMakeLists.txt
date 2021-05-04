@@ -9,4 +9,5 @@ add_subdirectory(External/glew-cmake) # glew library
 add_subdirectory(External/glm)        # glm library
 
 add_subdirectory(Ziben)               # Ziben GameEngine
+add_subdirectory(ZibenEditor)         # Ziben Editor
 add_subdirectory(Sandbox)             # Subdirectory to test Ziben GameEngine

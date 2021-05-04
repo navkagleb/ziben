@@ -21,13 +21,7 @@ public:
     void OnImGuiRender() override;
 
 private:
-    static const uint32_t s_MapWidth;
-    static const uint32_t s_MapHeight;
-    static const char*    s_MapTiles;
-
-private:
     Ziben::OrthographicCameraController                       m_CameraController;
-    Ziben::Ref<Ziben::FrameBuffer>                            m_FrameBuffer;
     Ziben::Ref<Ziben::Texture2D>                              m_CheckerBoardTexture;
     Ziben::Ref<Ziben::Texture2D>                              m_SpriteSheetTexture;
 
