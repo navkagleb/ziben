@@ -64,7 +64,7 @@ namespace Ziben {
     bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event) {
         ZIBEN_PROFILE_FUNCTION();
 
-        m_ZoomLevel = std::max(m_ZoomLevel - static_cast<float>(event.GetOffsetY()) * 0.25f, 0.25f);
+        m_ZoomLevel = std::max(m_ZoomLevel - static_cast<float>(event.GetOffsetY()) * 0.5f, 0.25f);
         UpdateCamera();
 
         return false;

@@ -36,6 +36,7 @@ namespace Ziben {
         Texture2D(uint32_t width, uint32_t height);
         ~Texture2D() override;
 
+        [[nodiscard]] uint32_t GetHandle() const { return m_Handle; }
         [[nodiscard]] uint32_t GetWidth() const override { return m_Width; }
         [[nodiscard]] uint32_t GetHeight() const override { return m_Height; }
 

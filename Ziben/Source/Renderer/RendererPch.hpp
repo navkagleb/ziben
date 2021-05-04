@@ -10,5 +10,6 @@
 #include <unordered_map>
 #include <numeric>
 #include <algorithm>
+#include <cassert>
 
 #include "Ziben/Profiling/ProfileEngine.hpp"

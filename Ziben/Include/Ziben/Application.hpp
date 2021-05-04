@@ -26,6 +26,7 @@ namespace Ziben {
         [[nodiscard]] inline LayerStack& GetLayerStack() { return *m_LayerStack; }
 
         void Run();
+        void Close();
 
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);

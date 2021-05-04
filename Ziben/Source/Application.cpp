@@ -75,6 +75,10 @@ namespace Ziben {
         }
     }
 
+    void Application::Close() {
+        m_Window->Close();
+    }
+
     void Application::PushLayer(Layer* layer) {
         ZIBEN_PROFILE_FUNCTION();
 

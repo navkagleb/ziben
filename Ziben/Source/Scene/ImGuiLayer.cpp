@@ -30,7 +30,9 @@ namespace Ziben {
         ImGuiIO& io = ImGui::GetIO(); (void)io;
 
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;        // Enable Gamepad Controls
+//        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;        // Enable Gamepad Controls
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
 //        ImGui::StyleColorsDark();
         ImGui::StyleColorsClassic();
@@ -75,8 +77,22 @@ namespace Ziben {
     void ImGuiLayer::End() {
         ZIBEN_PROFILE_FUNCTION();
 
+        ImGuiIO&     io          = ImGui::GetIO();
+        Application& application = Application::Get();
+        Window&      window      = application.GetWindow();
+
+        io.DisplaySize = ImVec2(static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()));
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
+
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backupCurrentContext);
+        }
     }
 
     void ImGuiLayer::BlockEvents(bool block) {

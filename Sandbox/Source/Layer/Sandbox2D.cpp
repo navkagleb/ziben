@@ -13,39 +13,10 @@
 
 #include "Application/SandboxApplication.hpp"
 
-const uint32_t Sandbox2D::s_MapWidth  = 25;
-const uint32_t Sandbox2D::s_MapHeight = 25;
-const char* Sandbox2D::s_MapTiles     =
-    "WWWWWWWWWWWWWWWWWWWWWWWWW"
-    "WWWWWWWWWWWWWWWWWWWWWWWWW"
-    "WWWWWWDDDDDDWWWWWWWWWWWWW"
-    "WWWWDDDDDDDDDWWWWWWWWWWWW"
-    "WWWDDDDDDDDDDDWWWWWWWWWWW"
-    "WWWDDDDDDDDDDDDDDDWWWWWWW"
-    "WWWDDDDDDDDDDDDDDDDWWWWWW"
-    "WWWWDDDDDDDDDDDDDDDWWWWWW"
-    "WWDDDDDDDDDDDDDDDDDWWWWWW"
-    "WWDDDDDDDDDDDDDDDDDWWWWWW"
-    "WDDDDDDDDDDDDDDDDDDWWWWWW"
-    "WDDDDDDDDDDDDDDDDDDDWWWWW"
-    "WDDDDDDDDDDWWWDDDDDDWWWWW"
-    "WDDDDDDDWWWWWWDDDDDDDWWWW"
-    "WWDDDDDDDWWWWDDDDDDDDWWWW"
-    "WWDDDDDDDDDWWDDDDDDDDDWWW"
-    "WWWDDDDDDDDDDDDDDDDDDDWWW"
-    "WWWWDDDDDDDDDDDDDDDDDDWWW"
-    "WWWWWWDDDDDDDDDDDDDDDDWWW"
-    "WWWWWWWDDDDDDDDDDDDDDWWWW"
-    "WWWWWWWWWWDDDDDDDDDWWWWWW"
-    "WWWWWWWWWWWWWWWWWWWWWWWWW"
-    "WWWWWWWWWWWWWWWWWWWWWWWWW"
-    "WWWWWWWWWWWWWWWWWWWWWWWWW"
-    "WWWWWWWWWWWWWWWWWWWWWWWWW";
-
 Sandbox2D::Sandbox2D()
     : Ziben::Layer("Sandbox2D")
     , m_CameraController(1280.0f / 720.0f)
-    , m_SquareColor(0.0f)
+    , m_SquareColor(0.2f, 0.3f, 0.8f, 0.9f)
     , m_SquareAngle(0.0f)
     , m_ColorDirection(1.0f)
     , m_ParticleSystem(5'000) {}
@@ -53,14 +24,18 @@ Sandbox2D::Sandbox2D()
 void Sandbox2D::OnAttach() {
     ZIBEN_PROFILE_FUNCTION();
 
+    // Init FrameBuffer
+    Ziben::FrameBufferSpecification specification;
+
+    specification.Width  = 1280;
+    specification.Height = 720;
+
+    m_FrameBuffer                = Ziben::FrameBuffer::Create(specification);
+
     // Init Texture
     m_CheckerBoardTexture        = Ziben::Texture2D::Create("Assets/Textures/CheckerBoard.png");
     m_SpriteSheetTexture         = Ziben::Texture2D::Create("Assets/Textures/SpriteSheet.png");
-    m_Bush                       = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 2, 3 }, { 128, 128 });
     m_Tree                       = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 0, 1 }, { 128, 128 }, { 1, 2 });
-
-    m_Tiles['W']                 = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 11, 11 }, { 128, 128 });
-    m_Tiles['D']                 = Ziben::SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 1, 11 }, { 128, 128 });
 
     // Init Particle
     m_Particle.ColorBegin        = { 254 / 255.0f, 212 / 255.0f, 123 / 255.0f, 1.0f };
@@ -71,7 +46,7 @@ void Sandbox2D::OnAttach() {
     m_Particle.VelocityVariation = { 3.0f, 1.0f };
     m_Particle.Position          = { 0.0f, 0.0f };
 
-    m_CameraController.SetZoomLevel(15a.0f);
+    m_CameraController.SetZoomLevel(5.0f);
 }
 
 void Sandbox2D::OnDetach() {
@@ -112,19 +87,21 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
     {
         ZIBEN_PROFILE_SCOPE("Sandbox Renderer Prepare");
 
+        Ziben::FrameBuffer::Bind(m_FrameBuffer);
         Ziben::RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
         Ziben::RenderCommand::Clear();
     }
 
-#if 0
     {
         ZIBEN_PROFILE_SCOPE("Sandbox Render Draw");
 
         Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
+        // Background
+        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerBoardTexture, 10.0f);
+
         Ziben::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
         Ziben::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
-        Ziben::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerBoardTexture, 10.0f);
         Ziben::Renderer2D::DrawRotatedQuad({ 0.5f, 0.3f }, { 0.3, 0.3f }, glm::radians(45.0f), { 0.2f, 0.8f, 0.3f, 0.6f });
         Ziben::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.1f }, { 1.0f, 1.0f }, glm::radians(m_SquareAngle), m_CheckerBoardTexture, 20.0f);
 
@@ -136,28 +113,7 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
             }
         }
 
-        Ziben::Renderer2D::EndScene();
-    }
-#endif
-
-    {
-        ZIBEN_PROFILE_SCOPE("Sandbox Render");
-
-        Ziben::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-        for (uint32_t y = 0; y < s_MapHeight; ++y) {
-            for (uint32_t x = 0; x < s_MapWidth; ++x) {
-                char tileType = s_MapTiles[x + y * s_MapWidth];
-                auto texture  = m_Bush;
-
-                if (m_Tiles.contains(tileType))
-                    texture = m_Tiles[tileType];
-
-                Ziben::Renderer2D::DrawQuad({ static_cast<float>(x) - s_MapWidth / 2.0f, s_MapHeight / 2.0f - static_cast<float>(y) }, { 1.0f, 1.0f }, texture);
-            }
-        }
-
-        Ziben::Renderer2D::DrawQuad({ -4.0f, 2.0f, 0.1f }, { 1.0f, 2.0f }, m_Tree);
+        Ziben::Renderer2D::DrawQuad({ -2.0f, 2.0f, 0.1f }, { 1.0f, 2.0f }, m_Tree);
 
         Ziben::Renderer2D::EndScene();
     }
@@ -184,11 +140,76 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
 
         m_ParticleSystem.OnUpdate(ts);
         m_ParticleSystem.OnRender(m_CameraController.GetCamera());
+
+        Ziben::FrameBuffer::Unbind();
     }
 }
 
 void Sandbox2D::OnImGuiRender() {
     ZIBEN_PROFILE_FUNCTION();
+
+    static bool dockspaceOpen = true;
+    static bool opt_fullscreen = true;
+    static bool opt_padding = false;
+    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+    // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+    // because it would be confusing to have two docking targets within each others.
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+    if (opt_fullscreen)
+    {
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
+    else
+    {
+        dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+    }
+
+    // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
+    // and handle the pass-thru hole, so we ask Begin() to not render a background.
+    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+        window_flags |= ImGuiWindowFlags_NoBackground;
+
+    // Important: note that we proceed even if Begin() returns false (aka window is collapsed).
+    // This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
+    // all active windows docked into it will lose their parent and become undocked.
+    // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
+    // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
+    if (!opt_padding)
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+    ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+
+    if (!opt_padding)
+        ImGui::PopStyleVar();
+
+    if (opt_fullscreen)
+        ImGui::PopStyleVar(2);
+
+    // DockSpace
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    }
+
+    if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("Exit", ""))
+                SandboxApplication::Get().Close();
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMenuBar();
+    }
 
     ImGui::Begin("Scene2D");
 
@@ -204,7 +225,12 @@ void Sandbox2D::OnImGuiRender() {
         ImGui::ColorEdit4("SquareColor", glm::value_ptr(m_SquareColor));
         ImGui::ColorEdit4("ParticleBeginColor", glm::value_ptr(m_Particle.ColorBegin));
         ImGui::ColorEdit4("ParticleEndColor", glm::value_ptr(m_Particle.ColorEnd));
+
+        uintmax_t textureHandle = m_FrameBuffer->GetColorAttachmentHandle();
+        ImGui::Image((void*)textureHandle, ImVec2(1280.0f, 720.0f));
     }
+
+    ImGui::End();
 
     ImGui::End();
 }

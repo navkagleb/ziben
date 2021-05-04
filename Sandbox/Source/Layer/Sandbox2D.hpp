@@ -6,6 +6,7 @@
 #include <Ziben/Renderer/VertexArray.hpp>
 #include <Ziben/Renderer/Texture.hpp>
 #include <Ziben/Renderer/SubTexture2D.hpp>
+#include <Ziben/Renderer/FrameBuffer.hpp>
 
 #include "Entities/ParticleSystem.hpp"
 
@@ -26,6 +27,7 @@ private:
 
 private:
     Ziben::OrthographicCameraController                       m_CameraController;
+    Ziben::Ref<Ziben::FrameBuffer>                            m_FrameBuffer;
     Ziben::Ref<Ziben::Texture2D>                              m_CheckerBoardTexture;
     Ziben::Ref<Ziben::Texture2D>                              m_SpriteSheetTexture;
 
