@@ -10,15 +10,15 @@ namespace Ziben {
 
     ImGuiLayer::ImGuiLayer()
         : Layer("ImGuiLayer")
-        , m_IsBlockedEvents(false) {}
+        , m_IsBlockedEvents(true) {}
 
     void ImGuiLayer::OnEvent(Event& event) {
         ImGuiIO& io = ImGui::GetIO();
 
-//        if (!m_IsBlockedEvents) {
-//            event.m_IsHandled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
-//            event.m_IsHandled |= event.IsInCategory(EventCategoryMouse)    & io.WantCaptureMouse;
-//        }
+        if (m_IsBlockedEvents) {
+            event.m_IsHandled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+            event.m_IsHandled |= event.IsInCategory(EventCategoryMouse)    & io.WantCaptureMouse;
+        }
     }
 
     void ImGuiLayer::OnAttach() {
@@ -95,8 +95,8 @@ namespace Ziben {
         }
     }
 
-    void ImGuiLayer::BlockEvents(bool block) {
-        m_IsBlockedEvents = block;
+    void ImGuiLayer::BlockEvents(bool isBlockedEvents) {
+        m_IsBlockedEvents = isBlockedEvents;
     }
 
 } // namespace Ziben

@@ -28,6 +28,8 @@ namespace Ziben {
         void Run();
         void Close();
 
+        void BlockImGuiEvents(bool blockImGuiEvents);
+
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* layer);
         void PopLayer(Layer* layer);

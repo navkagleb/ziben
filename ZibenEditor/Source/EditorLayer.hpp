@@ -31,6 +31,8 @@ namespace Ziben {
         float                        m_SquareAngle;
 
         glm::vec2                    m_ViewportSize;
+        bool                         m_ViewportIsFocused;
+        bool                         m_ViewportIsHovered;
 
     }; // class EditorLayer
 

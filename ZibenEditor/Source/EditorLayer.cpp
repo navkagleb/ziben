@@ -20,7 +20,9 @@ namespace Ziben {
         , m_CameraController(1280.0f / 720.0f)
         , m_SquareColor(0.2f, 0.3f, 0.8f, 0.9f)
         , m_SquareAngle(0.0f)
-        , m_ViewportSize(0.0f) {}
+        , m_ViewportSize(0.0f)
+        , m_ViewportIsFocused(false)
+        , m_ViewportIsHovered(false) {}
 
     void EditorLayer::OnAttach() {
         ZIBEN_PROFILE_FUNCTION();
@@ -65,7 +67,9 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
 
         // Update
-        m_CameraController.OnUpdate(ts);
+        if (m_ViewportIsFocused)
+            m_CameraController.OnUpdate(ts);
+
         m_SquareAngle += 40.0f * (float)ts;
 
         // Render
@@ -193,6 +197,11 @@ namespace Ziben {
         ImGui::Begin("Viewport");
 
         {
+            m_ViewportIsFocused = ImGui::IsWindowFocused();
+            m_ViewportIsHovered = ImGui::IsWindowHovered();
+
+            ZibenEditor::Get().BlockImGuiEvents(!m_ViewportIsFocused || !m_ViewportIsHovered);
+
             ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 
             if (m_ViewportSize != *(glm::vec2*)&viewportPanelSize) {

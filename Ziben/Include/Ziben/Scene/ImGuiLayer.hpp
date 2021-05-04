@@ -17,7 +17,7 @@ namespace Ziben {
         static void Begin();
         static void End();
 
-        void BlockEvents(bool block);
+        void BlockEvents(bool isBlockedEvents);
 
     private:
         bool m_IsBlockedEvents;

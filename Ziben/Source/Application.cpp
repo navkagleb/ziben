@@ -79,6 +79,10 @@ namespace Ziben {
         m_Window->Close();
     }
 
+    void Application::BlockImGuiEvents(bool blockImGuiEvents) {
+        m_ImGuiLayer->BlockEvents(blockImGuiEvents);
+    }
+
     void Application::PushLayer(Layer* layer) {
         ZIBEN_PROFILE_FUNCTION();
 
