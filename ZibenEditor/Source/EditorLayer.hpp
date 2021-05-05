@@ -36,8 +36,9 @@ namespace Ziben {
         Ref<Scene>                   m_ActiveScene;
 
         Entity                       m_Square;
-
-        float                        m_SquareAngle;
+        Entity                       m_Camera;
+        Entity                       m_ClipSpaceCamera;
+        bool                         m_IsClipSpaceCamera;
 
         glm::vec2                    m_ViewportSize;
         bool                         m_ViewportIsFocused;

@@ -1,18 +1,19 @@
 #pragma once
 
-#include "Camera.hpp"
+#include <glm/glm.hpp>
 
 namespace Ziben {
 
-    class PerspectiveCamera : public Camera {
+    class PerspectiveCamera {
     public:
         PerspectiveCamera(float fov, float aspect, float near, float far);
         ~PerspectiveCamera() = default;
 
-        [[nodiscard]] inline const glm::mat4& GetProjectionMatrix() const override { return m_ProjectionMatrix; }
-        [[nodiscard]] inline const glm::mat4& GetViewMatrix() const override { return m_ViewMatrix; }
-        [[nodiscard]] inline const glm::mat4& GetViewProjectionMatrix() const override { return m_ViewProjectionMatrix; }
-        [[nodiscard]] inline const glm::vec3& GetPosition() const override { return m_Position; }
+    public:
+        [[nodiscard]] inline const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
+        [[nodiscard]] inline const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
+        [[nodiscard]] inline const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
+        [[nodiscard]] inline const glm::vec3& GetPosition() const { return m_Position; }
 
         [[nodiscard]] inline float GetFov() const { return m_Fov; }
         [[nodiscard]] inline float GetYaw() const { return m_Yaw; }

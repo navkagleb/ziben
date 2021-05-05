@@ -21,7 +21,7 @@ namespace Ziben {
     }
 
     void Renderer::BeginScene(Camera& camera) {
-        GetStorage().ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+//        GetStorage().ViewProjectionMatrix = camera.GetViewProjectionMatri();
     }
 
     void Renderer::EndScene() {

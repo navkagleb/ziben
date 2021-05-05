@@ -11,12 +11,36 @@ namespace Ziben {
         : m_Name(std::move(name)) {}
 
     void Scene::OnRender() {
-        auto group = m_Registry.group<TransformComponent, SpriteRendererComponent>();
+        const Camera*    primaryCamera          = nullptr;
+        const glm::mat4* primaryCameraTransform = nullptr;
 
-        for (const auto& entity : group) {
-            const auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+        {
+            auto view = m_Registry.view<TransformComponent, CameraComponent>();
 
-            Renderer2D::DrawQuad((const glm::mat4&)transform, (const glm::vec4&)sprite);
+            for (const auto& entity : view) {
+                const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+                if (camera.IsPrimary()) {
+                    primaryCamera          = &camera.GetCamera();
+                    primaryCameraTransform = &transform.GetTransform();
+
+                    break;
+                }
+            }
+        }
+
+        if (primaryCamera) {
+            Renderer2D::BeginScene(*primaryCamera, *primaryCameraTransform);
+
+            auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+
+            for (const auto& entity : view) {
+                const auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
+
+                Renderer2D::DrawQuad((const glm::mat4&)transform, (const glm::vec4&)sprite);
+            }
+
+            Renderer2D::EndScene();
         }
     }
 

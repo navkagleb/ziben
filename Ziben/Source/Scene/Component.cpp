@@ -13,4 +13,12 @@ namespace Ziben {
     SpriteRendererComponent::SpriteRendererComponent(const glm::vec4& color)
         : m_Color(color) {}
 
+    CameraComponent::CameraComponent(const glm::mat4& projectionMatrix, bool isPrimary)
+        : m_Camera(projectionMatrix)
+        , m_IsPrimary(isPrimary) {}
+
+    void CameraComponent::SetPrimary(bool isPrimary) {
+        m_IsPrimary = isPrimary;
+    }
+
 } // namespace Ziben

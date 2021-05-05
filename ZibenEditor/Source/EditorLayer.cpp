@@ -17,7 +17,7 @@ namespace Ziben {
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
         , m_CameraController(1280.0f / 720.0f)
-        , m_SquareAngle(0.0f)
+        , m_IsClipSpaceCamera(false)
         , m_ViewportSize(0.0f)
         , m_ViewportIsFocused(false)
         , m_ViewportIsHovered(false) {}
@@ -40,8 +40,14 @@ namespace Ziben {
 
         m_ActiveScene = CreateRef<Scene>("ActiveScene");
 
-        m_Square      = m_ActiveScene->CreateEntity("Square");
+        m_Square = m_ActiveScene->CreateEntity("Square");
         m_Square.PushComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.3f, 0.7f, 1.0f));
+
+        m_Camera = m_ActiveScene->CreateEntity("Camera");
+        m_Camera.PushComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f), true);
+
+        m_ClipSpaceCamera = m_ActiveScene->CreateEntity("ClipSpace Camera");
+        m_ClipSpaceCamera.PushComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f), false);
     }
 
     void EditorLayer::OnDetach() {
@@ -64,20 +70,13 @@ namespace Ziben {
         if (m_ViewportIsFocused)
             m_CameraController.OnUpdate(ts);
 
-        m_SquareAngle += 40.0f * (float)ts;
-
         // Render
         Renderer2D::ResetStatistics();
         FrameBuffer::Bind(m_FrameBuffer);
         RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
         RenderCommand::Clear();
 
-        Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-        // Update scene
         m_ActiveScene->OnRender();
-
-        Renderer2D::EndScene();
 
         FrameBuffer::Unbind();
     }
@@ -164,6 +163,13 @@ namespace Ziben {
                 ImGui::Text("%s", m_Square.GetComponent<TagComponent>().GetTag().c_str());
                 ImGui::ColorEdit4("SquareColor", glm::value_ptr(m_Square.GetComponent<SpriteRendererComponent>().GetColor()));
                 ImGui::Separator();
+            }
+
+            ImGui::DragFloat3("Camera Position", glm::value_ptr((glm::mat4&)m_Camera.GetComponent<TransformComponent>().GetTransform()[3]));
+
+            if (ImGui::Checkbox("ClipSpace Camera", &m_IsClipSpaceCamera)) {
+                m_Camera.GetComponent<CameraComponent>().SetPrimary(!m_IsClipSpaceCamera);
+                m_ClipSpaceCamera.GetComponent<CameraComponent>().SetPrimary(m_IsClipSpaceCamera);
             }
         }
 

@@ -68,6 +68,20 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
     }
 
+    void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform) {
+        ZIBEN_PROFILE_FUNCTION();
+
+        Shader::Bind(GetData().TextureShader);
+        GetData().TextureShader->SetUniform(
+            "u_ViewProjectionMatrix",
+            camera.GetProjectionMatrix() * glm::inverse(transform)
+        );
+
+        GetData().QuadIndexCount          = 0;
+        GetData().TextureSlotIndex        = 1;
+        GetData().QuadVertexBufferPointer = GetData().QuadVertexBufferBase;
+    }
+
     void Renderer2D::BeginScene(const OrthographicCamera& camera) {
         ZIBEN_PROFILE_FUNCTION();
 

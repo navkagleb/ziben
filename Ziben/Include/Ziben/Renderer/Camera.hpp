@@ -6,10 +6,13 @@ namespace Ziben {
 
     class Camera {
     public:
-        [[nodiscard]] virtual const glm::mat4& GetProjectionMatrix() const     = 0;
-        [[nodiscard]] virtual const glm::mat4& GetViewMatrix() const           = 0;
-        [[nodiscard]] virtual const glm::mat4& GetViewProjectionMatrix() const = 0;
-        [[nodiscard]] virtual const glm::vec3& GetPosition() const             = 0;
+        explicit Camera(const glm::mat4& projectionMatrix = glm::mat4(1.0f));
+        ~Camera() = default;
+
+        [[nodiscard]] virtual const glm::mat4& GetProjectionMatrix() const { return m_ProjectionMatrix; }
+
+    private:
+        glm::mat4 m_ProjectionMatrix;
 
     }; // class Camera
 
