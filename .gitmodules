@@ -16,3 +16,6 @@
 [submodule "Ziben/External/glm"]
 	path = Ziben/External/glm
 	url = https://github.com/g-truc/glm
+[submodule "Ziben/External/entt"]
+	path = Ziben/External/entt
+	url = https://github.com/skypjack/entt

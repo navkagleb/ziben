@@ -308,7 +308,60 @@ namespace Ziben {
 
         ++GetStatistics().QuadCount;
     }
-    
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const glm::vec4& color) {
+        DrawQuad(transform, GetData().WhiteTexture, color, 1.0f);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture) {
+        DrawQuad(transform, texture, glm::vec4(1.0f), 1.0f);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tintColor) {
+        DrawQuad(transform, texture, tintColor, 1.0f);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor) {
+        DrawQuad(transform, texture, glm::vec4(1.0f), tilingFactor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture,  const glm::vec4& tintColor, float tilingFactor) {
+        ZIBEN_PROFILE_FUNCTION();
+
+        if (GetData().QuadIndexCount >= s_MaxIndexCount)
+            FlushAndReset();
+
+        uint32_t textureIndex;
+
+        auto texturePosition = std::find_if(
+            GetData().TextureSlots.begin(),
+            GetData().TextureSlots.begin() + GetData().TextureSlotIndex,
+            [&](const Ref<Texture2D>& textureSlot) {
+                return *textureSlot == *texture;
+            }
+        );
+
+        if (texturePosition != GetData().TextureSlots.begin() + GetData().TextureSlotIndex) {
+            textureIndex = std::distance(GetData().TextureSlots.begin(), texturePosition);
+        } else {
+            textureIndex                                         = GetData().TextureSlotIndex;
+            GetData().TextureSlots[GetData().TextureSlotIndex++] = texture;
+        }
+
+        for (uint32_t i = 0; i < 4; ++i) {
+            GetData().QuadVertexBufferPointer->Position     = transform * s_QuadVertexPositions[i];
+            GetData().QuadVertexBufferPointer->Color        = tintColor;
+            GetData().QuadVertexBufferPointer->TexCoord     = s_QuadTexCoords[i];
+            GetData().QuadVertexBufferPointer->TexIndex     = static_cast<float>(textureIndex);
+            GetData().QuadVertexBufferPointer->TilingFactor = tilingFactor;
+            GetData().QuadVertexBufferPointer++;
+        }
+
+        GetData().QuadIndexCount += 6;
+
+        ++GetStatistics().QuadCount;
+    }
+
     void Renderer2D::DrawRotatedQuad(
         const glm::vec2& position,
         const glm::vec2& size,

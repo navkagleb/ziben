@@ -20,6 +20,7 @@ namespace Ziben {
 
     VertexArray::VertexArray()
         : m_Handle(0)
+        , m_VertexBufferIndex(0)
         , m_IndexBuffer(nullptr) {
 
         ZIBEN_PROFILE_FUNCTION();
@@ -42,10 +43,10 @@ namespace Ziben {
 
         m_VertexBuffers.push_back(vertexBuffer);
 
-        for (uint32_t index = 0; const auto& element : vertexBuffer->GetLayout()) {
-            glEnableVertexAttribArray(index);
+        for (const auto& element : vertexBuffer->GetLayout()) {
+            glEnableVertexAttribArray(m_VertexBufferIndex);
             glVertexAttribPointer(
-                index++,
+                m_VertexBufferIndex++,
                 ShaderData::GetCount(element.Type),
                 ShaderData::ToNativeType(element.Type),
                 element.IsNormalized,

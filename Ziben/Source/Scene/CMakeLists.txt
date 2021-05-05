@@ -2,6 +2,7 @@ set(TARGET ZibenScene)
 
 file(GLOB HEADER_FILES
     ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Scene/*.hpp
+    ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Scene/*.inl
     ${PROJECT_SOURCE_DIR}/Ziben/Source/Scene/*.hpp
 )
 
@@ -25,7 +26,7 @@ target_include_directories(${TARGET}
 
 target_link_libraries(${TARGET}
     PUBLIC
-        ZibenRenderer
+        ZibenRenderer EnTT::EnTT
     PRIVATE
         -loleaut32 -limm32 -lversion
 )

@@ -23,6 +23,7 @@ namespace Ziben {
 
     private:
         HandleType                     m_Handle;
+        std::size_t                    m_VertexBufferIndex;
         std::vector<Ref<VertexBuffer>> m_VertexBuffers;
         Ref<IndexBuffer>               m_IndexBuffer;
 

@@ -4,12 +4,11 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include <Ziben/System/Log.hpp>
 #include <Ziben/Window/Input.hpp>
 #include <Ziben/Window/EventDispatcher.hpp>
-#include <Ziben/Window/KeyEvent.hpp>
 #include <Ziben/Renderer/RenderCommand.hpp>
 #include <Ziben/Renderer/Renderer2D.hpp>
+#include <Ziben/Scene/Component.hpp>
 
 #include "ZibenEditor.hpp"
 
@@ -18,7 +17,6 @@ namespace Ziben {
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
         , m_CameraController(1280.0f / 720.0f)
-        , m_SquareColor(0.2f, 0.3f, 0.8f, 0.9f)
         , m_SquareAngle(0.0f)
         , m_ViewportSize(0.0f)
         , m_ViewportIsFocused(false)
@@ -40,7 +38,10 @@ namespace Ziben {
         m_SpriteSheetTexture         = Texture2D::Create("Assets/Textures/SpriteSheet.png");
         m_Tree                       = SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 0, 1 }, { 128, 128 }, { 1, 2 });
 
-        m_CameraController.SetZoomLevel(5.0f);
+        m_ActiveScene = CreateRef<Scene>("ActiveScene");
+
+        m_Square      = m_ActiveScene->CreateEntity("Square");
+        m_Square.PushComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.3f, 0.7f, 1.0f));
     }
 
     void EditorLayer::OnDetach() {
@@ -67,41 +68,18 @@ namespace Ziben {
 
         // Render
         Renderer2D::ResetStatistics();
+        FrameBuffer::Bind(m_FrameBuffer);
+        RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
+        RenderCommand::Clear();
 
-        {
-            ZIBEN_PROFILE_SCOPE("Sandbox Renderer Prepare");
+        Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-            FrameBuffer::Bind(m_FrameBuffer);
-            RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
-            RenderCommand::Clear();
-        }
+        // Update scene
+        m_ActiveScene->OnRender();
 
-        {
-            ZIBEN_PROFILE_SCOPE("Sandbox Render Draw");
+        Renderer2D::EndScene();
 
-            Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-            // Background
-            Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckerBoardTexture, 10.0f);
-
-            Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, m_SquareColor);
-            Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.8f }, { 0.8f, 0.4f, 0.3f, 1.0f });
-            Renderer2D::DrawRotatedQuad({ 0.5f, 0.3f }, { 0.3, 0.3f }, glm::radians(45.0f), { 0.2f, 0.8f, 0.3f, 0.6f });
-            Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.1f }, { 1.0f, 1.0f }, glm::radians(m_SquareAngle), m_CheckerBoardTexture, 20.0f);
-
-            for (int i = -10; i < 10; ++i) {
-                for (int j = -10; j < 10; ++j) {
-                    glm::vec2 position = { static_cast<float>(j) / 2.0f + 0.25f, static_cast<float>(i) / 2.0f + 0.25f };
-                    glm::vec4 color = { static_cast<float>(j + 5) / 10.0f, 0.4f, static_cast<float>(i + 5) / 10.0f, 0.7f };
-                    Renderer2D::DrawQuad(position, { 0.45f, 0.45f }, color);
-                }
-            }
-
-            Renderer2D::DrawQuad({ -2.0f, 2.0f, 0.1f }, { 1.0f, 2.0f }, m_Tree);
-
-            Renderer2D::EndScene();
-            FrameBuffer::Unbind();
-        }
+        FrameBuffer::Unbind();
     }
 
     void EditorLayer::OnImGuiRender() {
@@ -181,7 +159,12 @@ namespace Ziben {
             ImGui::Text("Vertex Count: %d", statistics.QuadCount * 4);
             ImGui::Text("Index Count: %d",  statistics.QuadCount * 6);
 
-            ImGui::ColorEdit4("SquareColor", glm::value_ptr(m_SquareColor));
+            if (m_Square) {
+                ImGui::Separator();
+                ImGui::Text("%s", m_Square.GetComponent<TagComponent>().GetTag().c_str());
+                ImGui::ColorEdit4("SquareColor", glm::value_ptr(m_Square.GetComponent<SpriteRendererComponent>().GetColor()));
+                ImGui::Separator();
+            }
         }
 
         ImGui::End();

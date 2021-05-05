@@ -8,6 +8,8 @@
 #include <Ziben/Renderer/SubTexture2D.hpp>
 #include <Ziben/Renderer/FrameBuffer.hpp>
 #include <Ziben/Window/KeyEvent.hpp>
+#include <Ziben/Scene/Scene.hpp>
+#include <Ziben/Scene/Entity.hpp>
 
 namespace Ziben {
 
@@ -31,8 +33,10 @@ namespace Ziben {
         Ref<Texture2D>               m_CheckerBoardTexture;
         Ref<Texture2D>               m_SpriteSheetTexture;
         Ref<SubTexture2D>            m_Tree;
+        Ref<Scene>                   m_ActiveScene;
 
-        glm::vec4                    m_SquareColor;
+        Entity                       m_Square;
+
         float                        m_SquareAngle;
 
         glm::vec2                    m_ViewportSize;
