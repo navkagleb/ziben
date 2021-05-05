@@ -2,8 +2,6 @@
 
 #include <stb_image.h>
 
-#include "Ziben/System/Log.hpp"
-
 namespace Ziben {
 
     Ref<Texture2D> Texture2D::Create(const std::string& filepath) {

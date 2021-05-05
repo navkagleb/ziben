@@ -1,5 +1,10 @@
 set(TARGET ZibenEngine)
 
+add_subdirectory(External/spdlog)     # logging library
+add_subdirectory(External/glfw)       # glfw library
+add_subdirectory(External/glew-cmake) # glew library
+add_subdirectory(External/glm)        # glm library
+
 # Detect Debug / Release modes
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_definitions(ZIBEN_DEBUG)

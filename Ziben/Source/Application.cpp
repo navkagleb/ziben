@@ -52,24 +52,24 @@ namespace Ziben {
                     for (Layer* layer : *m_LayerStack)
                         layer->OnUpdate(m_TimeStep);
                 }
+
+                ImGuiLayer::Begin();
+
+                if (m_SceneManager->HasActiveScene()) {
+                    m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
+                    m_SceneManager->GetActiveScene()->OnRender();
+                    m_SceneManager->GetActiveScene()->OnImGuiRender();
+                }
+
+                {
+                    ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+                    for (Layer* layer : *m_LayerStack)
+                        layer->OnImGuiRender();
+                }
+
+                ImGuiLayer::End();
             }
-
-            ImGuiLayer::Begin();
-
-            if (m_SceneManager->HasActiveScene()) {
-                m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
-                m_SceneManager->GetActiveScene()->OnRender();
-                m_SceneManager->GetActiveScene()->OnImGuiRender();
-            }
-
-            {
-                ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
-
-                for (Layer* layer : *m_LayerStack)
-                    layer->OnImGuiRender();
-            }
-
-            ImGuiLayer::End();
 
             m_Window->OnUpdate();
         }
@@ -147,7 +147,7 @@ namespace Ziben {
     }
 
     bool Application::OnWindowMinimized(WindowMinimizedEvent& event) {
-        m_IsMinimized = !m_IsMinimized;
+        m_IsMinimized = true;
         return false;
     }
 

@@ -31,6 +31,9 @@ namespace Ziben {
         void Resize(uint32_t width, uint32_t height);
 
     private:
+        static constexpr uint32_t s_MaxFrameBufferSize = 8192;
+
+    private:
         HandleType               m_Handle;
         HandleType               m_ColorAttachment;
         HandleType               m_DepthAttachment;

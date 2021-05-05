@@ -44,6 +44,7 @@ namespace Ziben {
         bool OnWindowResized(WindowResizedEvent& event);
         bool OnWindowMinimized(WindowMinimizedEvent& event);
 
+
     private:
         Scope<Window>       m_Window;
         Scope<SceneManager> m_SceneManager;

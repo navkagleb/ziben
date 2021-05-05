@@ -52,15 +52,8 @@ namespace Ziben {
 
         EventDispatcher dispatcher(event);
 
-        dispatcher.Dispatch<KeyPressedEvent>([&](KeyPressedEvent& event) {
-            auto& window = ZibenEditor::Get().GetWindow();
-
-            if (event.GetKeyCode() == Key::V) {
-                window.SetVerticalSync(!window.IsVerticalSync());
-            }
-
-            return true;
-        });
+        dispatcher.Dispatch<KeyPressedEvent>(ZIBEN_BIND_EVENT_FUNC(OnKeyPressed));
+        dispatcher.Dispatch<WindowMinimizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowMinimized));
     }
 
     void EditorLayer::OnUpdate(const TimeStep& ts) {
@@ -202,23 +195,39 @@ namespace Ziben {
 
             ZibenEditor::Get().BlockImGuiEvents(!m_ViewportIsFocused || !m_ViewportIsHovered);
 
-            ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 
-            if (m_ViewportSize != *(glm::vec2*)&viewportPanelSize) {
-                m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+            if (m_ViewportSize != *(glm::vec2*)&viewportSize && viewportSize.x > 0 && viewportSize.y > 0) {
+                m_ViewportSize = { viewportSize.x, viewportSize.y };
+
                 m_FrameBuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-
                 m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
             }
 
             uintmax_t textureHandle = m_FrameBuffer->GetColorAttachmentHandle();
-            ImGui::Image((void*)textureHandle, viewportPanelSize, ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::Image((void*)textureHandle, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
         }
 
         ImGui::End();
         ImGui::PopStyleVar();
 
         ImGui::End();
+    }
+
+    bool EditorLayer::OnKeyPressed(KeyPressedEvent& event) {
+        if (event.GetKeyCode() == Key::V) {
+            auto& window = ZibenEditor::Get().GetWindow();
+
+            window.SetVerticalSync(!window.IsVerticalSync());
+        }
+
+        return true;
+    }
+
+    bool EditorLayer::OnWindowMinimized(WindowMinimizedEvent& event) {
+        m_ViewportSize = glm::vec2(0.0f);
+
+        return true;
     }
 
 } // namespace Ziben

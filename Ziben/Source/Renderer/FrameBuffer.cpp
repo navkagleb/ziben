@@ -68,7 +68,13 @@ namespace Ziben {
 
         glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
         glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
+        glTexStorage2D(
+            GL_TEXTURE_2D,
+            1,
+            GL_DEPTH24_STENCIL8,
+            static_cast<GLsizei>(m_Specification.Width),
+            static_cast<GLsizei>(m_Specification.Height)
+        );
 //        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr)
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
 
@@ -78,11 +84,15 @@ namespace Ziben {
     }
 
     void FrameBuffer::Resize(uint32_t width, uint32_t height) {
+        if (width == 0 || height == 0 || width > s_MaxFrameBufferSize || height > s_MaxFrameBufferSize) {
+            ZIBEN_WARN("Can't create FrameBuffer with such parameters: {0} {1}", width, height);
+            return;
+        }
+
         m_Specification.Width = width;
         m_Specification.Height = height;
 
         Invalidate();
     }
-
 
 } // namespace Ziben

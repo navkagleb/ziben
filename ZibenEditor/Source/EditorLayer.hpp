@@ -7,6 +7,7 @@
 #include <Ziben/Renderer/Texture.hpp>
 #include <Ziben/Renderer/SubTexture2D.hpp>
 #include <Ziben/Renderer/FrameBuffer.hpp>
+#include <Ziben/Window/KeyEvent.hpp>
 
 namespace Ziben {
 
@@ -19,6 +20,10 @@ namespace Ziben {
         void OnEvent(Event& event) override;
         void OnUpdate(const TimeStep& ts) override;
         void OnImGuiRender() override;
+
+    private:
+        bool OnKeyPressed(KeyPressedEvent& event);
+        bool OnWindowMinimized(WindowMinimizedEvent& event);
 
     private:
         OrthographicCameraController m_CameraController;

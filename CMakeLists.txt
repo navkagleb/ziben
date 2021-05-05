@@ -3,11 +3,6 @@ project(Ziben)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_subdirectory(External/spdlog)     # logging library
-add_subdirectory(External/glfw)       # glfw library
-add_subdirectory(External/glew-cmake) # glew library
-add_subdirectory(External/glm)        # glm library
-
 add_subdirectory(Ziben)               # Ziben GameEngine
 add_subdirectory(ZibenEditor)         # Ziben Editor
 add_subdirectory(Sandbox)             # Subdirectory to test Ziben GameEngine

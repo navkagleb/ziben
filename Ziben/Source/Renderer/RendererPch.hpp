@@ -13,3 +13,4 @@
 #include <cassert>
 
 #include "Ziben/Profiling/ProfileEngine.hpp"
+#include "Ziben/System/Log.hpp"

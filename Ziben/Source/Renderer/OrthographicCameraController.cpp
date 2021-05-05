@@ -78,7 +78,8 @@ namespace Ziben {
     bool OrthographicCameraController::OnWindowResized(WindowResizedEvent& event) {
         ZIBEN_PROFILE_FUNCTION();
 
-        OnResize(static_cast<float>(event.GetWidth()), static_cast<float>(event.GetHeight()));
+        if (event.GetWidth() != 0 && event.GetHeight() != 0)
+            OnResize(static_cast<float>(event.GetWidth()), static_cast<float>(event.GetHeight()));
 
         return false;
     }
