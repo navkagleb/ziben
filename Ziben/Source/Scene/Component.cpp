@@ -25,4 +25,7 @@ namespace Ziben {
         m_HasFixedAspectRatio = hasFixedAspectRatio;
     }
 
+    NativeScriptComponent::NativeScriptComponent()
+        : m_Instance(nullptr) {}
+
 } // namespace Ziben

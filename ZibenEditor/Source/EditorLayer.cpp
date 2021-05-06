@@ -48,6 +48,34 @@ namespace Ziben {
 
         m_ClipSpaceCamera = m_ActiveScene->CreateEntity("ClipSpace Camera");
         m_ClipSpaceCamera.PushComponent<CameraComponent>(false);
+
+        class CameraController : public ScriptableEntity {
+        public:
+            void OnCreate() {
+
+            }
+
+            void OnDestroy() {
+
+            }
+
+            void OnUpdate(const TimeStep& ts) {
+                static float speed = 5.0f;
+
+                auto& transform = (glm::mat4&)GetComponent<TransformComponent>();
+
+                if (Input::IsKeyPressed(Key::A))
+                    transform[3][0] -= speed * (float)ts;
+                if (Input::IsKeyPressed(Key::D))
+                    transform[3][0] += speed * (float)ts;
+                if (Input::IsKeyPressed(Key::S))
+                    transform[3][1] -= speed * (float)ts;
+                if (Input::IsKeyPressed(Key::W))
+                    transform[3][1] += speed * (float)ts;
+            }
+        };
+
+        m_Camera.PushComponent<NativeScriptComponent>().Bind<CameraController>();
     }
 
     void EditorLayer::OnDetach() {
@@ -83,6 +111,8 @@ namespace Ziben {
         // Update
         if (m_ViewportIsFocused)
             m_CameraController.OnUpdate(ts);
+
+        m_ActiveScene->OnUpdate(ts);
 
         // Render
         Renderer2D::ResetStatistics();

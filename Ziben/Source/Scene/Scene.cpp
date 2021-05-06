@@ -12,6 +12,19 @@ namespace Ziben {
         , m_ViewportWidth(0)
         , m_ViewportHeight(0) {}
 
+    void Scene::OnUpdate(const TimeStep& ts) {
+        // Update scripts
+        m_Registry.view<NativeScriptComponent>().each([&](const auto& entity, auto& nativeScriptComponent) {
+            if (!nativeScriptComponent.m_Instance) {
+                nativeScriptComponent.m_InstantiateFunction();
+                nativeScriptComponent.m_Instance->m_Entity = Entity(entity, this);
+                nativeScriptComponent.m_OnCreateFunction(nativeScriptComponent.m_Instance);
+            }
+
+            nativeScriptComponent.m_OnUpdateFunction(nativeScriptComponent.m_Instance, ts);
+        });
+    }
+
     void Scene::OnRender() {
         const Camera*    primaryCamera          = nullptr;
         const glm::mat4* primaryCameraTransform = nullptr;

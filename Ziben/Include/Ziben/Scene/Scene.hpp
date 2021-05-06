@@ -19,7 +19,7 @@ namespace Ziben {
 
     public:
         virtual void OnEvent(Event& event) {}
-        virtual void OnUpdate(const TimeStep& ts) {}
+        virtual void OnUpdate(const TimeStep& ts);
         virtual void OnRender();
         virtual void OnImGuiRender() {}
         void OnViewportResize(uint32_t width, uint32_t height);

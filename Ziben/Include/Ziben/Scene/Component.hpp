@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "SceneCamera.hpp"
+#include "ScriptableEntity.hpp"
 
 namespace Ziben {
 
@@ -78,4 +79,27 @@ namespace Ziben {
 
     }; // class CameraComponent
 
+    class NativeScriptComponent {
+    public:
+        NativeScriptComponent();
+        ~NativeScriptComponent() = default;
+
+    public:
+        template <typename T>
+        void Bind();
+
+    public:
+        ScriptableEntity*                                       m_Instance;
+
+        std::function<void()>                                   m_InstantiateFunction;
+        std::function<void()>                                   m_DestroyInstanceFunction;
+
+        std::function<void(ScriptableEntity*)>                  m_OnCreateFunction;
+        std::function<void(ScriptableEntity*)>                  m_OnDestroyFunction;
+        std::function<void(ScriptableEntity*, const TimeStep&)> m_OnUpdateFunction;
+
+    }; // class NativeScriptComponent
+
 } // namespace Ziben
+
+#include "Component.inl"
