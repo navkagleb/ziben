@@ -20,8 +20,12 @@ namespace Ziben {
         RenderCommand::SetViewport(0, 0, width, height);
     }
 
-    void Renderer::BeginScene(Camera& camera) {
+    void Renderer::BeginScene(const Camera& camera) {
 //        GetStorage().ViewProjectionMatrix = camera.GetViewProjectionMatri();
+    }
+
+    void Renderer::BeginScene(const OrthographicCamera& camera) {
+        GetStorage().ViewProjectionMatrix = camera.GetViewProjectionMatrix();
     }
 
     void Renderer::EndScene() {

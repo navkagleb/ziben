@@ -8,7 +8,9 @@
 namespace Ziben {
 
     Scene::Scene(std::string name)
-        : m_Name(std::move(name)) {}
+        : m_Name(std::move(name))
+        , m_ViewportWidth(0)
+        , m_ViewportHeight(0) {}
 
     void Scene::OnRender() {
         const Camera*    primaryCamera          = nullptr;
@@ -41,6 +43,20 @@ namespace Ziben {
             }
 
             Renderer2D::EndScene();
+        }
+    }
+
+    void Scene::OnViewportResize(uint32_t width, uint32_t height) {
+        m_ViewportWidth  = width;
+        m_ViewportHeight = height;
+
+        auto view = m_Registry.view<CameraComponent>();
+
+        for (auto& entity : view) {
+            auto& cameraComponent = view.get<CameraComponent>(entity);
+
+            if (!cameraComponent.HasFixedAspectRatio())
+                cameraComponent.GetCamera().SetViewportSize(width, height);
         }
     }
 

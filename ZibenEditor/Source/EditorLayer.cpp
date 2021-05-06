@@ -44,10 +44,10 @@ namespace Ziben {
         m_Square.PushComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.3f, 0.7f, 1.0f));
 
         m_Camera = m_ActiveScene->CreateEntity("Camera");
-        m_Camera.PushComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f), true);
+        m_Camera.PushComponent<CameraComponent>(true);
 
         m_ClipSpaceCamera = m_ActiveScene->CreateEntity("ClipSpace Camera");
-        m_ClipSpaceCamera.PushComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f), false);
+        m_ClipSpaceCamera.PushComponent<CameraComponent>(false);
     }
 
     void EditorLayer::OnDetach() {
@@ -65,6 +65,20 @@ namespace Ziben {
 
     void EditorLayer::OnUpdate(const TimeStep& ts) {
         ZIBEN_PROFILE_FUNCTION();
+
+        // Resize
+        if (auto specification = m_FrameBuffer->GetSpecification();
+            m_ViewportSize.x > 0 &&
+            m_ViewportSize.y > 0 && (
+                specification.Width  != m_ViewportSize.x ||
+                specification.Height != m_ViewportSize.y
+            ))
+        {
+            m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
+            m_CameraController.OnResize(static_cast<float>(m_ViewportSize.x), static_cast<float>(m_ViewportSize.y));
+
+            m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+        }
 
         // Update
         if (m_ViewportIsFocused)
@@ -171,6 +185,15 @@ namespace Ziben {
                 m_Camera.GetComponent<CameraComponent>().SetPrimary(!m_IsClipSpaceCamera);
                 m_ClipSpaceCamera.GetComponent<CameraComponent>().SetPrimary(m_IsClipSpaceCamera);
             }
+
+            {
+                auto& camera           = m_ClipSpaceCamera.GetComponent<CameraComponent>().GetCamera();
+                float orthographicSize = camera.GetOrthographicSize();
+
+                if (ImGui::DragFloat("ClipSpaceCamera OrthographicSize", &orthographicSize)) {
+                    camera.SetOrthographicSize(orthographicSize);
+                }
+            }
         }
 
         ImGui::End();
@@ -179,22 +202,15 @@ namespace Ziben {
         ImGui::Begin("Viewport");
 
         {
+            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+
             m_ViewportIsFocused = ImGui::IsWindowFocused();
             m_ViewportIsHovered = ImGui::IsWindowHovered();
+            m_ViewportSize      = { viewportSize.x, viewportSize.y };
 
             ZibenEditor::Get().BlockImGuiEvents(!m_ViewportIsFocused || !m_ViewportIsHovered);
 
-            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-
-            if (m_ViewportSize != *(glm::vec2*)&viewportSize && viewportSize.x > 0 && viewportSize.y > 0) {
-                m_ViewportSize = { viewportSize.x, viewportSize.y };
-
-                m_FrameBuffer->Resize(static_cast<uint32_t>(m_ViewportSize.x), static_cast<uint32_t>(m_ViewportSize.y));
-                m_CameraController.OnResize(m_ViewportSize.x, m_ViewportSize.y);
-            }
-
-            uintmax_t textureHandle = m_FrameBuffer->GetColorAttachmentHandle();
-            ImGui::Image((void*)textureHandle, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::Image((void*)m_FrameBuffer->GetColorAttachmentHandle(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
         }
 
         ImGui::End();

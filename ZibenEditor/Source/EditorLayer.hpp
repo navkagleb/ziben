@@ -40,7 +40,7 @@ namespace Ziben {
         Entity                       m_ClipSpaceCamera;
         bool                         m_IsClipSpaceCamera;
 
-        glm::vec2                    m_ViewportSize;
+        glm::vec<2, uint32_t>        m_ViewportSize;
         bool                         m_ViewportIsFocused;
         bool                         m_ViewportIsHovered;
 

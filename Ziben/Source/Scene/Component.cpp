@@ -13,12 +13,16 @@ namespace Ziben {
     SpriteRendererComponent::SpriteRendererComponent(const glm::vec4& color)
         : m_Color(color) {}
 
-    CameraComponent::CameraComponent(const glm::mat4& projectionMatrix, bool isPrimary)
-        : m_Camera(projectionMatrix)
-        , m_IsPrimary(isPrimary) {}
+    CameraComponent::CameraComponent(bool isPrimary, bool hasFixedAspectRatio)
+        : m_IsPrimary(isPrimary)
+        , m_HasFixedAspectRatio(hasFixedAspectRatio) {}
 
     void CameraComponent::SetPrimary(bool isPrimary) {
         m_IsPrimary = isPrimary;
+    }
+
+    void CameraComponent::SetFixedAspectRatio(bool hasFixedAspectRatio) {
+        m_HasFixedAspectRatio = hasFixedAspectRatio;
     }
 
 } // namespace Ziben

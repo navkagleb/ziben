@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera.hpp"
+#include "OrthographicCamera.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 
@@ -13,7 +14,8 @@ namespace Ziben {
 
         static void OnWindowResized(int width, int height);
 
-        static void BeginScene(Camera& camera);
+        static void BeginScene(const Camera& camera);
+        static void BeginScene(const OrthographicCamera& camera);
         static void EndScene();
 
         static void Submit(

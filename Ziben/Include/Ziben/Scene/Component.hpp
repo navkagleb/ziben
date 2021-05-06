@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Ziben/Renderer/Camera.hpp"
+#include "SceneCamera.hpp"
 
 namespace Ziben {
 
@@ -59,18 +59,22 @@ namespace Ziben {
 
     class CameraComponent {
     public:
-        explicit CameraComponent(const glm::mat4& projectionMatrix = glm::mat4(1.0f), bool isPrimary = false);
+        explicit CameraComponent(bool isPrimary = false, bool hasFixedAspectRatio = false);
         ~CameraComponent() = default;
 
     public:
-        [[nodiscard]] inline const Camera& GetCamera() const { return m_Camera; }
+        [[nodiscard]] inline SceneCamera& GetCamera() { return m_Camera; }
+        [[nodiscard]] inline const SceneCamera& GetCamera() const { return m_Camera; }
         [[nodiscard]] inline bool IsPrimary() const { return m_IsPrimary; }
+        [[nodiscard]] inline bool HasFixedAspectRatio() const { return m_HasFixedAspectRatio; }
 
         void SetPrimary(bool isPrimary);
+        void SetFixedAspectRatio(bool hasFixedAspectRatio);
 
     private:
-        Camera m_Camera;
-        bool   m_IsPrimary;
+        SceneCamera m_Camera;
+        bool        m_IsPrimary;
+        bool        m_HasFixedAspectRatio;
 
     }; // class CameraComponent
 

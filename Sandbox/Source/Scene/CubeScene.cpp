@@ -165,15 +165,15 @@ void CubeScene::OnUpdate(const Ziben::TimeStep& ts) {
 }
 
 void CubeScene::OnRender() {
-    Ziben::Renderer::BeginScene(m_Camera);
-
-    {
-        Ziben::Shader::Bind(m_Shader);
-        m_Shader->SetUniform("u_Color", m_Color);
-        Ziben::Renderer::Submit(m_Shader, m_VertexArray);
-    }
-
-    Ziben::Renderer::EndScene();
+//    Ziben::Renderer::BeginScene(m_Camera);
+//
+//    {
+//        Ziben::Shader::Bind(m_Shader);
+//        m_Shader->SetUniform("u_Color", m_Color);
+//        Ziben::Renderer::Submit(m_Shader, m_VertexArray);
+//    }
+//
+//    Ziben::Renderer::EndScene();
 }
 
 void CubeScene::OnImGuiRender() {
