@@ -2,12 +2,12 @@ namespace Ziben {
 
     template <typename T>
     void NativeScriptComponent::Bind() {
-        m_InstantiateFunction     = [&] { m_Instance = new T(); };
-        m_DestroyInstanceFunction = [&] { delete (T*)m_Instance; };
+        m_InstantiateScript = [] { return static_cast<ScriptableEntity*>(new T()); };
 
-        m_OnCreateFunction  = [](ScriptableEntity* instance) { return ((T*)instance)->OnCreate(); };
-        m_OnDestroyFunction = [](ScriptableEntity* instance) { return ((T*)instance)->OnDestroy(); };
-        m_OnUpdateFunction  = [](ScriptableEntity* instance, const TimeStep& ts) { return ((T*)instance)->OnUpdate(ts); };
+        m_DestroyScript = [](NativeScriptComponent* component) {
+            delete component->m_Instance;
+            component->m_Instance = nullptr;
+        };
     }
 
 } // namespace Ziben

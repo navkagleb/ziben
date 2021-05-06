@@ -20,6 +20,11 @@ namespace Ziben {
         [[nodiscard]] inline const Component& GetComponent() const { return m_Entity.GetComponent<Component>(); }
 
     protected:
+        virtual void OnCreate() {}
+        virtual void OnDestroy() {}
+        virtual void OnUpdate(const TimeStep& ts) {}
+
+    protected:
 
     private:
         Entity m_Entity;

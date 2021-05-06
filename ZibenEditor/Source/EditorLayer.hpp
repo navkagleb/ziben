@@ -1,15 +1,15 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include <Ziben/Scene/Layer.hpp>
-#include <Ziben/Renderer/OrthographicCameraController.hpp>
-#include <Ziben/Renderer/Shader.hpp>
-#include <Ziben/Renderer/VertexArray.hpp>
-#include <Ziben/Renderer/Texture.hpp>
-#include <Ziben/Renderer/SubTexture2D.hpp>
 #include <Ziben/Renderer/FrameBuffer.hpp>
 #include <Ziben/Window/KeyEvent.hpp>
+#include <Ziben/Window/WindowEvent.hpp>
 #include <Ziben/Scene/Scene.hpp>
 #include <Ziben/Scene/Entity.hpp>
+
+#include "Panels/SceneHierarchyPanel.hpp"
 
 namespace Ziben {
 
@@ -28,11 +28,7 @@ namespace Ziben {
         bool OnWindowMinimized(WindowMinimizedEvent& event);
 
     private:
-        OrthographicCameraController m_CameraController;
         Ref<FrameBuffer>             m_FrameBuffer;
-        Ref<Texture2D>               m_CheckerBoardTexture;
-        Ref<Texture2D>               m_SpriteSheetTexture;
-        Ref<SubTexture2D>            m_Tree;
         Ref<Scene>                   m_ActiveScene;
 
         Entity                       m_Square;
@@ -43,6 +39,8 @@ namespace Ziben {
         glm::vec<2, uint32_t>        m_ViewportSize;
         bool                         m_ViewportIsFocused;
         bool                         m_ViewportIsHovered;
+
+        SceneHierarchyPanel          m_SceneHierarchyPanel;
 
     }; // class EditorLayer
 

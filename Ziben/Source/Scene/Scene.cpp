@@ -1,8 +1,8 @@
 #include "Scene.hpp"
 
 #include "Entity.hpp"
-#include "Component.hpp"
 
+#include "Component.hpp"
 #include "Ziben/Renderer/Renderer2D.hpp"
 
 namespace Ziben {
@@ -14,14 +14,14 @@ namespace Ziben {
 
     void Scene::OnUpdate(const TimeStep& ts) {
         // Update scripts
-        m_Registry.view<NativeScriptComponent>().each([&](const auto& entity, auto& nativeScriptComponent) {
-            if (!nativeScriptComponent.m_Instance) {
-                nativeScriptComponent.m_InstantiateFunction();
-                nativeScriptComponent.m_Instance->m_Entity = Entity(entity, this);
-                nativeScriptComponent.m_OnCreateFunction(nativeScriptComponent.m_Instance);
+        m_Registry.view<NativeScriptComponent>().each([&](const auto& entity, auto& nsc) {
+            if (!nsc.m_Instance) {
+                nsc.m_Instance = nsc.m_InstantiateScript();
+                nsc.m_Instance->m_Entity = Entity(entity, this);
+                nsc.m_Instance->OnCreate();
             }
 
-            nativeScriptComponent.m_OnUpdateFunction(nativeScriptComponent.m_Instance, ts);
+            nsc.m_Instance->OnUpdate(ts);
         });
     }
 

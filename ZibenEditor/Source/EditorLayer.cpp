@@ -16,7 +16,6 @@ namespace Ziben {
 
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
-        , m_CameraController(1280.0f / 720.0f)
         , m_IsClipSpaceCamera(false)
         , m_ViewportSize(0.0f)
         , m_ViewportIsFocused(false)
@@ -31,13 +30,7 @@ namespace Ziben {
         specification.Width  = 1280;
         specification.Height = 720;
 
-        m_FrameBuffer                = FrameBuffer::Create(specification);
-
-        // Init Texture
-        m_CheckerBoardTexture        = Texture2D::Create("Assets/Textures/CheckerBoard.png");
-        m_SpriteSheetTexture         = Texture2D::Create("Assets/Textures/SpriteSheet.png");
-        m_Tree                       = SubTexture2D::CreateFromCoords(m_SpriteSheetTexture, { 0, 1 }, { 128, 128 }, { 1, 2 });
-
+        m_FrameBuffer = FrameBuffer::Create(specification);
         m_ActiveScene = CreateRef<Scene>("ActiveScene");
 
         m_Square = m_ActiveScene->CreateEntity("Square");
@@ -51,15 +44,15 @@ namespace Ziben {
 
         class CameraController : public ScriptableEntity {
         public:
-            void OnCreate() {
+            void OnCreate() override {
 
             }
 
-            void OnDestroy() {
+            void OnDestroy() override {
 
             }
 
-            void OnUpdate(const TimeStep& ts) {
+            void OnUpdate(const TimeStep& ts) override {
                 static float speed = 5.0f;
 
                 auto& transform = (glm::mat4&)GetComponent<TransformComponent>();
@@ -83,8 +76,6 @@ namespace Ziben {
     }
 
     void EditorLayer::OnEvent(Event& event) {
-        m_CameraController.OnEvent(event);
-
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<KeyPressedEvent>(ZIBEN_BIND_EVENT_FUNC(OnKeyPressed));
@@ -103,14 +94,9 @@ namespace Ziben {
             ))
         {
             m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-            m_CameraController.OnResize(static_cast<float>(m_ViewportSize.x), static_cast<float>(m_ViewportSize.y));
 
             m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         }
-
-        // Update
-        if (m_ViewportIsFocused)
-            m_CameraController.OnUpdate(ts);
 
         m_ActiveScene->OnUpdate(ts);
 
@@ -123,6 +109,8 @@ namespace Ziben {
         m_ActiveScene->OnRender();
 
         FrameBuffer::Unbind();
+
+        m_SceneHierarchyPanel.SetScene(m_ActiveScene);
     }
 
     void EditorLayer::OnImGuiRender() {
@@ -190,6 +178,8 @@ namespace Ziben {
 
             ImGui::EndMenuBar();
         }
+
+        m_SceneHierarchyPanel.OnImGuiRender();
 
         ImGui::Begin("Settings");
 

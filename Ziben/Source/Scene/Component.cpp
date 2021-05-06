@@ -26,6 +26,8 @@ namespace Ziben {
     }
 
     NativeScriptComponent::NativeScriptComponent()
-        : m_Instance(nullptr) {}
+        : m_Instance(nullptr)
+        , m_InstantiateScript(nullptr)
+        , m_DestroyScript(nullptr) {}
 
 } // namespace Ziben

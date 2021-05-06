@@ -30,7 +30,11 @@ namespace Ziben {
         void PopComponent();
 
     public:
-        explicit operator bool() const { return m_Handle != entt::null; }
+        explicit inline operator bool() const { return m_Handle != entt::null; }
+        explicit inline operator uint32_t() const { return static_cast<uint32_t>(m_Handle); }
+
+        bool operator !=(const Entity& other) const;
+        bool operator ==(const Entity& other) const;
 
     private:
         entt::entity m_Handle;

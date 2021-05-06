@@ -74,7 +74,7 @@ namespace Ziben {
         Shader::Bind(GetData().TextureShader);
         GetData().TextureShader->SetUniform(
             "u_ViewProjectionMatrix",
-            camera.GetProjectionMatrix() * glm::inverse(transform)
+            camera.GetProjectionMatrix() * transform
         );
 
         GetData().QuadIndexCount          = 0;

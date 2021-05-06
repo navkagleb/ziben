@@ -89,14 +89,13 @@ namespace Ziben {
         void Bind();
 
     public:
-        ScriptableEntity*                                       m_Instance;
+        using InstantiateScript = ScriptableEntity*(*)();
+        using DestroyScript     = void(*)(NativeScriptComponent*);
 
-        std::function<void()>                                   m_InstantiateFunction;
-        std::function<void()>                                   m_DestroyInstanceFunction;
-
-        std::function<void(ScriptableEntity*)>                  m_OnCreateFunction;
-        std::function<void(ScriptableEntity*)>                  m_OnDestroyFunction;
-        std::function<void(ScriptableEntity*, const TimeStep&)> m_OnUpdateFunction;
+    public:
+        ScriptableEntity*     m_Instance;
+        InstantiateScript     m_InstantiateScript;
+        DestroyScript         m_DestroyScript;
 
     }; // class NativeScriptComponent
 

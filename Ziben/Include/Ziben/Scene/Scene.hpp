@@ -12,6 +12,7 @@ namespace Ziben {
     class Scene {
     public:
         friend class Entity;
+        friend class SceneHierarchyPanel;
 
     public:
         explicit Scene(std::string name);
