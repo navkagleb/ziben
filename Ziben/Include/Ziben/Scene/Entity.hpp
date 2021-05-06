@@ -36,6 +36,9 @@ namespace Ziben {
         bool operator !=(const Entity& other) const;
         bool operator ==(const Entity& other) const;
 
+    public:
+        static Entity Null;
+
     private:
         entt::entity m_Handle;
         Scene*       m_Scene;

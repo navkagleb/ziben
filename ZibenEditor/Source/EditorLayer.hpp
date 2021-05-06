@@ -32,6 +32,7 @@ namespace Ziben {
         Ref<Scene>                   m_ActiveScene;
 
         Entity                       m_Square;
+        Entity                       m_Rect;
         Entity                       m_Camera;
         Entity                       m_ClipSpaceCamera;
         bool                         m_IsClipSpaceCamera;

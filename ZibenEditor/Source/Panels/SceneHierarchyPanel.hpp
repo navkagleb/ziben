@@ -18,6 +18,7 @@ namespace Ziben {
 
     private:
        void DrawEntityNode(const Entity& entity);
+       void DrawComponents();
 
     private:
         Ref<Scene> m_Scene;

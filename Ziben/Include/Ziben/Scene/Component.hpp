@@ -16,6 +16,7 @@ namespace Ziben {
         [[nodiscard]] inline const std::string& GetTag() const { return m_Tag; }
 
     public:
+        inline explicit operator std::string& () { return m_Tag; }
         inline explicit operator const std::string& () const { return m_Tag; }
 
     private:

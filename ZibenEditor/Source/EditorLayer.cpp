@@ -36,6 +36,9 @@ namespace Ziben {
         m_Square = m_ActiveScene->CreateEntity("Square");
         m_Square.PushComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.3f, 0.7f, 1.0f));
 
+        m_Rect = m_ActiveScene->CreateEntity("Rect");
+        m_Rect.PushComponent<SpriteRendererComponent>(glm::vec4(0.3f, 0.8f, 0.4f, 1.0f));
+
         m_Camera = m_ActiveScene->CreateEntity("Camera");
         m_Camera.PushComponent<CameraComponent>(true);
 
@@ -204,15 +207,6 @@ namespace Ziben {
             if (ImGui::Checkbox("ClipSpace Camera", &m_IsClipSpaceCamera)) {
                 m_Camera.GetComponent<CameraComponent>().SetPrimary(!m_IsClipSpaceCamera);
                 m_ClipSpaceCamera.GetComponent<CameraComponent>().SetPrimary(m_IsClipSpaceCamera);
-            }
-
-            {
-                auto& camera           = m_ClipSpaceCamera.GetComponent<CameraComponent>().GetCamera();
-                float orthographicSize = camera.GetOrthographicSize();
-
-                if (ImGui::DragFloat("ClipSpaceCamera OrthographicSize", &orthographicSize)) {
-                    camera.SetOrthographicSize(orthographicSize);
-                }
             }
         }
 

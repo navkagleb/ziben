@@ -1,7 +1,5 @@
 #include "Component.hpp"
 
-#include <utility>
-
 namespace Ziben {
 
     TagComponent::TagComponent(std::string tag)

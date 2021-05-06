@@ -5,25 +5,55 @@
 namespace Ziben {
 
     SceneCamera::SceneCamera()
-        : m_OrthographicSize(10.0f)
-        , m_OrthographicNear(-1.0f)
-        , m_OrthographicFar(1.0f)
+        : m_ProjectionType(ProjectionType::Orthographic)
         , m_AspectRatio(0.0f) {
 
         RecalculateProjection();
     }
 
-    void SceneCamera::SetOrthographicSize(float size) {
-        m_OrthographicSize = size;
-
+    void SceneCamera::SetProjectionType(ProjectionType projectionType) {
+        m_ProjectionType = projectionType;
         RecalculateProjection();
     }
 
-    void SceneCamera::SetOrthographic(float size, float nearClip, float farClip) {
-        m_OrthographicSize = size;
-        m_OrthographicNear = nearClip;
-        m_OrthographicFar  = farClip;
+    void SceneCamera::SetPerspectiveFov(float fov) {
+        m_PerspectiveProps.Fov = fov;
+    }
 
+    void SceneCamera::SetPerspectiveNear(float near) {
+        m_PerspectiveProps.Near = near;
+        RecalculateProjection();
+    }
+
+    void SceneCamera::SetPerspectiveFar(float far) {
+        m_OrthographicProps.Far = far;
+        RecalculateProjection();
+    }
+
+    void SceneCamera::SetPerspective(const PerspectiveProps& props) {
+        m_ProjectionType   = ProjectionType::Perspective;
+        m_PerspectiveProps = props;
+        RecalculateProjection();
+    }
+
+    void SceneCamera::SetOrthographicSize(float size) {
+        m_OrthographicProps.Size = size;
+        RecalculateProjection();
+    }
+
+    void SceneCamera::SetOrthographicNear(float near) {
+        m_OrthographicProps.Near = near;
+        RecalculateProjection();
+    }
+
+    void SceneCamera::SetOrthographicFar(float far) {
+        m_OrthographicProps.Far = far;
+        RecalculateProjection();
+    }
+
+    void SceneCamera::SetOrthographic(const OrthographicProps& props) {
+        m_ProjectionType    = ProjectionType::Orthographic;
+        m_OrthographicProps = props;
         RecalculateProjection();
     }
 
@@ -34,19 +64,36 @@ namespace Ziben {
     }
 
     void SceneCamera::RecalculateProjection() {
-        float orthographicLeft   = -m_OrthographicSize * m_AspectRatio * 0.5f;
-        float orthographicRight  =  m_OrthographicSize * m_AspectRatio * 0.5f;
-        float orthographicBottom = -m_OrthographicSize * 0.5f;
-        float orthographicTop    =  m_OrthographicSize * 0.5f;
+        switch (m_ProjectionType) {
+            case ProjectionType::Perspective: {
+                m_ProjectionMatrix = glm::perspective(
+                    m_PerspectiveProps.Fov,
+                    m_AspectRatio,
+                    m_PerspectiveProps.Near,
+                    m_PerspectiveProps.Far
+                );
 
-        m_ProjectionMatrix = glm::ortho(
-            orthographicLeft,
-            orthographicRight,
-            orthographicBottom,
-            orthographicTop,
-            m_OrthographicNear,
-            m_OrthographicFar
-        );
+                break;
+            }
+
+            case ProjectionType::Orthographic: {
+                float orthographicLeft   = -m_OrthographicProps.Size * m_AspectRatio * 0.5f;
+                float orthographicRight  =  m_OrthographicProps.Size * m_AspectRatio * 0.5f;
+                float orthographicBottom = -m_OrthographicProps.Size * 0.5f;
+                float orthographicTop    =  m_OrthographicProps.Size * 0.5f;
+
+                m_ProjectionMatrix = glm::ortho(
+                    orthographicLeft,
+                    orthographicRight,
+                    orthographicBottom,
+                    orthographicTop,
+                    m_OrthographicProps.Near,
+                    m_OrthographicProps.Far
+                );
+
+                break;
+            }
+        }
     }
 
 } // namespace Ziben
