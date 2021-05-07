@@ -1,6 +1,7 @@
 set(TARGET ZibenEngine)
 
 add_subdirectory(External/entt)       # ecs library
+add_subdirectory(External/freetype)   # freetype library
 add_subdirectory(External/glew-cmake) # glew library
 add_subdirectory(External/glfw)       # glfw library
 add_subdirectory(External/glm)        # glm library

@@ -6,6 +6,11 @@
 
 namespace Ziben {
 
+    template <typename Component>
+    void Scene::OnComponentPushed(entt::registry& registry, entt::entity handle) {
+        assert(false);
+    }
+
     template <>
     void Scene::OnComponentPushed<CameraComponent>(entt::registry& registry, entt::entity handle) {
         registry.get<CameraComponent>(handle).GetCamera().SetViewportSize(m_ViewportWidth, m_ViewportHeight);

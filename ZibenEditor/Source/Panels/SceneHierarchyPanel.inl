@@ -1,13 +1,13 @@
 namespace Ziben {
-
-    template <typename Component, typename Function>
-    void SceneHierarchyPanel::DrawComponent(const char* name, const Function& function) {
-        constexpr auto  treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen;
-        const     auto* id            = reinterpret_cast<void*>(typeid(Component).hash_code());
+ 
 
         if (bool isDeleted = false; m_SelectedEntity.HasComponent<Component>()) {
+            auto& component = m_SelectedEntity.GetComponent<Component>();
+
+            ImGui::Separator();
+
             if (ImGui::TreeNodeEx(id, treeNodeFlags, name)) {
-                if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+                if (canBeDeleted && ImGui::IsItemClicked(ImGuiMouseButton_Right))
                     ImGui::OpenPopup("ComponentSettings");
 
                 if (ImGui::BeginPopup("ComponentSettings")) {
@@ -17,7 +17,7 @@ namespace Ziben {
                     ImGui::EndPopup();
                 }
 
-                function();
+                function(component);
 
                 ImGui::TreePop();
             }

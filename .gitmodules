@@ -19,3 +19,6 @@
 [submodule "Ziben/External/entt"]
 	path = Ziben/External/entt
 	url = https://github.com/skypjack/entt
+[submodule "Ziben/External/freetype"]
+	path = Ziben/External/freetype
+	url = https://github.com/freetype/freetype

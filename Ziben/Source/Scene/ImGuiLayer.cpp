@@ -34,6 +34,11 @@ namespace Ziben {
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
+        ImFontConfig config;
+        config.OversampleH = 3;
+
+        io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Karla-Regular.ttf", 20.0f, &config);
+
 //        ImGui::StyleColorsDark();
         ImGui::StyleColorsClassic();
 
@@ -50,20 +55,6 @@ namespace Ziben {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
-    }
-
-    void ImGuiLayer::OnImGuiRender() {
-        ImGui::Begin("FPS");
-
-        {
-            ImGui::Text(
-                "Application average %.3f ms/frame (%.1f FPS)",
-                1000.0f / ImGui::GetIO().Framerate,
-                ImGui::GetIO().Framerate
-            );
-        }
-
-        ImGui::End();
     }
 
     void ImGuiLayer::Begin() {

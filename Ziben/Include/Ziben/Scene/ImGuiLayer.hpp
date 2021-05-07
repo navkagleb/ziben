@@ -1,5 +1,7 @@
 #pragma once
 
+#include <imgui.h>
+
 #include "Layer.hpp"
 
 namespace Ziben {
@@ -12,7 +14,6 @@ namespace Ziben {
         void OnEvent(Event& event) override;
         void OnAttach() override;
         void OnDetach() override;
-        void OnImGuiRender() override;
 
         static void Begin();
         static void End();

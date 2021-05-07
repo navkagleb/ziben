@@ -8,6 +8,10 @@ namespace Ziben {
     TagComponent::TagComponent(std::string tag)
         : m_Tag(std::move(tag)) {}
 
+    void TagComponent::SetTag(const std::string& tag) {
+        m_Tag = tag;
+    }
+
     TransformComponent::TransformComponent(const glm::vec3& translation)
         : m_Translation(translation)
         , m_Rotation(0.0f)

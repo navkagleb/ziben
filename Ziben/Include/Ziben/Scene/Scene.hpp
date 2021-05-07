@@ -40,9 +40,4 @@ namespace Ziben {
 
     }; // class Scene
 
-    template <typename Component>
-    void Scene::OnComponentPushed(entt::registry& registry, entt::entity handle) {
-        assert(false);
-    }
-
 } // namespace Ziben

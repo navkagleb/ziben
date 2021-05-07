@@ -23,7 +23,7 @@ namespace Ziben {
        void DrawComponents();
 
         template <typename Component, typename Function>
-        void DrawComponent(const char* name, const Function& function);
+        void DrawComponent(const char* name, bool canBeDeleted, const Function& function);
 
     private:
         Ref<Scene> m_Scene;

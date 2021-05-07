@@ -1,5 +1,7 @@
 set(TARGET ZibenScene)
 
+add_compile_definitions(IMGUI_ENABLE_FREETYPE)
+
 file(GLOB HEADER_FILES
     ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Scene/*.hpp
     ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Scene/*.inl
@@ -11,6 +13,7 @@ file(GLOB SOURCE_FILES
 
     # ImGui
     ${PROJECT_SOURCE_DIR}/Ziben/External/imgui/*.cpp
+    ${PROJECT_SOURCE_DIR}/Ziben/External/imgui/misc/freetype/*.cpp
 )
 
 add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
@@ -26,7 +29,7 @@ target_include_directories(${TARGET}
 
 target_link_libraries(${TARGET}
     PUBLIC
-        ZibenRenderer EnTT::EnTT
+        ZibenRenderer EnTT::EnTT freetype
     PRIVATE
         -loleaut32 -limm32 -lversion
 )

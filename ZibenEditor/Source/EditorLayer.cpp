@@ -39,6 +39,11 @@ namespace Ziben {
         m_Rect = m_ActiveScene->CreateEntity("Rect");
         m_Rect.PushComponent<SpriteRendererComponent>(glm::vec4(0.3f, 0.8f, 0.4f, 1.0f));
 
+        auto& rectTransformComponent = m_Rect.GetComponent<TransformComponent>();
+
+        rectTransformComponent.SetX(1.5f);
+        rectTransformComponent.SetScaleY(3.0f);
+
         m_Camera = m_ActiveScene->CreateEntity("Camera");
         m_Camera.PushComponent<CameraComponent>(true);
 
@@ -158,10 +163,17 @@ namespace Ziben {
 
         // DockSpace
         ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
+
+        float windowMinSizeX = style.WindowMinSize.x;
+        style.WindowMinSize.x = 370.0f;
+
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
+
+        style.WindowMinSize.x = windowMinSizeX;
 
         if (ImGui::BeginMenuBar()) {
             if (ImGui::BeginMenu("File")) {
@@ -187,12 +199,16 @@ namespace Ziben {
             ImGui::Text("Vertex Count: %d", statistics.QuadCount * 4);
             ImGui::Text("Index Count: %d",  statistics.QuadCount * 6);
 
-            {
-                auto& window = ZibenEditor::Get().GetWindow();
+            ImGui::Separator();
+            ImGui::Text("Application");
 
-                if (bool isVerticalSync = window.IsVerticalSync(); ImGui::Checkbox("IsVerticalSync", &isVerticalSync))
-                    ZibenEditor::Get().GetWindow().SetVerticalSync(isVerticalSync);
-            }
+            auto& window = ZibenEditor::Get().GetWindow();
+
+            if (bool isVerticalSync = window.IsVerticalSync(); ImGui::Checkbox("IsVerticalSync", &isVerticalSync))
+                ZibenEditor::Get().GetWindow().SetVerticalSync(isVerticalSync);
+
+            ImGui::Text("FrameTime: %0.3f", 1000.0f / ImGui::GetIO().Framerate);
+            ImGui::Text("FrameRate: %0.1f", ImGui::GetIO().Framerate);
         }
 
         ImGui::End();

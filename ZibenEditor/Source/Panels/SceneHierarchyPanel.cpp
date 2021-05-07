@@ -45,23 +45,6 @@ namespace Ziben {
         {
             if (m_SelectedEntity) {
                 DrawComponents();
-
-                if (ImGui::Button("Add Component"))
-                    ImGui::OpenPopup("AddComponent");
-
-                if (ImGui::BeginPopup("AddComponent")) {
-                    if (ImGui::MenuItem("Camera")) {
-                        m_SelectedEntity.PushComponent<CameraComponent>();
-                        ImGui::CloseCurrentPopup();
-                    }
-
-                    if (ImGui::MenuItem("Sprite Renderer")) {
-                        m_SelectedEntity.PushComponent<SpriteRendererComponent>();
-                        ImGui::CloseCurrentPopup();
-                    }
-
-                    ImGui::EndPopup();
-                }
             }
         }
 
@@ -72,6 +55,8 @@ namespace Ziben {
         auto& tag = entity.GetComponent<TagComponent>().GetTag();
 
         ImGuiTreeNodeFlags flags = (m_SelectedEntity == entity ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+
+        flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
         if (ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, "%s", tag.c_str())) {
             ImGui::Text("Fuck this shit");
@@ -99,38 +84,62 @@ namespace Ziben {
     }
 
     void SceneHierarchyPanel::DrawComponents() {
-        DrawComponent<TagComponent>("TagComponent", [&] {
-            auto& tag = (std::string&)m_SelectedEntity.GetComponent<TagComponent>();
+        {
+            auto& component = m_SelectedEntity.GetComponent<TagComponent>();
+
+            const auto& tag = component.GetTag();
 
             char buffer[256] = { 0 };
             strcpy_s(buffer, sizeof(buffer), tag.c_str());
 
-            if (ImGui::InputText("Tag", buffer, sizeof(buffer)))
-                tag = buffer;
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 150.0f);
+
+            if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+                component.SetTag(buffer);
+
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+            ImGui::PushItemWidth(-1.0f);
+
+            if (ImGui::Button("Push Component"))
+                ImGui::OpenPopup("PushComponent");
+
+            if (ImGui::BeginPopup("PushComponent")) {
+                if (ImGui::MenuItem("Camera")) {
+                    m_SelectedEntity.PushComponent<CameraComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+
+                if (ImGui::MenuItem("SpriteRendererComponent")) {
+                    m_SelectedEntity.PushComponent<SpriteRendererComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+
+                ImGui::EndPopup();
+            }
+
+            ImGui::PopItemWidth();
+        }
+
+        DrawComponent<TransformComponent>("TransformComponent", false, [&](TransformComponent& component) {
+            if (auto translation = component.GetTranslation(); ImGui::DragFloat3("Translation", glm::value_ptr(translation), 0.1f))
+                component.SetTranslation(translation);
+
+            if (auto rotation = glm::degrees(component.GetRotation()); ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f))
+                component.SetRotation(glm::radians(rotation));
+
+            if (auto scale = component.GetScale(); ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f))
+                component.SetScale(scale);
         });
 
-        DrawComponent<TransformComponent>("TransformComponent", [&]{
-            auto& tc = m_SelectedEntity.GetComponent<TransformComponent>();
-
-            if (auto translation = tc.GetTranslation(); ImGui::DragFloat3("Translation", glm::value_ptr(translation), 0.1f))
-                tc.SetTranslation(translation);
-
-            if (auto rotation = glm::degrees(tc.GetRotation()); ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f))
-                tc.SetRotation(glm::radians(rotation));
-
-            if (auto scale = tc.GetScale(); ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f))
-                tc.SetScale(scale);
-        });
-
-        DrawComponent<CameraComponent>("CameraComponent", [&] {
-            auto& cameraComponent = m_SelectedEntity.GetComponent<CameraComponent>();
-            auto& camera          = cameraComponent.GetCamera();
+        DrawComponent<CameraComponent>("CameraComponent", true, [&](CameraComponent& component) {
+            auto& camera = component.GetCamera();
 
             {
-                bool isPrimary = cameraComponent.IsPrimary();
+                bool isPrimary = component.IsPrimary();
 
                 if (ImGui::Checkbox("Primary", &isPrimary))
-                    cameraComponent.SetPrimary(isPrimary);
+                    component.SetPrimary(isPrimary);
             }
 
             const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
@@ -174,7 +183,7 @@ namespace Ziben {
                     float size                = camera.GetOrthographicProps().Size;
                     float near                = camera.GetOrthographicProps().Near;
                     float far                 = camera.GetOrthographicProps().Far;
-                    bool  hasFixedAspectRatio = cameraComponent.HasFixedAspectRatio();
+                    bool  hasFixedAspectRatio = component.HasFixedAspectRatio();
 
                     if (ImGui::DragFloat("Size", &size, 0.1f))
                         camera.SetOrthographicSize(size);
@@ -186,17 +195,16 @@ namespace Ziben {
                         camera.SetOrthographicFar(far);
 
                     if (ImGui::Checkbox("Fixed Aspect Ratio", &hasFixedAspectRatio))
-                        cameraComponent.SetFixedAspectRatio(hasFixedAspectRatio);
+                        component.SetFixedAspectRatio(hasFixedAspectRatio);
 
                     break;
                 }
             }
         });
 
-        DrawComponent<SpriteRendererComponent>("SpriteRendererComponent", [&] {
-            auto& spriteComponent = m_SelectedEntity.GetComponent<SpriteRendererComponent>();
-
-            ImGui::ColorEdit4("Color", glm::value_ptr(spriteComponent.GetColor()));
+        DrawComponent<SpriteRendererComponent>("SpriteRendererComponent", true, [&](SpriteRendererComponent& component) {
+            if (auto color = component.GetColor(); ImGui::ColorEdit4("Color", glm::value_ptr(color)))
+                component.SetColor(color);
         });
     }
 

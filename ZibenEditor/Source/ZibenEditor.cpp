@@ -5,7 +5,7 @@
 namespace Ziben {
 
     ZibenEditor::ZibenEditor()
-        : Application("ZibenEditor", 1280, 720) {
+        : Application("ZibenEditor", 1600, 900) {
 
         PushLayer(new EditorLayer);
     }
