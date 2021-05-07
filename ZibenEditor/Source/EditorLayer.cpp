@@ -47,27 +47,19 @@ namespace Ziben {
 
         class CameraController : public ScriptableEntity {
         public:
-            void OnCreate() override {
-
-            }
-
-            void OnDestroy() override {
-
-            }
-
             void OnUpdate(const TimeStep& ts) override {
                 static float speed = 5.0f;
 
-                auto& transform = (glm::mat4&)GetComponent<TransformComponent>();
+                auto& tc = GetComponent<TransformComponent>();
 
                 if (Input::IsKeyPressed(Key::A))
-                    transform[3][0] -= speed * (float)ts;
+                    tc.SetX(tc.GetX() - speed * (float)ts);
                 if (Input::IsKeyPressed(Key::D))
-                    transform[3][0] += speed * (float)ts;
+                    tc.SetX(tc.GetX() + speed * (float)ts);
                 if (Input::IsKeyPressed(Key::S))
-                    transform[3][1] -= speed * (float)ts;
+                    tc.SetY(tc.GetY() - speed * (float)ts);
                 if (Input::IsKeyPressed(Key::W))
-                    transform[3][1] += speed * (float)ts;
+                    tc.SetY(tc.GetY() + speed * (float)ts);
             }
         };
 
@@ -106,7 +98,7 @@ namespace Ziben {
         // Render
         Renderer2D::ResetStatistics();
         FrameBuffer::Bind(m_FrameBuffer);
-        RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
+        RenderCommand::SetClearColor({ 0.16f, 0.16f, 0.16f, 0.9f });
         RenderCommand::Clear();
 
         m_ActiveScene->OnRender();
@@ -195,18 +187,11 @@ namespace Ziben {
             ImGui::Text("Vertex Count: %d", statistics.QuadCount * 4);
             ImGui::Text("Index Count: %d",  statistics.QuadCount * 6);
 
-            if (m_Square) {
-                ImGui::Separator();
-                ImGui::Text("%s", m_Square.GetComponent<TagComponent>().GetTag().c_str());
-                ImGui::ColorEdit4("SquareColor", glm::value_ptr(m_Square.GetComponent<SpriteRendererComponent>().GetColor()));
-                ImGui::Separator();
-            }
+            {
+                auto& window = ZibenEditor::Get().GetWindow();
 
-            ImGui::DragFloat3("Camera Position", glm::value_ptr((glm::mat4&)m_Camera.GetComponent<TransformComponent>().GetTransform()[3]));
-
-            if (ImGui::Checkbox("ClipSpace Camera", &m_IsClipSpaceCamera)) {
-                m_Camera.GetComponent<CameraComponent>().SetPrimary(!m_IsClipSpaceCamera);
-                m_ClipSpaceCamera.GetComponent<CameraComponent>().SetPrimary(m_IsClipSpaceCamera);
+                if (bool isVerticalSync = window.IsVerticalSync(); ImGui::Checkbox("IsVerticalSync", &isVerticalSync))
+                    ZibenEditor::Get().GetWindow().SetVerticalSync(isVerticalSync);
             }
         }
 
@@ -224,7 +209,7 @@ namespace Ziben {
 
             ZibenEditor::Get().BlockImGuiEvents(!m_ViewportIsFocused || !m_ViewportIsHovered);
 
-            ImGui::Image((void*)m_FrameBuffer->GetColorAttachmentHandle(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::Image((void*)(uint64_t)m_FrameBuffer->GetColorAttachmentHandle(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
         }
 
         ImGui::End();
@@ -234,11 +219,6 @@ namespace Ziben {
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event) {
-        if (event.GetKeyCode() == Key::V) {
-            auto& window = ZibenEditor::Get().GetWindow();
-
-            window.SetVerticalSync(!window.IsVerticalSync());
-        }
 
         return true;
     }

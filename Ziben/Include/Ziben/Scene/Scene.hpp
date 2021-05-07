@@ -14,6 +14,10 @@ namespace Ziben {
         friend class Entity;
         friend class SceneHierarchyPanel;
 
+    private:
+        template <typename Component>
+        void OnComponentPushed(entt::registry& registry, entt::entity handle);
+
     public:
         explicit Scene(std::string name);
         virtual ~Scene() = default;
@@ -26,6 +30,7 @@ namespace Ziben {
         void OnViewportResize(uint32_t width, uint32_t height);
 
         Entity CreateEntity(const std::string& tag = "EnTT");
+        void DestroyEntity(const Entity& entity);
 
     private:
         std::string    m_Name;
@@ -34,5 +39,10 @@ namespace Ziben {
         entt::registry m_Registry;
 
     }; // class Scene
+
+    template <typename Component>
+    void Scene::OnComponentPushed(entt::registry& registry, entt::entity handle) {
+        assert(false);
+    }
 
 } // namespace Ziben

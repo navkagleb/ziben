@@ -20,12 +20,15 @@ namespace Ziben {
     template <typename Component, typename... Args>
     Component& Entity::PushComponent(Args&&... args) {
         assert(!HasComponent<Component>());
-        return m_Scene->m_Registry.emplace<Component>(m_Handle, std::forward<Args>(args)...);
+        Component& component = m_Scene->m_Registry.emplace<Component>(m_Handle, std::forward<Args>(args)...);
+//        m_Scene->OnComponentPushed<Component>(*this, component);
+
+        return component;
     }
 
     template <typename Component>
     void Entity::PopComponent() {
-        assert(!HasComponent<Component>());
+        assert(HasComponent<Component>());
         m_Scene->m_Registry.remove<Component>(m_Handle);
     }
 

@@ -2,6 +2,7 @@ set(TARGET ZibenEditor)
 
 file(GLOB_RECURSE HEADER_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.inl
 )
 
 file(GLOB_RECURSE SOURCE_FILES

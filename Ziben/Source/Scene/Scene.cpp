@@ -1,16 +1,23 @@
 #include "Scene.hpp"
 
 #include "Entity.hpp"
-
 #include "Component.hpp"
 #include "Ziben/Renderer/Renderer2D.hpp"
 
 namespace Ziben {
 
+    template <>
+    void Scene::OnComponentPushed<CameraComponent>(entt::registry& registry, entt::entity handle) {
+        registry.get<CameraComponent>(handle).GetCamera().SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+    }
+
     Scene::Scene(std::string name)
         : m_Name(std::move(name))
         , m_ViewportWidth(0)
-        , m_ViewportHeight(0) {}
+        , m_ViewportHeight(0) {
+
+        m_Registry.on_construct<CameraComponent>().connect<&Scene::OnComponentPushed<CameraComponent>>(this);
+    }
 
     void Scene::OnUpdate(const TimeStep& ts) {
         // Update scripts
@@ -26,8 +33,8 @@ namespace Ziben {
     }
 
     void Scene::OnRender() {
-        const Camera*    primaryCamera          = nullptr;
-        const glm::mat4* primaryCameraTransform = nullptr;
+        const Camera* primaryCamera          = nullptr;
+        glm::mat4     primaryCameraTransform = glm::mat4(1.0f);
 
         {
             auto view = m_Registry.view<TransformComponent, CameraComponent>();
@@ -37,7 +44,7 @@ namespace Ziben {
 
                 if (camera.IsPrimary()) {
                     primaryCamera          = &camera.GetCamera();
-                    primaryCameraTransform = &transform.GetTransform();
+                    primaryCameraTransform = transform.GetTransform();
 
                     break;
                 }
@@ -45,14 +52,14 @@ namespace Ziben {
         }
 
         if (primaryCamera) {
-            Renderer2D::BeginScene(*primaryCamera, *primaryCameraTransform);
+            Renderer2D::BeginScene(*primaryCamera, primaryCameraTransform);
 
             auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 
             for (const auto& entity : view) {
                 const auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
 
-                Renderer2D::DrawQuad((const glm::mat4&)transform, (const glm::vec4&)sprite);
+                Renderer2D::DrawQuad((glm::mat4)transform, (const glm::vec4&)sprite);
             }
 
             Renderer2D::EndScene();
@@ -80,6 +87,10 @@ namespace Ziben {
         entity.PushComponent<TransformComponent>();
 
         return entity;
+    }
+
+    void Scene::DestroyEntity(const Entity& entity) {
+        m_Registry.destroy((entt::entity)entity);
     }
 
 } // namespace Ziben

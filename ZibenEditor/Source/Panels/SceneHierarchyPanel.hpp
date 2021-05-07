@@ -1,5 +1,7 @@
 #pragma once
 
+#include <imgui.h>
+
 #include <Ziben/Utility/Reference.hpp>
 #include <Ziben/Scene/Scene.hpp>
 #include <Ziben/Scene/Entity.hpp>
@@ -20,6 +22,9 @@ namespace Ziben {
        void DrawEntityNode(const Entity& entity);
        void DrawComponents();
 
+        template <typename Component, typename Function>
+        void DrawComponent(const char* name, const Function& function);
+
     private:
         Ref<Scene> m_Scene;
         Entity     m_SelectedEntity;
@@ -27,3 +32,5 @@ namespace Ziben {
     }; // class SceneHierarchyPanel
 
 } // namespace Ziben
+
+#include "SceneHierarchyPanel.inl"
