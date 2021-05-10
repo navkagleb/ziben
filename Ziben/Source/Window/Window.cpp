@@ -5,7 +5,7 @@
 #include "KeyEvent.hpp"
 #include "WindowEvent.hpp"
 
-#include "Ziben/System/Log.hpp"
+#include "Ziben/System/FileDialogs.hpp"
 
 namespace Ziben {
 
@@ -54,6 +54,9 @@ namespace Ziben {
 
         // Init input
         Input::Init(m_Handle);
+
+        // Init FileDialogs
+        FileDialogs::Init(m_Handle);
 
         // Set glfw callbacks
         glfwSetCursorPosCallback(     m_Handle, MouseMovedCallback     );

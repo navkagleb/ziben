@@ -5,13 +5,6 @@
 
 namespace Ziben {
 
-    TagComponent::TagComponent(std::string tag)
-        : m_Tag(std::move(tag)) {}
-
-    void TagComponent::SetTag(const std::string& tag) {
-        m_Tag = tag;
-    }
-
     TransformComponent::TransformComponent(const glm::vec3& translation)
         : m_Translation(translation)
         , m_Rotation(0.0f)
@@ -71,25 +64,6 @@ namespace Ziben {
 
     void TransformComponent::SetScale(const glm::vec3& scale) {
         m_Scale = scale;
-    }
-
-    SpriteRendererComponent::SpriteRendererComponent(const glm::vec4& color)
-        : m_Color(color) {}
-
-    void SpriteRendererComponent::SetColor(const glm::vec4& color) {
-        m_Color = color;
-    }
-
-    CameraComponent::CameraComponent(bool isPrimary, bool hasFixedAspectRatio)
-        : m_IsPrimary(isPrimary)
-        , m_HasFixedAspectRatio(hasFixedAspectRatio) {}
-
-    void CameraComponent::SetPrimary(bool isPrimary) {
-        m_IsPrimary = isPrimary;
-    }
-
-    void CameraComponent::SetFixedAspectRatio(bool hasFixedAspectRatio) {
-        m_HasFixedAspectRatio = hasFixedAspectRatio;
     }
 
     NativeScriptComponent::NativeScriptComponent()

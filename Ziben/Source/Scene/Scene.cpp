@@ -13,7 +13,7 @@ namespace Ziben {
 
     template <>
     void Scene::OnComponentPushed<CameraComponent>(entt::registry& registry, entt::entity handle) {
-        registry.get<CameraComponent>(handle).GetCamera().SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+        registry.get<CameraComponent>(handle).Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
     }
 
     Scene::Scene(std::string name)
@@ -47,8 +47,8 @@ namespace Ziben {
             for (const auto& entity : view) {
                 const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
-                if (camera.IsPrimary()) {
-                    primaryCamera          = &camera.GetCamera();
+                if (camera.IsPrimary) {
+                    primaryCamera          = &camera.Camera;
                     primaryCameraTransform = transform.GetTransform();
 
                     break;
@@ -80,8 +80,8 @@ namespace Ziben {
         for (auto& entity : view) {
             auto& cameraComponent = view.get<CameraComponent>(entity);
 
-            if (!cameraComponent.HasFixedAspectRatio())
-                cameraComponent.GetCamera().SetViewportSize(width, height);
+            if (!cameraComponent.HasFixedAspectRatio)
+                cameraComponent.Camera.SetViewportSize(width, height);
         }
     }
 

@@ -24,6 +24,9 @@ namespace Ziben {
         [[nodiscard]] const Component& GetComponent() const;
 
         template <typename Component, typename... Args>
+        Component& GetOrPushComponent(Args&&... args);
+
+        template <typename Component, typename... Args>
         Component& PushComponent(Args&&... args);
 
         template <typename Component>

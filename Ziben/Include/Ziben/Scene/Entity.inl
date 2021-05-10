@@ -18,12 +18,14 @@ namespace Ziben {
     }
 
     template <typename Component, typename... Args>
+    Component& Entity::GetOrPushComponent(Args&&... args) {
+        return m_Scene->m_Registry.get_or_emplace<Component>(m_Handle, std::forward<Args>(args)...);
+    }
+
+    template <typename Component, typename... Args>
     Component& Entity::PushComponent(Args&&... args) {
         assert(!HasComponent<Component>());
-        Component& component = m_Scene->m_Registry.emplace<Component>(m_Handle, std::forward<Args>(args)...);
-//        m_Scene->OnComponentPushed<Component>(*this, component);
-
-        return component;
+        return m_Scene->m_Registry.emplace<Component>(m_Handle, std::forward<Args>(args)...);
     }
 
     template <typename Component>

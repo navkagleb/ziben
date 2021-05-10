@@ -15,7 +15,8 @@ namespace Ziben {
     }
 
     void SceneHierarchyPanel::SetScene(const Ref<Scene>& scene) {
-        m_Scene = scene;
+        m_Scene          = scene;
+        m_SelectedEntity = Entity::Null;
     }
 
     void SceneHierarchyPanel::OnImGuiRender() {
@@ -52,7 +53,7 @@ namespace Ziben {
     }
 
     void SceneHierarchyPanel::DrawEntityNode(const Entity& entity) {
-        auto& tag = entity.GetComponent<TagComponent>().GetTag();
+        auto& tag = entity.GetComponent<TagComponent>().Tag;
 
         ImGuiTreeNodeFlags flags = (m_SelectedEntity == entity ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 
@@ -87,7 +88,7 @@ namespace Ziben {
         {
             auto& component = m_SelectedEntity.GetComponent<TagComponent>();
 
-            const auto& tag = component.GetTag();
+            auto& tag = component.Tag;
 
             char buffer[256] = { 0 };
             strcpy_s(buffer, sizeof(buffer), tag.c_str());
@@ -95,7 +96,7 @@ namespace Ziben {
             ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 150.0f);
 
             if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
-                component.SetTag(buffer);
+                tag = buffer;
 
             ImGui::PopItemWidth();
             ImGui::SameLine();
@@ -133,14 +134,9 @@ namespace Ziben {
         });
 
         DrawComponent<CameraComponent>("CameraComponent", true, [&](CameraComponent& component) {
-            auto& camera = component.GetCamera();
+            auto& camera = component.Camera;
 
-            {
-                bool isPrimary = component.IsPrimary();
-
-                if (ImGui::Checkbox("Primary", &isPrimary))
-                    component.SetPrimary(isPrimary);
-            }
+            ImGui::Checkbox("Primary", &component.IsPrimary);
 
             const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
             const char* currentProjectionTypeString = projectionTypeStrings[static_cast<int8_t>(camera.GetProjectionType())];
@@ -183,7 +179,6 @@ namespace Ziben {
                     float size                = camera.GetOrthographicProps().Size;
                     float near                = camera.GetOrthographicProps().Near;
                     float far                 = camera.GetOrthographicProps().Far;
-                    bool  hasFixedAspectRatio = component.HasFixedAspectRatio();
 
                     if (ImGui::DragFloat("Size", &size, 0.1f))
                         camera.SetOrthographicSize(size);
@@ -194,8 +189,7 @@ namespace Ziben {
                     if (ImGui::DragFloat("Far", &far, 0.1f))
                         camera.SetOrthographicFar(far);
 
-                    if (ImGui::Checkbox("Fixed Aspect Ratio", &hasFixedAspectRatio))
-                        component.SetFixedAspectRatio(hasFixedAspectRatio);
+                    ImGui::Checkbox("Fixes Aspect Ratio", &component.HasFixedAspectRatio);
 
                     break;
                 }
@@ -203,8 +197,9 @@ namespace Ziben {
         });
 
         DrawComponent<SpriteRendererComponent>("SpriteRendererComponent", true, [&](SpriteRendererComponent& component) {
-            if (auto color = component.GetColor(); ImGui::ColorEdit4("Color", glm::value_ptr(color)))
-                component.SetColor(color);
+            auto& color = component.Color;
+
+            ImGui::ColorEdit4("Color", glm::value_ptr(color));
         });
     }
 

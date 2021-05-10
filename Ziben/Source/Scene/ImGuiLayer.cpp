@@ -37,7 +37,7 @@ namespace Ziben {
         ImFontConfig config;
         config.OversampleH = 3;
 
-        io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Karla-Regular.ttf", 20.0f, &config);
+        io.FontDefault = io.Fonts->AddFontFromFileTTF("Assets/Fonts/OpenSans-Regular.ttf", 20.0f, &config);
 
 //        ImGui::StyleColorsDark();
         ImGui::StyleColorsClassic();

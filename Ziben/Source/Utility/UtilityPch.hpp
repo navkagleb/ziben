@@ -8,3 +8,5 @@
 #include <random>
 #include <chrono>
 #include <numeric>
+
+#include "PlatformDetection.hpp"

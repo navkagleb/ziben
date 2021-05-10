@@ -17,4 +17,11 @@ add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(${TARGET} PRIVATE ZibenEngine)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_command(TARGET ${TARGET} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/Assets/
+    ${CMAKE_CURRENT_BINARY_DIR}/Assets
+    COMMENT "Copy ZibenEditor/Assets files to build directory" VERBATIM
+)
+
+add_compile_options()

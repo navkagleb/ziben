@@ -7,24 +7,12 @@
 
 namespace Ziben {
 
-    class TagComponent {
-    public:
-        explicit TagComponent(std::string tag = "EnTT");
-        ~TagComponent() = default;
+    struct TagComponent {
+        std::string Tag = "EnTT";
 
-    public:
-        [[nodiscard]] inline const std::string& GetTag() const { return m_Tag; }
-
-        void SetTag(const std::string& tag);
-
-    public:
-        inline explicit operator std::string& () { return m_Tag; }
-        inline explicit operator const std::string& () const { return m_Tag; }
-
-    private:
-        std::string m_Tag;
-
-    }; // class TagComponent
+        inline explicit operator std::string& () { return Tag; }
+        inline explicit operator const std::string& () const { return Tag; }
+    };
 
     class TransformComponent {
     public:
@@ -74,47 +62,19 @@ namespace Ziben {
 
     }; // class TransformComponent
 
-    class SpriteRendererComponent {
+    struct SpriteRendererComponent {
     public:
-        explicit SpriteRendererComponent(const glm::vec4& color = glm::vec4(1.0f));
-        ~SpriteRendererComponent() = default;
+        glm::vec4 Color = glm::vec4(1.0f);
 
-    public:
-        [[nodiscard]] inline glm::vec4& GetColor() { return m_Color; }
-        [[nodiscard]] inline const glm::vec4& GetColor() const { return m_Color; }
+        inline explicit operator glm::vec4& () { return Color; }
+        inline explicit operator const glm::vec4& () const { return Color; }
+    };
 
-        void SetColor(const glm::vec4& color);
-
-    public:
-        inline explicit operator const glm::vec4& () const { return m_Color; }
-
-    private:
-        glm::vec4 m_Color;
-
-    }; // class SpriteRendererComponent
-
-    class CameraComponent {
-    public:
-        explicit CameraComponent(bool isPrimary = false, bool hasFixedAspectRatio = false);
-        ~CameraComponent() = default;
-
-    public:
-        [[nodiscard]] inline SceneCamera& GetCamera() { return m_Camera; }
-        [[nodiscard]] inline const SceneCamera& GetCamera() const { return m_Camera; }
-        [[nodiscard]] inline bool IsPrimary() const { return m_IsPrimary; }
-        [[nodiscard]] inline bool HasFixedAspectRatio() const { return m_HasFixedAspectRatio; }
-
-        void SetPrimary(bool isPrimary);
-        void SetFixedAspectRatio(bool hasFixedAspectRatio);
-
-        void Init() { ZIBEN_WARN("Fuck"); }
-
-    private:
-        SceneCamera m_Camera;
-        bool        m_IsPrimary;
-        bool        m_HasFixedAspectRatio;
-
-    }; // class CameraComponent
+    struct CameraComponent {
+        SceneCamera Camera;
+        bool        IsPrimary           = false;
+        bool        HasFixedAspectRatio = false;
+    };
 
     class NativeScriptComponent {
     public:

@@ -2,13 +2,13 @@
 
 #include <imgui.h>
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include <Ziben/Window/Input.hpp>
 #include <Ziben/Window/EventDispatcher.hpp>
 #include <Ziben/Renderer/RenderCommand.hpp>
 #include <Ziben/Renderer/Renderer2D.hpp>
 #include <Ziben/Scene/Component.hpp>
+#include <Ziben/Scene/SceneSerializer.hpp>
+#include <Ziben/System/FileDialogs.hpp>
 
 #include "ZibenEditor.hpp"
 
@@ -16,7 +16,6 @@ namespace Ziben {
 
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
-        , m_IsClipSpaceCamera(false)
         , m_ViewportSize(0.0f)
         , m_ViewportIsFocused(false)
         , m_ViewportIsHovered(false) {}
@@ -33,6 +32,7 @@ namespace Ziben {
         m_FrameBuffer = FrameBuffer::Create(specification);
         m_ActiveScene = CreateRef<Scene>("ActiveScene");
 
+#if 0
         m_Square = m_ActiveScene->CreateEntity("Square");
         m_Square.PushComponent<SpriteRendererComponent>(glm::vec4(0.2f, 0.3f, 0.7f, 1.0f));
 
@@ -44,11 +44,11 @@ namespace Ziben {
         rectTransformComponent.SetX(1.5f);
         rectTransformComponent.SetScaleY(3.0f);
 
-        m_Camera = m_ActiveScene->CreateEntity("Camera");
-        m_Camera.PushComponent<CameraComponent>(true);
+        m_CameraA = m_ActiveScene->CreateEntity("Camera A");
+        m_CameraA.PushComponent<CameraComponent>().IsPrimary = true;
 
-        m_ClipSpaceCamera = m_ActiveScene->CreateEntity("ClipSpace Camera");
-        m_ClipSpaceCamera.PushComponent<CameraComponent>(false);
+        m_CameraB = m_ActiveScene->CreateEntity("Camera B");
+        m_CameraB.PushComponent<CameraComponent>();
 
         class CameraController : public ScriptableEntity {
         public:
@@ -68,7 +68,10 @@ namespace Ziben {
             }
         };
 
-        m_Camera.PushComponent<NativeScriptComponent>().Bind<CameraController>();
+        m_CameraA.PushComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
+
+        m_SceneHierarchyPanel.SetScene(m_ActiveScene);
     }
 
     void EditorLayer::OnDetach() {
@@ -177,6 +180,15 @@ namespace Ziben {
 
         if (ImGui::BeginMenuBar()) {
             if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("New", "Ctrl+N"))
+                    NewScene();
+
+                if (ImGui::MenuItem("Open...", "Ctrl+O"))
+                    OpenScene();
+
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+                    SaveSceneAs();
+
                 if (ImGui::MenuItem("Exit", ""))
                     ZibenEditor::Get().Close();
 
@@ -225,7 +237,12 @@ namespace Ziben {
 
             ZibenEditor::Get().BlockImGuiEvents(!m_ViewportIsFocused || !m_ViewportIsHovered);
 
-            ImGui::Image((void*)(uint64_t)m_FrameBuffer->GetColorAttachmentHandle(), viewportSize, ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::Image(
+                (void*)(uint64_t)m_FrameBuffer->GetColorAttachmentHandle(),
+                viewportSize,
+                ImVec2(0, 1),
+                ImVec2(1, 0)
+            );
         }
 
         ImGui::End();
@@ -235,6 +252,36 @@ namespace Ziben {
     }
 
     bool EditorLayer::OnKeyPressed(KeyPressedEvent& event) {
+        if (event.GetCount() > 1)
+            return false;
+
+        bool control = Input::IsKeyPressed({ Key::LeftControl, Key::RightControl });
+        bool shift   = Input::IsKeyPressed({ Key::LeftShift, Key::RightShift });
+
+        switch (event.GetKeyCode()) {
+            case Key::N: {
+                if (control)
+                    NewScene();
+
+                break;
+            }
+
+            case Key::O: {
+                if (control)
+                    OpenScene();
+
+                break;
+            }
+
+            case Key::S: {
+                if (control && shift)
+                    SaveSceneAs();
+
+                break;
+            }
+
+            default: break;
+        }
 
         return true;
     }
@@ -243,6 +290,36 @@ namespace Ziben {
         m_ViewportSize = glm::vec2(0.0f);
 
         return true;
+    }
+
+    void EditorLayer::NewScene() {
+        m_ActiveScene = CreateRef<Scene>("New");
+        m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+
+        m_SceneHierarchyPanel.SetScene(m_ActiveScene);
+    }
+
+    void EditorLayer::OpenScene() {
+        std::string filepath = FileDialogs::OpenFile("Ziben Scene (*.ziben)\0*.ziben\0");
+
+        if (!filepath.empty()) {
+            m_ActiveScene = CreateRef<Scene>("New");
+            m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+
+            m_SceneHierarchyPanel.SetScene(m_ActiveScene);
+
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Deserialize(filepath);
+        }
+    }
+
+    void EditorLayer::SaveSceneAs() {
+        std::string filepath = FileDialogs::SaveFile("Ziben Scene (*.ziben)\0*.ziben\0");
+
+        if (!filepath.empty()) {
+            SceneSerializer serializer(m_ActiveScene);
+            serializer.Serialize(filepath);
+        }
     }
 
 } // namespace Ziben

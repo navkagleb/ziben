@@ -27,15 +27,18 @@ namespace Ziben {
         bool OnKeyPressed(KeyPressedEvent& event);
         bool OnWindowMinimized(WindowMinimizedEvent& event);
 
+        void NewScene();
+        void OpenScene();
+        void SaveSceneAs();
+
     private:
         Ref<FrameBuffer>             m_FrameBuffer;
         Ref<Scene>                   m_ActiveScene;
 
         Entity                       m_Square;
         Entity                       m_Rect;
-        Entity                       m_Camera;
-        Entity                       m_ClipSpaceCamera;
-        bool                         m_IsClipSpaceCamera;
+        Entity                       m_CameraA;
+        Entity                       m_CameraB;
 
         glm::vec<2, uint32_t>        m_ViewportSize;
         bool                         m_ViewportIsFocused;

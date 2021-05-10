@@ -6,6 +6,7 @@ add_subdirectory(External/glew-cmake) # glew library
 add_subdirectory(External/glfw)       # glfw library
 add_subdirectory(External/glm)        # glm library
 add_subdirectory(External/spdlog)     # logging library
+add_subdirectory(External/yaml-cpp)   # serialization library
 
 # Detect Debug / Release modes
 if (CMAKE_BUILD_TYPE MATCHES Debug)

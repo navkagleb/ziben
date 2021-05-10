@@ -12,6 +12,7 @@ namespace Ziben {
     class Scene {
     public:
         friend class Entity;
+        friend class SceneSerializer;
         friend class SceneHierarchyPanel;
 
     private:

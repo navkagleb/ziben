@@ -22,3 +22,6 @@
 [submodule "Ziben/External/freetype"]
 	path = Ziben/External/freetype
 	url = https://github.com/freetype/freetype
+[submodule "Ziben/External/yaml-cpp"]
+	path = Ziben/External/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp

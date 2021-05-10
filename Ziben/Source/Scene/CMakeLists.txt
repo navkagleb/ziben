@@ -29,7 +29,7 @@ target_include_directories(${TARGET}
 
 target_link_libraries(${TARGET}
     PUBLIC
-        ZibenRenderer EnTT::EnTT freetype
+        ZibenRenderer EnTT::EnTT freetype yaml-cpp
     PRIVATE
         -loleaut32 -limm32 -lversion
 )
