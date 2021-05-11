@@ -4,6 +4,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include <ImGuizmo.h>
+
 #include "Ziben/Application.hpp"
 
 namespace Ziben {
@@ -63,14 +65,14 @@ namespace Ziben {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGuizmo::BeginFrame();
     }
 
     void ImGuiLayer::End() {
         ZIBEN_PROFILE_FUNCTION();
 
-        ImGuiIO&     io          = ImGui::GetIO();
-        Application& application = Application::Get();
-        Window&      window      = application.GetWindow();
+        ImGuiIO& io     = ImGui::GetIO();
+        Window&  window = Application::Get().GetWindow();
 
         io.DisplaySize = ImVec2(static_cast<float>(window.GetWidth()), static_cast<float>(window.GetHeight()));
 

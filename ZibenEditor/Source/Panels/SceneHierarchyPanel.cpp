@@ -21,34 +21,31 @@ namespace Ziben {
 
     void SceneHierarchyPanel::OnImGuiRender() {
         ImGui::Begin("Scene Hierarchy");
-
         {
-            m_Scene->m_Registry.each([this](const auto& handle) {
-                DrawEntityNode(Entity(handle, m_Scene.get()));
-            });
+            if (m_Scene) {
+                m_Scene->m_Registry.each([this](const auto& handle) {
+                    DrawEntityNode(Entity(handle, m_Scene.get()));
+                });
 
-            if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-                m_SelectedEntity = Entity::Null;
+                if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+                    m_SelectedEntity = Entity::Null;
 
-            // Right-click on blank space
-            if (ImGui::BeginPopupContextWindow(nullptr, ImGuiMouseButton_Right, false)) {
-                if (ImGui::MenuItem("Create Empty Entity"))
-                    m_Scene->CreateEntity("Unnamed");
+                // Right-click on blank space
+                if (ImGui::BeginPopupContextWindow(nullptr, ImGuiMouseButton_Right, false)) {
+                    if (ImGui::MenuItem("Create Empty Entity"))
+                        m_Scene->CreateEntity("Unnamed");
 
-                ImGui::EndPopup();
+                    ImGui::EndPopup();
+                }
             }
         }
-
         ImGui::End();
 
         ImGui::Begin("Properties");
-
         {
-            if (m_SelectedEntity) {
+            if (m_SelectedEntity)
                 DrawComponents();
-            }
         }
-
         ImGui::End();
     }
 

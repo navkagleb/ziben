@@ -15,6 +15,8 @@ namespace Ziben {
         ~SceneHierarchyPanel() = default;
 
     public:
+        [[nodiscard]] inline const Entity& GetSelectedEntity() const { return m_SelectedEntity; }
+
         void SetScene(const Ref<Scene>& scene);
         void OnImGuiRender();
 

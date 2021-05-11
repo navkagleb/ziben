@@ -41,8 +41,10 @@ namespace Ziben {
         Entity                       m_CameraB;
 
         glm::vec<2, uint32_t>        m_ViewportSize;
-        bool                         m_ViewportIsFocused;
-        bool                         m_ViewportIsHovered;
+        bool                         m_IsViewportFocused;
+        bool                         m_IsViewportHovered;
+
+        int                          m_GuizmoType;
 
         SceneHierarchyPanel          m_SceneHierarchyPanel;
 

@@ -26,14 +26,14 @@ namespace Ziben {
 
     void Scene::OnUpdate(const TimeStep& ts) {
         // Update scripts
-        m_Registry.view<NativeScriptComponent>().each([&](const auto& entity, auto& nsc) {
-            if (!nsc.m_Instance) {
-                nsc.m_Instance = nsc.m_InstantiateScript();
-                nsc.m_Instance->m_Entity = Entity(entity, this);
-                nsc.m_Instance->OnCreate();
+        m_Registry.view<NativeScriptComponent>().each([&](entt::entity handle, auto& component) {
+            if (!component.m_Instance) {
+                component.m_Instance = component.m_InstantiateScript();
+                component.m_Instance->m_Entity = Entity(handle, this);
+                component.m_Instance->OnCreate();
             }
 
-            nsc.m_Instance->OnUpdate(ts);
+            component.m_Instance->OnUpdate(ts);
         });
     }
 
@@ -44,8 +44,8 @@ namespace Ziben {
         {
             auto view = m_Registry.view<TransformComponent, CameraComponent>();
 
-            for (const auto& entity : view) {
-                const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+            for (entt::entity handle : view) {
+                const auto& [transform, camera] = view.get<TransformComponent, CameraComponent>(handle);
 
                 if (camera.IsPrimary) {
                     primaryCamera          = &camera.Camera;
@@ -58,15 +58,15 @@ namespace Ziben {
 
         if (primaryCamera) {
             Renderer2D::BeginScene(*primaryCamera, primaryCameraTransform);
+            {
+                auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 
-            auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+                for (entt::entity handle : view) {
+                    const auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(handle);
 
-            for (const auto& entity : view) {
-                const auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(entity);
-
-                Renderer2D::DrawQuad((glm::mat4)transform, (const glm::vec4&)sprite);
+                    Renderer2D::DrawQuad((glm::mat4)transform, (const glm::vec4&)sprite);
+                }
             }
-
             Renderer2D::EndScene();
         }
     }
@@ -75,10 +75,8 @@ namespace Ziben {
         m_ViewportWidth  = width;
         m_ViewportHeight = height;
 
-        auto view = m_Registry.view<CameraComponent>();
-
-        for (auto& entity : view) {
-            auto& cameraComponent = view.get<CameraComponent>(entity);
+        for (auto view = m_Registry.view<CameraComponent>(); entt::entity handle : view) {
+            auto& cameraComponent = view.get<CameraComponent>(handle);
 
             if (!cameraComponent.HasFixedAspectRatio)
                 cameraComponent.Camera.SetViewportSize(width, height);
@@ -96,6 +94,14 @@ namespace Ziben {
 
     void Scene::DestroyEntity(const Entity& entity) {
         m_Registry.destroy((entt::entity)entity);
+    }
+
+    Entity Scene::GetPrimaryCameraEntity() {
+        for (auto view = m_Registry.view<const CameraComponent>(); entt::entity handle : view)
+            if (m_Registry.get<CameraComponent>(handle).IsPrimary)
+                return Entity(handle, this);
+
+        return Entity::Null;
     }
 
 } // namespace Ziben

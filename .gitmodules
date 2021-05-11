@@ -25,3 +25,6 @@
 [submodule "Ziben/External/yaml-cpp"]
 	path = Ziben/External/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "Ziben/External/ImGuizmo"]
+	path = Ziben/External/ImGuizmo
+	url = https://github.com/NavkaGleb/ImGuizmo

@@ -33,6 +33,8 @@ namespace Ziben {
         Entity CreateEntity(const std::string& tag = "EnTT");
         void DestroyEntity(const Entity& entity);
 
+        Entity GetPrimaryCameraEntity();
+
     private:
         std::string    m_Name;
         uint32_t       m_ViewportWidth;

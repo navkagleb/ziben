@@ -66,6 +66,8 @@ namespace Ziben {
 
     void Renderer2D::Shutdown() {
         ZIBEN_PROFILE_FUNCTION();
+
+        delete[] GetData().QuadVertexBufferBase;
     }
 
     void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform) {
@@ -74,7 +76,7 @@ namespace Ziben {
         Shader::Bind(GetData().TextureShader);
         GetData().TextureShader->SetUniform(
             "u_ViewProjectionMatrix",
-            camera.GetProjectionMatrix() * transform
+            camera.GetProjectionMatrix() * glm::inverse(transform)
         );
 
         GetData().QuadIndexCount          = 0;

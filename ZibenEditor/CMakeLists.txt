@@ -11,9 +11,9 @@ file(GLOB_RECURSE SOURCE_FILES
 
 add_compile_definitions(ZIBEN_PROFILE)
 
-include_directories(Source)
-
 add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})
+
+target_include_directories(${TARGET} PRIVATE Source)
 
 target_link_libraries(${TARGET} PRIVATE ZibenEngine)
 

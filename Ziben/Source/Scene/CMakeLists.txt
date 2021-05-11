@@ -14,6 +14,9 @@ file(GLOB SOURCE_FILES
     # ImGui
     ${PROJECT_SOURCE_DIR}/Ziben/External/imgui/*.cpp
     ${PROJECT_SOURCE_DIR}/Ziben/External/imgui/misc/freetype/*.cpp
+
+    #ImGuizmo
+    ${PROJECT_SOURCE_DIR}/Ziben/External/ImGuizmo/ImGuizmo.cpp
 )
 
 add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
@@ -21,6 +24,7 @@ add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
 target_include_directories(${TARGET}
     PUBLIC
         ${PROJECT_SOURCE_DIR}/Ziben/External/imgui
+        ${PROJECT_SOURCE_DIR}/Ziben/External/ImGuizmo
     PRIVATE
         ${PROJECT_SOURCE_DIR}/Ziben/External/imgui/backends
         ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Scene
