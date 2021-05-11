@@ -8,6 +8,7 @@
 namespace Ziben {
 
     class Entity;
+    class EditorCamera;
 
     class Scene {
     public:
@@ -24,10 +25,12 @@ namespace Ziben {
         virtual ~Scene() = default;
 
     public:
-        virtual void OnEvent(Event& event) {}
-        virtual void OnUpdate(const TimeStep& ts);
-        virtual void OnRender();
-        virtual void OnImGuiRender() {}
+        void OnUpdateEditor(const TimeStep& ts, EditorCamera& camera);
+        void OnRenderEditor(EditorCamera& camera);
+
+        void OnUpdateRuntime(const TimeStep& ts);
+        void OnRenderRuntime();
+
         void OnViewportResize(uint32_t width, uint32_t height);
 
         Entity CreateEntity(const std::string& tag = "EnTT");

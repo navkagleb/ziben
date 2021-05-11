@@ -55,11 +55,11 @@ namespace Ziben {
 
                 ImGuiLayer::Begin();
 
-                if (m_SceneManager->HasActiveScene()) {
-                    m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
-                    m_SceneManager->GetActiveScene()->OnRender();
-                    m_SceneManager->GetActiveScene()->OnImGuiRender();
-                }
+//                if (m_SceneManager->HasActiveScene()) {
+//                    m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
+//                    m_SceneManager->GetActiveScene()->OnRender();
+//                    m_SceneManager->GetActiveScene()->OnImGuiRender();
+//                }
 
                 {
                     ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
@@ -120,8 +120,8 @@ namespace Ziben {
         dispatcher.Dispatch<WindowResizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowResized));
         dispatcher.Dispatch<WindowMinimizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowMinimized));
 
-        if (m_SceneManager->HasActiveScene())
-            m_SceneManager->GetActiveScene()->OnEvent(event);
+//        if (m_SceneManager->HasActiveScene())
+//            m_SceneManager->GetActiveScene()->OnEvent(event);
 
         for (auto it = m_LayerStack->ReverseBegin(); it != m_LayerStack->ReverseEnd(); ++it) {
             if (event.IsHandled())

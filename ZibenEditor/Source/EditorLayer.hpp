@@ -8,6 +8,7 @@
 #include <Ziben/Window/WindowEvent.hpp>
 #include <Ziben/Scene/Scene.hpp>
 #include <Ziben/Scene/Entity.hpp>
+#include <Ziben/Renderer/EditorCamera.hpp>
 
 #include "Panels/SceneHierarchyPanel.hpp"
 
@@ -39,6 +40,8 @@ namespace Ziben {
         Entity                       m_Rect;
         Entity                       m_CameraA;
         Entity                       m_CameraB;
+
+        EditorCamera                 m_EditorCamera;
 
         glm::vec<2, uint32_t>        m_ViewportSize;
         bool                         m_IsViewportFocused;

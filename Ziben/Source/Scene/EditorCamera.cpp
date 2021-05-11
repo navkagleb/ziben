@@ -18,6 +18,7 @@ namespace Ziben {
 
     void SceneCamera::SetPerspectiveFov(float fov) {
         m_PerspectiveProps.Fov = fov;
+        RecalculateProjection();
     }
 
     void SceneCamera::SetPerspectiveNear(float near) {
@@ -59,7 +60,6 @@ namespace Ziben {
 
     void SceneCamera::SetViewportSize(uint32_t width, uint32_t height) {
         m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
-
         RecalculateProjection();
     }
 

@@ -4,7 +4,7 @@
 
 #include "RenderCommand.hpp"
 
-#include "Ziben/System.hpp"
+#include "EditorCamera.hpp"
 
 namespace Ziben {
 
@@ -78,6 +78,17 @@ namespace Ziben {
             "u_ViewProjectionMatrix",
             camera.GetProjectionMatrix() * glm::inverse(transform)
         );
+
+        GetData().QuadIndexCount          = 0;
+        GetData().TextureSlotIndex        = 1;
+        GetData().QuadVertexBufferPointer = GetData().QuadVertexBufferBase;
+    }
+
+    void Renderer2D::BeginScene(const EditorCamera& camera) {
+        ZIBEN_PROFILE_FUNCTION();
+
+        Shader::Bind(GetData().TextureShader);
+        GetData().TextureShader->SetUniform("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
 
         GetData().QuadIndexCount          = 0;
         GetData().TextureSlotIndex        = 1;

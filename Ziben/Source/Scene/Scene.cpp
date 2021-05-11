@@ -3,6 +3,7 @@
 #include "Entity.hpp"
 #include "Component.hpp"
 #include "Ziben/Renderer/Renderer2D.hpp"
+#include "Ziben/Renderer/EditorCamera.hpp"
 
 namespace Ziben {
 
@@ -24,7 +25,25 @@ namespace Ziben {
         m_Registry.on_construct<CameraComponent>().connect<&Scene::OnComponentPushed<CameraComponent>>(this);
     }
 
-    void Scene::OnUpdate(const TimeStep& ts) {
+    void Scene::OnUpdateEditor(const TimeStep& ts, EditorCamera& camera) {
+
+    }
+
+    void Scene::OnRenderEditor(EditorCamera& camera) {
+        Renderer2D::BeginScene(camera);
+        {
+            auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
+
+            for (entt::entity handle : view) {
+                const auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(handle);
+
+                Renderer2D::DrawQuad((glm::mat4)transform, (const glm::vec4&)sprite);
+            }
+        }
+        Renderer2D::EndScene();
+    }
+
+    void Scene::OnUpdateRuntime(const TimeStep& ts) {
         // Update scripts
         m_Registry.view<NativeScriptComponent>().each([&](entt::entity handle, auto& component) {
             if (!component.m_Instance) {
@@ -37,7 +56,7 @@ namespace Ziben {
         });
     }
 
-    void Scene::OnRender() {
+    void Scene::OnRenderRuntime() {
         const Camera* primaryCamera          = nullptr;
         glm::mat4     primaryCameraTransform = glm::mat4(1.0f);
 

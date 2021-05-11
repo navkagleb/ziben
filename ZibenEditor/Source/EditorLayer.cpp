@@ -94,6 +94,7 @@ namespace Ziben {
 
     EditorLayer::EditorLayer()
         : Layer("EditorLayer")
+        , m_EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f)
         , m_ViewportSize(0.0f)
         , m_IsViewportFocused(false)
         , m_IsViewportHovered(false)
@@ -156,6 +157,8 @@ namespace Ziben {
     }
 
     void EditorLayer::OnEvent(Event& event) {
+        m_EditorCamera.OnEvent(event);
+
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<KeyPressedEvent>(ZIBEN_BIND_EVENT_FUNC(OnKeyPressed));
@@ -174,11 +177,13 @@ namespace Ziben {
             )
         ) {
             m_FrameBuffer->Resize(m_ViewportSize.x, m_ViewportSize.y);
-
+            m_EditorCamera.SetViewportSize(static_cast<float>(m_ViewportSize.x), static_cast<float>(m_ViewportSize.y));
             m_ActiveScene->OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
         }
 
-        m_ActiveScene->OnUpdate(ts);
+        m_EditorCamera.OnUpdate(ts);
+
+        m_ActiveScene->OnUpdateEditor(ts, m_EditorCamera);
 
         // Render
         Renderer2D::ResetStatistics();
@@ -186,7 +191,7 @@ namespace Ziben {
         RenderCommand::SetClearColor({ 0.16f, 0.16f, 0.16f, 0.9f });
         RenderCommand::Clear();
 
-        m_ActiveScene->OnRender();
+        m_ActiveScene->OnRenderEditor(m_EditorCamera);
 
         FrameBuffer::Unbind();
     }
@@ -310,7 +315,7 @@ namespace Ziben {
                 ZibenEditor::Get().BlockImGuiEvents(!m_IsViewportFocused && !m_IsViewportHovered);
 
                 ImGui::Image(
-                    (void*)(uint64_t)m_FrameBuffer->GetColorAttachmentHandle(),
+                    reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentHandle()),
                     viewportSize,
                     ImVec2(0, 1),
                     ImVec2(1, 0)
@@ -328,17 +333,21 @@ namespace Ziben {
 
                     ImGuizmo::SetRect(windowPosition.x, windowPosition.y, windowSize.x, windowSize.y);
 
-                    // Camera
-                    auto        cameraEntity       = m_ActiveScene->GetPrimaryCameraEntity();
-                    const auto& transformComponent = cameraEntity.GetComponent<TransformComponent>();
-                    const auto& cameraComponent    = cameraEntity.GetComponent<CameraComponent>();
+                    // Editor Camera
+                    const glm::mat4& cameraProjection = m_EditorCamera.GetProjectionMatrix();
+                    const glm::mat4& cameraView       = m_EditorCamera.GetViewMatrix();
+
+                    // Runtime Camera
+                    // auto        cameraEntity       = m_ActiveScene->GetPrimaryCameraEntity();
+                    // const auto& transformComponent = cameraEntity.GetComponent<TransformComponent>();
+                    // const auto& cameraComponent    = cameraEntity.GetComponent<CameraComponent>();
 
                     // Entity
-                    auto& entityTransformComponent = selectedEntity.GetComponent<TransformComponent>();
-                    glm::mat4 entityTransform      = entityTransformComponent.GetTransform();
+                    auto&     entityTransformComponent = selectedEntity.GetComponent<TransformComponent>();
+                    glm::mat4 entityTransform          = entityTransformComponent.GetTransform();
 
                     // Snapping
-                    bool snap       = Input::IsKeyPressed(Key::LeftControl);
+                    bool  snap       = Input::IsKeyPressed(Key::LeftControl);
                     float snapValue = 0.0f;
 
                     switch (m_GuizmoType) {
@@ -351,8 +360,8 @@ namespace Ziben {
                     float snapValues[3] = { snapValue, snapValue, snapValue };
 
                     ImGuizmo::Manipulate(
-                        glm::value_ptr(glm::inverse(transformComponent.GetTransform())),
-                        glm::value_ptr(cameraComponent.Camera.GetProjectionMatrix()),
+                        glm::value_ptr(cameraView),
+                        glm::value_ptr(cameraProjection),
                         static_cast<ImGuizmo::OPERATION>(m_GuizmoType),
                         ImGuizmo::LOCAL,
                         glm::value_ptr(entityTransform),
