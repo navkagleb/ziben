@@ -118,6 +118,28 @@ namespace Ziben {
             );
         }
 
+        static constexpr GLenum ZibenFrameBufferTextureFormatToGL(FrameBufferTextureFormat format) {
+            switch (format) {
+                case FrameBufferTextureFormat::RGBA8:      return GL_RGB8;
+                case FrameBufferTextureFormat::RedInteger: return GL_RED_INTEGER;
+                default:                                   break;
+            }
+
+            assert(false);
+            return 0;
+        }
+
+        static constexpr GLenum GetGLDataTypeFromZibenFrameBufferTextureFormat(FrameBufferTextureFormat format) {
+            switch (format) {
+                case FrameBufferTextureFormat::RGBA8:      return GL_UNSIGNED_BYTE;
+                case FrameBufferTextureFormat::RedInteger: return GL_INT;
+                default:                                   break;
+            }
+
+            assert(false);
+            return 0;
+        }
+
     } // namespace Internal
 
     Ref<FrameBuffer> FrameBuffer::Create(FrameBufferSpecification&& specification) {
@@ -136,6 +158,17 @@ namespace Ziben {
 
     void FrameBuffer::Unbind() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    int FrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y) {
+        assert(attachmentIndex < m_ColorAttachments.size());
+
+        int pixelData;
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+
+        return pixelData;
     }
 
     FrameBuffer::FrameBuffer(FrameBufferSpecification&& specification)
@@ -269,15 +302,24 @@ namespace Ziben {
         Invalidate();
     }
 
-    int FrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y) {
+    void FrameBuffer::ClearColorAttachment(std::size_t index, int value) {
         assert(attachmentIndex < m_ColorAttachments.size());
 
-        int pixelData;
+        // Clear Attachments
+//        int clearValue = -1;
+//        glClearTexImage(frameBuffer->m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &clearValue);
 
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
-        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+        auto& specification = m_ColorAttachmentSpecification[index];
 
-        return pixelData;
+        specification.TextureFormat;
+
+        glClearTexImage(
+            m_ColorAttachments[index],
+            0,
+            Internal::ZibenFrameBufferTextureFormatToGL(specification.TextureFormat),
+            GL_INT,
+            &value
+        );
     }
 
     void FrameBuffer::Clear() {

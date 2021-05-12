@@ -197,6 +197,9 @@ namespace Ziben {
         RenderCommand::SetClearColor({ 0.16f, 0.16f, 0.16f, 0.9f });
         RenderCommand::Clear();
 
+        // Clear entity Id attachment to -1
+        m_FrameBuffer->ClearColorAttachment(1, -1);
+
         m_ActiveScene->OnRenderEditor(m_EditorCamera);
 
         auto [mouseX, mouseY] = ImGui::GetMousePos();
@@ -206,7 +209,9 @@ namespace Ziben {
         glm::vec2 viewportSize = { m_ViewportBounds[1] - m_ViewportBounds[0] };
 
         if (mouseX >= 0.0f && mouseY >= 0.0f && mouseX < viewportSize.x && mouseY < viewportSize.y) {
-            ZIBEN_INFO("Pixel {0}", m_FrameBuffer->ReadPixel(1, static_cast<int>(mouseX), static_cast<int>(mouseY)));
+            int pixelData = FrameBuffer::ReadPixel(1, static_cast<int>(mouseX), static_cast<int>(mouseY));
+
+            m_HoveredEntity = pixelData == -1 ? Entity::Null : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }
 
         FrameBuffer::Unbind();
@@ -300,6 +305,12 @@ namespace Ziben {
             {
                 const auto& statistics = Renderer2D::GetStatistics();
 
+                ImGui::Text("Editor");
+
+                std::string name = m_HoveredEntity ? m_HoveredEntity.GetComponent<TagComponent>().Tag : "None";
+                ImGui::Text("Hovered Entity: %s", name.c_str());
+
+                ImGui::Separator();
                 ImGui::Text("Renderer2D Statistics: ");
                 ImGui::Text("Draw Calls: %d",   statistics.DrawCalls);
                 ImGui::Text("Quad Count: %d",   statistics.QuadCount);

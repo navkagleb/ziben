@@ -10,6 +10,7 @@
 namespace Ziben {
 
     class EditorCamera;
+    class SpriteRendererComponent;
 
     class Renderer2D {
     public:
@@ -19,6 +20,9 @@ namespace Ziben {
             glm::vec2 TexCoord     = glm::vec2(0.0f);
             float     TexIndex     = 0.0f;
             float     TilingFactor = 1.0f;
+
+            // Editor only!
+            int       EntityHandle = -1;
         };
 
     public:
@@ -64,7 +68,7 @@ namespace Ziben {
         static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture);
         static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tintColor);
         static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, float tilingFactor);
-        static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture,  const glm::vec4& tintColor, float tilingFactor);
+            static void DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture,  const glm::vec4& tintColor, float tilingFactor, int entityHandle = -1);
 
         static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angle, const glm::vec4& color);
         static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angle, const glm::vec4& color);
@@ -80,6 +84,8 @@ namespace Ziben {
 
         static void DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
         static void DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, float angle, const Ref<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor);
+
+        static void DrawSprite(const glm::mat4& transform, const SpriteRendererComponent& spriteRendererComponent, int entityHandle);
 
     public:
         struct Statistics {

@@ -41,7 +41,7 @@ namespace Ziben {
         bool operator ==(const Entity& other) const;
 
     public:
-        static Entity Null;
+        static const Entity   Null;
 
     private:
         entt::entity m_Handle;

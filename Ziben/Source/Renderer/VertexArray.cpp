@@ -44,15 +44,74 @@ namespace Ziben {
         m_VertexBuffers.push_back(vertexBuffer);
 
         for (const auto& element : vertexBuffer->GetLayout()) {
-            glEnableVertexAttribArray(m_VertexBufferIndex);
-            glVertexAttribPointer(
-                m_VertexBufferIndex++,
-                ShaderData::GetCount(element.Type),
-                ShaderData::ToNativeType(element.Type),
-                element.IsNormalized,
-                static_cast<GLsizei>(vertexBuffer->GetLayout().GetStride()),
-                (const void*)element.Offset
-            );
+//            switch
+//            glEnableVertexAttribArray(m_VertexBufferIndex);
+//            glVertexAttribPointer(
+//                m_VertexBufferIndex++,
+//                ShaderData::GetCount(element.Type),
+//                ShaderData::ToNativeType(element.Type),
+//                element.IsNormalized,
+//                static_cast<GLsizei>(vertexBuffer->GetLayout().GetStride()),
+//                (const void*)element.Offset
+//            );
+
+            switch (element.Type) {
+                case ShaderData::Type::Float:
+                case ShaderData::Type::Float2:
+                case ShaderData::Type::Float3:
+                case ShaderData::Type::Float4: {
+                    glEnableVertexAttribArray(m_VertexBufferIndex);
+                    glVertexAttribPointer(
+                        m_VertexBufferIndex++,
+                        ShaderData::GetCount(element.Type),
+                        ShaderData::ToNativeType(element.Type),
+                        element.IsNormalized,
+                        static_cast<GLsizei>(vertexBuffer->GetLayout().GetStride()),
+                        reinterpret_cast<const void *>(element.Offset)
+                    );
+
+                    break;
+                }
+
+                case ShaderData::Type::Int:
+                case ShaderData::Type::Int2:
+                case ShaderData::Type::Int3:
+                case ShaderData::Type::Int4:
+                case ShaderData::Type::Bool: {
+                    glEnableVertexAttribArray(m_VertexBufferIndex);
+                    glVertexAttribIPointer(
+                        m_VertexBufferIndex++,
+                        ShaderData::GetCount(element.Type),
+                        ShaderData::ToNativeType(element.Type),
+                        static_cast<GLsizei>(vertexBuffer->GetLayout().GetStride()),
+                        reinterpret_cast<const void *>(element.Offset)
+                    );
+
+                    break;
+                }
+
+                case ShaderData::Type::Mat3:
+                case ShaderData::Type::Mat4: {
+                    int count = ShaderData::GetCount(element.Type);
+
+                    for (int i = 0; i < count; ++i) {
+                        glVertexAttribPointer(
+                            m_VertexBufferIndex++,
+                            count,
+                            ShaderData::ToNativeType(element.Type),
+                            element.IsNormalized,
+                            static_cast<GLsizei>(vertexBuffer->GetLayout().GetStride()),
+                            reinterpret_cast<const void *>(element.Offset + sizeof(float) * count * i)
+                        );
+
+                        glVertexAttribDivisor(m_VertexBufferIndex, 1);
+                    }
+
+                    break;
+                }
+
+                default: break;
+            }
         }
     }
 

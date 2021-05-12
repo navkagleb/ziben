@@ -35,9 +35,9 @@ namespace Ziben {
             auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 
             for (entt::entity handle : view) {
-                const auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(handle);
+                const auto& [tc, src] = view.get<TransformComponent, SpriteRendererComponent>(handle);
 
-                Renderer2D::DrawQuad((glm::mat4)transform, (const glm::vec4&)sprite);
+                Renderer2D::DrawSprite(tc.GetTransform(), src, static_cast<int>(handle));
             }
         }
         Renderer2D::EndScene();
@@ -81,9 +81,9 @@ namespace Ziben {
                 auto view = m_Registry.view<TransformComponent, SpriteRendererComponent>();
 
                 for (entt::entity handle : view) {
-                    const auto& [transform, sprite] = view.get<TransformComponent, SpriteRendererComponent>(handle);
+                    const auto& [tc, src] = view.get<TransformComponent, SpriteRendererComponent>(handle);
 
-                    Renderer2D::DrawQuad((glm::mat4)transform, (const glm::vec4&)sprite);
+                    Renderer2D::DrawSprite(tc.GetTransform(), src, static_cast<int>(handle));
                 }
             }
             Renderer2D::EndScene();

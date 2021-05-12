@@ -36,10 +36,7 @@ namespace Ziben {
         Ref<FrameBuffer>             m_FrameBuffer;
         Ref<Scene>                   m_ActiveScene;
 
-        Entity                       m_Square;
-        Entity                       m_Rect;
-        Entity                       m_CameraA;
-        Entity                       m_CameraB;
+        Entity                       m_HoveredEntity;
 
         EditorCamera                 m_EditorCamera;
 

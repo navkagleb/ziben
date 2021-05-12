@@ -2,7 +2,7 @@
 
 namespace Ziben {
 
-    Entity Entity::Null = Entity();
+    const Entity Entity::Null = Entity();
 
     Entity::Entity(entt::entity handle, Scene* scene)
         : m_Handle(handle)

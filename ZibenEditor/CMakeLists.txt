@@ -17,7 +17,7 @@ target_include_directories(${TARGET} PRIVATE Source)
 
 target_link_libraries(${TARGET} PRIVATE ZibenEngine)
 
-add_custom_command(TARGET ${TARGET} POST_BUILD
+add_custom_command(TARGET ${TARGET} PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_CURRENT_SOURCE_DIR}/Assets/
     ${CMAKE_CURRENT_BINARY_DIR}/Assets

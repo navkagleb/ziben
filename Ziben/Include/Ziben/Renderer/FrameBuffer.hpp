@@ -51,6 +51,8 @@ namespace Ziben {
         static void Bind(const Ref<FrameBuffer>& frameBuffer);
         static void Unbind();
 
+        static int ReadPixel(uint32_t attachmentIndex, int x, int y);
+
     public:
         explicit FrameBuffer(FrameBufferSpecification&& specification);
         ~FrameBuffer();
@@ -62,7 +64,7 @@ namespace Ziben {
 
         void Invalidate();
         void Resize(uint32_t width, uint32_t height);
-        int ReadPixel(uint32_t attachmentIndex, int x, int y);
+        void ClearColorAttachment(std::size_t index, int value);
 
     private:
         void Clear();

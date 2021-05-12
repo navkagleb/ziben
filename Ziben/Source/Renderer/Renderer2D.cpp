@@ -3,8 +3,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "RenderCommand.hpp"
-
 #include "EditorCamera.hpp"
+#include "Ziben/Scene/Component.hpp"
 
 namespace Ziben {
 
@@ -17,8 +17,9 @@ namespace Ziben {
             { ShaderData::Type::Float3, "VertexPosition" },
             { ShaderData::Type::Float4, "Color"          },
             { ShaderData::Type::Float2, "TexCoord"       },
-            { ShaderData::Type::Float,  "TexIndex"      },
-            { ShaderData::Type::Float,  "TilingFactor"   }
+            { ShaderData::Type::Float,  "TexIndex"       },
+            { ShaderData::Type::Float,  "TilingFactor"   },
+            { ShaderData::Type::Int,    "EntityHandle"   }
         });
 
         GetData().QuadVertexBufferBase = new QuadVertex[s_MaxVertexCount];
@@ -352,7 +353,13 @@ namespace Ziben {
         DrawQuad(transform, texture, glm::vec4(1.0f), tilingFactor);
     }
 
-    void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture,  const glm::vec4& tintColor, float tilingFactor) {
+    void Renderer2D::DrawQuad(
+        const glm::mat4& transform,
+        const Ref<Texture2D>& texture,
+        const glm::vec4& tintColor,
+        float tilingFactor,
+        int   entityHandle
+    ) {
         ZIBEN_PROFILE_FUNCTION();
 
         if (GetData().QuadIndexCount >= s_MaxIndexCount)
@@ -381,6 +388,7 @@ namespace Ziben {
             GetData().QuadVertexBufferPointer->TexCoord     = s_QuadTexCoords[i];
             GetData().QuadVertexBufferPointer->TexIndex     = static_cast<float>(textureIndex);
             GetData().QuadVertexBufferPointer->TilingFactor = tilingFactor;
+            GetData().QuadVertexBufferPointer->EntityHandle = entityHandle;
             GetData().QuadVertexBufferPointer++;
         }
 
@@ -523,6 +531,14 @@ namespace Ziben {
         GetData().QuadIndexCount += 6;
 
         ++GetStatistics().QuadCount;
+    }
+
+    void Renderer2D::DrawSprite(
+        const glm::mat4&               transform,
+        const SpriteRendererComponent& spriteRendererComponent,
+        int                            entityHandle
+    ) {
+        DrawQuad(transform, GetData().WhiteTexture, spriteRendererComponent.Color, 1.0f, entityHandle);
     }
 
     Renderer2D::Statistics& Renderer2D::GetStatistics() {
