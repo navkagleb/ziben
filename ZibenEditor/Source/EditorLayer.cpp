@@ -168,6 +168,7 @@ namespace Ziben {
         EventDispatcher dispatcher(event);
 
         dispatcher.Dispatch<KeyPressedEvent>(ZIBEN_BIND_EVENT_FUNC(OnKeyPressed));
+        dispatcher.Dispatch<MouseButtonPressedEvent>(ZIBEN_BIND_EVENT_FUNC(OnMouseButtonPressed));
         dispatcher.Dispatch<WindowMinimizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowMinimized));
     }
 
@@ -333,38 +334,28 @@ namespace Ziben {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
             ImGui::Begin("Viewport");
             {
-                auto viewportSize = ImGui::GetContentRegionAvail();
-
                 // Includes tab bar
-                auto viewportOffset = ImGui::GetCursorPos();
+                auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+                auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+                auto viewportOffset    = ImGui::GetWindowPos();
 
+                m_ViewportBounds[0]    = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+                m_ViewportBounds[1]    = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-
-                m_IsViewportFocused = ImGui::IsWindowFocused();
-                m_IsViewportHovered = ImGui::IsWindowHovered();
-                m_ViewportSize      = { viewportSize.x, viewportSize.y };
+                m_IsViewportFocused    = ImGui::IsWindowFocused();
+                m_IsViewportHovered    = ImGui::IsWindowHovered();
 
                 ZibenEditor::Get().BlockImGuiEvents(!m_IsViewportFocused && !m_IsViewportHovered);
 
+                auto viewportPanelSize = ImGui::GetContentRegionAvail();
+                m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
                 ImGui::Image(
                     reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentHandle(0)),
-                    viewportSize,
+                    viewportPanelSize,
                     ImVec2(0, 1),
                     ImVec2(1, 0)
                 );
-
-                auto windowSize = ImGui::GetWindowSize();
-                auto minBounds  = ImGui::GetWindowPos();
-
-                minBounds.x += viewportOffset.x;
-                minBounds.y += viewportOffset.y;
-
-                ImVec2 maxBounds = { minBounds.x + windowSize.x, minBounds.y + windowSize.y };
-
-                m_ViewportBounds[0] = { minBounds.x, minBounds.y };
-                m_ViewportBounds[1] = { maxBounds.x, maxBounds.y };
-
-
 
                 // Gizmos
                 if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
@@ -373,10 +364,13 @@ namespace Ziben {
                     ImGuizmo::SetOrthographic(false);
                     ImGuizmo::SetDrawlist();
 
-                    glm::vec2 windowPosition = { ImGui::GetWindowPos().x, ImGui::GetWindowPos().y };
-                    glm::vec2 windowSize     = { ImGui::GetWindowWidth(), ImGui::GetWindowHeight() };
+                    ImGuizmo::SetRect(
+                        m_ViewportBounds[0].x,
+                        m_ViewportBounds[0].y,
+                        m_ViewportBounds[1].x - m_ViewportBounds[0].x,
+                        m_ViewportBounds[1].y - m_ViewportBounds[0].y
+                    );
 
-                    ImGuizmo::SetRect(windowPosition.x, windowPosition.y, windowSize.x, windowSize.y);
 
                     // Editor Camera
                     const glm::mat4& cameraProjection = m_EditorCamera.GetProjectionMatrix();
@@ -476,10 +470,22 @@ namespace Ziben {
         return true;
     }
 
+    bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& event) {
+        if (event.GetButtonCode() == Button::Left)
+            if (CanPick())
+                m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
+
+        return false;
+    }
+
     bool EditorLayer::OnWindowMinimized(WindowMinimizedEvent& event) {
         m_ViewportSize = glm::vec2(0.0f);
 
         return true;
+    }
+
+    bool EditorLayer::CanPick() {
+        return m_IsViewportHovered && !ImGuizmo::IsOver() && !m_EditorCamera.IsActive();
     }
 
     void EditorLayer::NewScene() {

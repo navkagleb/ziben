@@ -6,6 +6,7 @@
 #include <Ziben/Renderer/FrameBuffer.hpp>
 #include <Ziben/Window/KeyEvent.hpp>
 #include <Ziben/Window/WindowEvent.hpp>
+#include <Ziben/Window/MouseEvent.hpp>
 #include <Ziben/Scene/Scene.hpp>
 #include <Ziben/Scene/Entity.hpp>
 #include <Ziben/Renderer/EditorCamera.hpp>
@@ -26,7 +27,10 @@ namespace Ziben {
 
     private:
         bool OnKeyPressed(KeyPressedEvent& event);
+        bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
         bool OnWindowMinimized(WindowMinimizedEvent& event);
+
+        bool CanPick();
 
         void NewScene();
         void OpenScene();

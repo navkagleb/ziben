@@ -17,6 +17,8 @@ namespace Ziben {
     public:
         [[nodiscard]] inline const Entity& GetSelectedEntity() const { return m_SelectedEntity; }
 
+        void SetSelectedEntity(const Entity& entity);
+
         void SetScene(const Ref<Scene>& scene);
         void OnImGuiRender();
 

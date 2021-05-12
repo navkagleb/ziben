@@ -20,6 +20,7 @@ namespace Ziben {
         [[nodiscard]] inline float GetDistance() const { return m_Distance; }
         [[nodiscard]] inline float GetPitch() const { return m_Pitch; }
         [[nodiscard]] inline float GetYaw() const { return m_Yaw; }
+        [[nodiscard]] inline bool IsActive() const { return m_IsActive; }
 
         [[nodiscard]] glm::mat4 GetViewProjectionMatrix() const;
         [[nodiscard]] glm::vec3 GetUpDirection() const;
@@ -65,6 +66,8 @@ namespace Ziben {
 
         float m_ViewportWidth;
         float m_ViewportHeight;
+
+        bool  m_IsActive;
 
     }; // class EditorCamera
 

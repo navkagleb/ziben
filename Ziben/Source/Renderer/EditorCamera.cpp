@@ -25,7 +25,8 @@ namespace Ziben {
         , m_Pitch(0.0f)
         , m_Yaw(0.0f)
         , m_ViewportWidth(1280.0f)
-        , m_ViewportHeight(720.0f) {
+        , m_ViewportHeight(720.0f)
+        , m_IsActive(false) {
 
         UpdateViewMatrix();
     }
@@ -44,7 +45,8 @@ namespace Ziben {
         , m_Pitch(0.0f)
         , m_Yaw(0.0f)
         , m_ViewportWidth(1280.0f)
-        , m_ViewportHeight(720.0f) {
+        , m_ViewportHeight(720.0f)
+        , m_IsActive(false) {
 
         UpdateViewMatrix();
     }
@@ -76,7 +78,11 @@ namespace Ziben {
     }
 
     void EditorCamera::OnUpdate(const TimeStep& ts) {
+        m_IsActive = false;
+
         if (Input::IsKeyPressed(Key::LeftAlt)) {
+            m_IsActive = true;
+
             glm::vec2 delta = (Input::GetMousePosition<float>() - m_InitialMousePosition) * 0.003f;
 
             m_InitialMousePosition = Input::GetMousePosition<float>();
