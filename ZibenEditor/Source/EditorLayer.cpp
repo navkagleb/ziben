@@ -107,9 +107,9 @@ namespace Ziben {
         FrameBufferSpecification specification;
 
         specification.Attachments = {
-            { FrameBufferTextureFormat::RGBA8 },
-            { FrameBufferTextureFormat::RGBA8 },
-            { FrameBufferTextureFormat::Depth }
+            { FrameBufferTextureFormat::RGBA8      },
+            { FrameBufferTextureFormat::RedInteger },
+            { FrameBufferTextureFormat::Depth      }
         };
 
         specification.Width  = 1280;
@@ -198,6 +198,16 @@ namespace Ziben {
         RenderCommand::Clear();
 
         m_ActiveScene->OnRenderEditor(m_EditorCamera);
+
+        auto [mouseX, mouseY] = ImGui::GetMousePos();
+        mouseX -= m_ViewportBounds[0].x;
+        mouseY  = static_cast<float>(m_ViewportSize.y) - (mouseY - m_ViewportBounds[0].y);
+
+        glm::vec2 viewportSize = { m_ViewportBounds[1] - m_ViewportBounds[0] };
+
+        if (mouseX >= 0.0f && mouseY >= 0.0f && mouseX < viewportSize.x && mouseY < viewportSize.y) {
+            ZIBEN_INFO("Pixel {0}", m_FrameBuffer->ReadPixel(1, static_cast<int>(mouseX), static_cast<int>(mouseY)));
+        }
 
         FrameBuffer::Unbind();
     }
@@ -312,7 +322,12 @@ namespace Ziben {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
             ImGui::Begin("Viewport");
             {
-                ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+                auto viewportSize = ImGui::GetContentRegionAvail();
+
+                // Includes tab bar
+                auto viewportOffset = ImGui::GetCursorPos();
+
+
 
                 m_IsViewportFocused = ImGui::IsWindowFocused();
                 m_IsViewportHovered = ImGui::IsWindowHovered();
@@ -321,11 +336,24 @@ namespace Ziben {
                 ZibenEditor::Get().BlockImGuiEvents(!m_IsViewportFocused && !m_IsViewportHovered);
 
                 ImGui::Image(
-                    reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentHandle(1)),
+                    reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentHandle(0)),
                     viewportSize,
                     ImVec2(0, 1),
                     ImVec2(1, 0)
                 );
+
+                auto windowSize = ImGui::GetWindowSize();
+                auto minBounds  = ImGui::GetWindowPos();
+
+                minBounds.x += viewportOffset.x;
+                minBounds.y += viewportOffset.y;
+
+                ImVec2 maxBounds = { minBounds.x + windowSize.x, minBounds.y + windowSize.y };
+
+                m_ViewportBounds[0] = { minBounds.x, minBounds.y };
+                m_ViewportBounds[1] = { maxBounds.x, maxBounds.y };
+
+
 
                 // Gizmos
                 if (Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
@@ -353,7 +381,7 @@ namespace Ziben {
                     glm::mat4 entityTransform          = entityTransformComponent.GetTransform();
 
                     // Snapping
-                    bool  snap       = Input::IsKeyPressed(Key::LeftControl);
+                    bool  snap      = Input::IsKeyPressed(Key::LeftControl);
                     float snapValue = 0.0f;
 
                     switch (m_GuizmoType) {

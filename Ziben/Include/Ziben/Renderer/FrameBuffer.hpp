@@ -10,6 +10,7 @@ namespace Ziben {
 
         // Color
         RGBA8,
+        RedInteger,
 
         // Depth / Stencil
         Depth24Stencil8,
@@ -61,6 +62,7 @@ namespace Ziben {
 
         void Invalidate();
         void Resize(uint32_t width, uint32_t height);
+        int ReadPixel(uint32_t attachmentIndex, int x, int y);
 
     private:
         void Clear();

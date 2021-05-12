@@ -32,10 +32,10 @@ in float v_TilingFactor;
 
 uniform sampler2D u_Textures[32];
 
-layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec4 FragColor2;
+layout (location = 0) out vec4 FragColor1;
+layout (location = 1) out int  FragColor2;
 
 void main() {
-    FragColor = texture(u_Textures[int(v_TexIndex)], v_TexCoord * v_TilingFactor) * v_Color;
-    FragColor2 = vec4(0.9, 0.2, 0.3, 1.0);
+    FragColor1 = texture(u_Textures[int(v_TexIndex)], v_TexCoord * v_TilingFactor) * v_Color;
+    FragColor2 = 50;
 }

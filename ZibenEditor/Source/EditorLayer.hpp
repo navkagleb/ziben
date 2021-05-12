@@ -44,6 +44,7 @@ namespace Ziben {
         EditorCamera                 m_EditorCamera;
 
         glm::vec<2, uint32_t>        m_ViewportSize;
+        std::array<glm::vec2, 2>     m_ViewportBounds;
         bool                         m_IsViewportFocused;
         bool                         m_IsViewportHovered;
 

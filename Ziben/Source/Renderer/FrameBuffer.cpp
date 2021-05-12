@@ -1,7 +1,5 @@
 #include "FrameBuffer.hpp"
 
-#include <utility>
-
 namespace Ziben {
 
     namespace Internal {
@@ -197,6 +195,20 @@ namespace Ziben {
                         break;
                     }
 
+                    case FrameBufferTextureFormat::RedInteger: {
+                        Internal::AttachColorTexture(
+                            m_ColorAttachments[i],
+                            m_Specification.Samples,
+                            GL_R32I,
+                            GL_RED_INTEGER,
+                            m_Specification.Width,
+                            m_Specification.Height,
+                            i
+                        );
+
+                        break;
+                    }
+
                     default: break;
                 }
             }
@@ -255,6 +267,17 @@ namespace Ziben {
         m_Specification.Height = height;
 
         Invalidate();
+    }
+
+    int FrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y) {
+        assert(attachmentIndex < m_ColorAttachments.size());
+
+        int pixelData;
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+
+        return pixelData;
     }
 
     void FrameBuffer::Clear() {
