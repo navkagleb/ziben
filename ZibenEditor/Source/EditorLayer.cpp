@@ -106,10 +106,16 @@ namespace Ziben {
         // Init FrameBuffer
         FrameBufferSpecification specification;
 
+        specification.Attachments = {
+            { FrameBufferTextureFormat::RGBA8 },
+            { FrameBufferTextureFormat::RGBA8 },
+            { FrameBufferTextureFormat::Depth }
+        };
+
         specification.Width  = 1280;
         specification.Height = 720;
 
-        m_FrameBuffer = FrameBuffer::Create(specification);
+        m_FrameBuffer = FrameBuffer::Create(std::move(specification));
         m_ActiveScene = CreateRef<Scene>("ActiveScene");
 
 #if 0
@@ -315,7 +321,7 @@ namespace Ziben {
                 ZibenEditor::Get().BlockImGuiEvents(!m_IsViewportFocused && !m_IsViewportHovered);
 
                 ImGui::Image(
-                    reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentHandle()),
+                    reinterpret_cast<void*>(m_FrameBuffer->GetColorAttachmentHandle(1)),
                     viewportSize,
                     ImVec2(0, 1),
                     ImVec2(1, 0)
