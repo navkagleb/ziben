@@ -49,25 +49,28 @@ namespace Ziben {
                 {
                     ZIBEN_PROFILE_SCOPE("LayerStack OnUpdate");
 
-                    for (Layer* layer : *m_LayerStack)
+                    for (Layer *layer : *m_LayerStack) {
                         layer->OnUpdate(m_TimeStep);
+                        layer->OnRender();
+                    }
                 }
 
                 ImGuiLayer::Begin();
-
-//                if (m_SceneManager->HasActiveScene()) {
-//                    m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
-//                    m_SceneManager->GetActiveScene()->OnRender();
-//                    m_SceneManager->GetActiveScene()->OnImGuiRender();
-//                }
-
                 {
-                    ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
 
-                    for (Layer* layer : *m_LayerStack)
-                        layer->OnImGuiRender();
+    //                if (m_SceneManager->HasActiveScene()) {
+    //                    m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
+    //                    m_SceneManager->GetActiveScene()->OnRender();
+    //                    m_SceneManager->GetActiveScene()->OnImGuiRender();
+    //                }
+
+                    {
+                        ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
+
+                        for (Layer *layer : *m_LayerStack)
+                            layer->OnImGuiRender();
+                    }
                 }
-
                 ImGuiLayer::End();
             }
 

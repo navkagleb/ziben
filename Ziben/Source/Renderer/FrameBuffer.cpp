@@ -160,17 +160,6 @@ namespace Ziben {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    int FrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y) {
-        assert(attachmentIndex < m_ColorAttachments.size());
-
-        int pixelData;
-
-        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
-        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
-
-        return pixelData;
-    }
-
     FrameBuffer::FrameBuffer(FrameBufferSpecification&& specification)
         : m_Handle(0)
         , m_Specification(specification)
@@ -303,12 +292,6 @@ namespace Ziben {
     }
 
     void FrameBuffer::ClearColorAttachment(std::size_t index, int value) {
-        assert(attachmentIndex < m_ColorAttachments.size());
-
-        // Clear Attachments
-//        int clearValue = -1;
-//        glClearTexImage(frameBuffer->m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &clearValue);
-
         auto& specification = m_ColorAttachmentSpecification[index];
 
         specification.TextureFormat;
@@ -320,6 +303,17 @@ namespace Ziben {
             GL_INT,
             &value
         );
+    }
+
+    int FrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y) {
+        assert(attachmentIndex < m_ColorAttachments.size());
+
+        int pixelData;
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+
+        return pixelData;
     }
 
     void FrameBuffer::Clear() {

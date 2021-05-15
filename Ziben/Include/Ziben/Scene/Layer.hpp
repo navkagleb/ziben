@@ -8,7 +8,7 @@ namespace Ziben {
     class Layer {
     public:
         explicit Layer(std::string name = "Layer");
-        virtual ~Layer() = default;
+        virtual ~Layer() noexcept = default;
 
         [[nodiscard]] const std::string& GetName() const { return m_Name; }
 
@@ -16,11 +16,12 @@ namespace Ziben {
         virtual void OnDetach() {}
         virtual void OnEvent(Event& event) {}
         virtual void OnUpdate(const TimeStep& ts) {}
+        virtual void OnRender() {}
         virtual void OnImGuiRender() {}
 
     protected:
         std::string m_Name;
 
-    }; // class Layer
+    }; // class Layers
 
 } // namespace Ziben

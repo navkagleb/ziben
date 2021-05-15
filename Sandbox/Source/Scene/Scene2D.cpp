@@ -12,7 +12,7 @@
 #include <Ziben/Renderer/RenderCommand.hpp>
 #include <Ziben/Renderer/Renderer.hpp>
 
-#include "Application/SandboxApplication.hpp"
+#include "Application/Application.hpp"
 
 Scene2D::Scene2D()
     : Ziben::Scene("Scene2D")

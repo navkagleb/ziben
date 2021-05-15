@@ -135,7 +135,8 @@ namespace Ziben {
     private:
         static Data& GetData();
 
-        static void FlushAndReset();
+        static void StartBatch();
+        static void NextBatch();
 
     }; // class Renderer2D
 

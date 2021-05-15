@@ -25,5 +25,8 @@ target_include_directories(${TARGET}
 )
 
 target_link_libraries(${TARGET} PUBLIC ZibenSystem ZibenProfiling libglew_static glm EnTT::EnTT)
+#target_link_libraries(${TARGET} PUBLIC OpenGL::OpenGL OpenGL::EGL)
+
+#-lglut32 -lglu32 -lopengl32
 
 target_precompile_headers(${TARGET} PUBLIC RendererPch.hpp)

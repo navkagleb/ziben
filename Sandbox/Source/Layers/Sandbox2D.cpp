@@ -11,7 +11,7 @@
 #include <Ziben/Renderer/RenderCommand.hpp>
 #include <Ziben/Renderer/Renderer2D.hpp>
 
-#include "Application/SandboxApplication.hpp"
+#include "Application/Application.hpp"
 
 Sandbox2D::Sandbox2D()
     : Ziben::Layer("Sandbox2D")
@@ -51,7 +51,7 @@ void Sandbox2D::OnEvent(Ziben::Event& event) {
     Ziben::EventDispatcher dispatcher(event);
 
     dispatcher.Dispatch<Ziben::KeyPressedEvent>([&](Ziben::KeyPressedEvent& event) {
-        auto& window = SandboxApplication::Get().GetWindow();
+        auto& window = Sandbox::Application::Get().GetWindow();
 
         if (event.GetKeyCode() == Ziben::Key::V) {
             window.SetVerticalSync(!window.IsVerticalSync());
@@ -115,8 +115,8 @@ void Sandbox2D::OnUpdate(const Ziben::TimeStep& ts) {
         if (Ziben::Input::IsButtonPressed(Ziben::Button::Left))
         {
             auto position       = Ziben::Input::GetMousePosition<float>();
-            auto width          = SandboxApplication::Get().GetWindow().GetWidth();
-            auto height         = SandboxApplication::Get().GetWindow().GetHeight();
+            auto width          = Sandbox::Application::Get().GetWindow().GetWidth();
+            auto height         = Sandbox::Application::Get().GetWindow().GetHeight();
             auto bounds         = m_CameraController.GetBounds();
             auto cameraPosition = m_CameraController.GetCamera().GetPosition();
 

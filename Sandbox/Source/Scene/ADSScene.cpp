@@ -10,7 +10,7 @@
 #include <Ziben/Window/MouseEvent.hpp>
 
 
-#include "Application/SandboxApplication.hpp"
+#include "Application/Application.hpp"
 
 ADSScene::ADSScene()
     : Ziben::Scene("ADSScene")

@@ -210,7 +210,7 @@ namespace Ziben {
         glm::vec2 viewportSize = { m_ViewportBounds[1] - m_ViewportBounds[0] };
 
         if (mouseX >= 0.0f && mouseY >= 0.0f && mouseX < viewportSize.x && mouseY < viewportSize.y) {
-            int pixelData = FrameBuffer::ReadPixel(1, static_cast<int>(mouseX), static_cast<int>(mouseY));
+            int pixelData = m_FrameBuffer->ReadPixel(1, static_cast<int>(mouseX), static_cast<int>(mouseY));
 
             m_HoveredEntity = pixelData == -1 ? Entity::Null : Entity((entt::entity)pixelData, m_ActiveScene.get());
         }

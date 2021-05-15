@@ -80,9 +80,7 @@ namespace Ziben {
             camera.GetProjectionMatrix() * glm::inverse(transform)
         );
 
-        GetData().QuadIndexCount          = 0;
-        GetData().TextureSlotIndex        = 1;
-        GetData().QuadVertexBufferPointer = GetData().QuadVertexBufferBase;
+        StartBatch();
     }
 
     void Renderer2D::BeginScene(const EditorCamera& camera) {
@@ -91,9 +89,7 @@ namespace Ziben {
         Shader::Bind(GetData().TextureShader);
         GetData().TextureShader->SetUniform("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
 
-        GetData().QuadIndexCount          = 0;
-        GetData().TextureSlotIndex        = 1;
-        GetData().QuadVertexBufferPointer = GetData().QuadVertexBufferBase;
+        StartBatch();
     }
 
     void Renderer2D::BeginScene(const OrthographicCamera& camera) {
@@ -102,26 +98,32 @@ namespace Ziben {
         Shader::Bind(GetData().TextureShader);
         GetData().TextureShader->SetUniform("u_ViewProjectionMatrix", camera.GetViewProjectionMatrix());
 
-        GetData().QuadIndexCount          = 0;
-        GetData().TextureSlotIndex        = 1;
-        GetData().QuadVertexBufferPointer = GetData().QuadVertexBufferBase;
+        StartBatch();
     }
 
     void Renderer2D::EndScene() {
         ZIBEN_PROFILE_FUNCTION();
 
-        GetData().QuadVertexBuffer->SetData(
-            GetData().QuadVertexBufferBase,
-            (uint8_t*)GetData().QuadVertexBufferPointer - (uint8_t*)GetData().QuadVertexBufferBase
-        );
-
         Flush();
+
+        std::fill(GetData().QuadVertexBufferBase, GetData().QuadVertexBufferBase + s_MaxVertexCount, QuadVertex());
     }
 
     void Renderer2D::Flush() {
+        if (GetData().QuadIndexCount == 0)
+            return;
+
+        GetData().QuadVertexBuffer->SetData(
+            GetData().QuadVertexBufferBase,
+            s_MaxVertexCount
+//            (uint8_t*)GetData().QuadVertexBufferPointer - (uint8_t*)GetData().QuadVertexBufferBase
+        );
+
+        // Bind Textures
         for (uint32_t i = 0; i < GetData().TextureSlotIndex; ++i)
             Texture2D::Bind(GetData().TextureSlots[i], i);
 
+        Shader::Bind(GetData().TextureShader);
         RenderCommand::DrawIndexed(GetData().QuadVertexArray, GetData().QuadIndexCount);
 
         ++GetStatistics().DrawCalls;
@@ -199,7 +201,7 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
 
         if (GetData().QuadIndexCount >= s_MaxIndexCount)
-            FlushAndReset();
+            NextBatch();
 
         uint32_t textureIndex;
 
@@ -300,7 +302,7 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
 
         if (GetData().QuadIndexCount >= s_MaxIndexCount)
-            FlushAndReset();
+            NextBatch();
 
         uint32_t textureIndex;
 
@@ -363,7 +365,7 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
 
         if (GetData().QuadIndexCount >= s_MaxIndexCount)
-            FlushAndReset();
+            NextBatch();
 
         uint32_t textureIndex;
 
@@ -495,7 +497,7 @@ namespace Ziben {
         ZIBEN_PROFILE_FUNCTION();
 
         if (GetData().QuadIndexCount >= s_MaxIndexCount)
-            FlushAndReset();
+            NextBatch();
 
         uint32_t textureIndex;
 
@@ -556,12 +558,15 @@ namespace Ziben {
         return data;
     }
 
-    void Renderer2D::FlushAndReset() {
-        EndScene();
-
+    void Renderer2D::StartBatch() {
         GetData().QuadIndexCount          = 0;
         GetData().TextureSlotIndex        = 1;
         GetData().QuadVertexBufferPointer = GetData().QuadVertexBufferBase;
+    }
+
+    void Renderer2D::NextBatch() {
+        Flush();
+        StartBatch();
     }
 
 } // namespace Ziben

@@ -12,7 +12,7 @@
 #include "Ziben/Renderer/RenderCommand.hpp"
 #include <Ziben/Renderer/Renderer.hpp>
 
-#include "Application/SandboxApplication.hpp"
+#include "Application/Application.hpp"
 
 Layer2D::Layer2D()
     : Ziben::Layer("Scene2D")
@@ -82,7 +82,7 @@ void Layer2D::OnEvent(Ziben::Event& event) {
     Ziben::EventDispatcher dispatcher(event);
 
     dispatcher.Dispatch<Ziben::KeyPressedEvent>([&](Ziben::KeyPressedEvent& event) {
-        auto& window = SandboxApplication::Get().GetWindow();
+        auto& window = Sandbox::Application::Get().GetWindow();
 
         if (event.GetKeyCode() == Ziben::Key::R)
             window.SetVerticalSync(!window.IsVerticalSync());
