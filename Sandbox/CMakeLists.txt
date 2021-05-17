@@ -1,4 +1,4 @@
-set(TARGET Sandbox)
+set(TARGET ZibenSandbox)
 
 file(GLOB HEADER_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Algorithms/*.hpp

@@ -1,7 +1,5 @@
 #include "RenderCommand.hpp"
 
-#include "Ziben/System/Log.hpp"
-
 namespace Ziben {
 
     namespace Internal {
