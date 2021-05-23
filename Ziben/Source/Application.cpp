@@ -160,7 +160,6 @@ namespace Ziben {
 int main(int argc, char** argv) {
     Ziben::Log::Create();
     Ziben::Profile::ProfileEngine::Create();
-    Ziben::Random::Create();
 
     // Startup
     ZIBEN_PROFILE_BEGIN_SESSION("Startup", "ZibenProfile_Startup.json");

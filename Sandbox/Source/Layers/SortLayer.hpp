@@ -42,6 +42,7 @@ namespace Sandbox {
         void SelectionSortQuads();
         void InsertionSortQuads();
         void ShellSortQuads();
+        void QuickSortQuads();
 
     private:
         Ziben::OrthographicCamera m_Camera;

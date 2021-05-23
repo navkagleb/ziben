@@ -52,12 +52,12 @@ void ParticleSystem::Push(const ParticleProps& props) {
 
     particle.Active        = true;
     particle.Position      = props.Position;
-    particle.Rotation      = Ziben::Random::GetRef().Get<float>(0.0f, glm::pi<float>());
+    particle.Rotation      = Ziben::Random::GetFromRange(0.0f, glm::pi<float>());
 
     // Velocity
     particle.Velocity      = props.Velocity;
-    particle.Velocity.x   += props.VelocityVariation.x * (Ziben::Random::GetRef().Get<float>(0.0f, 1.0f) - 0.5f);
-    particle.Velocity.y   += props.VelocityVariation.y * (Ziben::Random::GetRef().Get<float>(0.0f, 1.0f) - 0.5f);
+    particle.Velocity.x   += props.VelocityVariation.x * (Ziben::Random::GetFromRange(0.0f, 1.0f) - 0.5f);
+    particle.Velocity.y   += props.VelocityVariation.y * (Ziben::Random::GetFromRange(0.0f, 1.0f) - 0.5f);
 
     // Color
     particle.ColorBegin    = props.ColorBegin;
@@ -65,7 +65,7 @@ void ParticleSystem::Push(const ParticleProps& props) {
 
     particle.LifeTime      = props.LifeTime;
     particle.LifeRemaining = props.LifeTime;
-    particle.SizeBegin     = props.SizeBegin + props.SizeVariation * (Ziben::Random::GetRef().Get<float>(0.0f, 1.0f) - 0.5f);
+    particle.SizeBegin     = props.SizeBegin + props.SizeVariation * (Ziben::Random::GetFromRange(0.0f, 1.0f) - 0.5f);
     particle.SizeEnd       = props.SizeEnd;
 
     m_PoolIndex = --m_PoolIndex % m_ParticlePool.size();

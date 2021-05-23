@@ -12,9 +12,18 @@
 #include <Ziben/Renderer/Renderer2D.hpp>
 
 #include "Application/Application.hpp"
-#include "Algorithms/Algorithms.hpp"
+#include "Algorithms/Algorithm.hpp"
 
 namespace Sandbox {
+
+    namespace Internal {
+
+        void Sleep(uintmax_t ms) {
+            auto end = clock() + ms * CLOCKS_PER_SEC / 1000;
+            while (clock() < end);
+        }
+
+    } // namespace Internal
 
     SortLayer::SortLayer()
         : Ziben::Layer("SortLayer")
@@ -85,6 +94,9 @@ namespace Sandbox {
 
             if (ImGui::Button("ShellSort"))
                 ShellSortQuads();
+
+            if (ImGui::Button("QuickSort"))
+                QuickSortQuads();
         }
         ImGui::End();
 
@@ -93,7 +105,7 @@ namespace Sandbox {
             ImGui::Text("Sorted: %s", m_IsSorted ? "True" : "False");
             ImGui::Text("QuadCount: %llu", m_QuadCount);
 
-            ImGui::DragInt("Delay Time (ms)", &m_DelayTime, 0.1f, 0, 200);
+            ImGui::DragInt("Delay Time (us)", &m_DelayTime, 0.3f, 0, 1000);
 
             if (ImGui::ColorEdit4("BeginColor", glm::value_ptr(m_BeginColor)))
                 UpdateQuads();
@@ -121,7 +133,9 @@ namespace Sandbox {
     }
 
     void SortLayer::Sleep() const {
-        std::this_thread::sleep_for(std::chrono::milliseconds(m_DelayTime));
+
+
+        std::cout << std::endl;
     }
 
     void SortLayer::InitQuads() {
@@ -137,10 +151,11 @@ namespace Sandbox {
         m_SortFuture = std::async(std::launch::async, [&] {
             m_IsSorted = false;
 
-            for (std::size_t i = m_Quads.size() - 1; i > 0; --i) {
-                SwapQuads(m_Quads[i], m_Quads[Ziben::Random::GetRef().Get<std::size_t>(0, i)]);
-                Sleep();
-            }
+            Algorithm::Shuffle(m_Quads.begin(), m_Quads.end(), [&](auto index) {
+                Internal::Sleep(10);
+                UpdateQuads();
+                return Ziben::Random::GetFromRange<decltype(index)>(0, index);
+            });
         });
     }
 
@@ -168,23 +183,12 @@ namespace Sandbox {
 
     void SortLayer::BubbleSortQuads() {
         m_SortFuture = std::async(std::launch::async, [&] {
-            bool isSwapped;
+            Algorithm::BubbleSort(m_Quads.begin(), m_Quads.end(), [&](const auto& lhs, const auto& rhs) {
+                Internal::Sleep(5);
+                UpdateQuads();
 
-            for (int i = 0; i < m_QuadCount - 1; ++i) {
-                isSwapped = false;
-
-                for (int j = 0; j < m_QuadCount - i - 1; ++j) {
-                    if (m_Quads[j].Index > m_Quads[j + 1].Index) {
-                        isSwapped = true;
-
-                        SwapQuads(m_Quads[j], m_Quads[j + 1]);
-                        Sleep();
-                    }
-                }
-
-                if (!isSwapped)
-                    break;
-            }
+                return lhs.Index < rhs.Index;
+            });
 
             m_IsSorted = true;
         });
@@ -192,18 +196,14 @@ namespace Sandbox {
 
     void SortLayer::SelectionSortQuads() {
         m_SortFuture = std::async(std::launch::async, [&] {
-            std::size_t minIndex;
+            Algorithm::SelectionSort(m_Quads.begin(), m_Quads.end(), [&](const auto& lhs, const auto& rhs) {
+                Internal::Sleep(1);
+                UpdateQuads();
 
-            for (int i = 0; i < m_QuadCount - 1; ++i) {
-                minIndex = i;
+                return lhs.Index < rhs.Index;
+            });
 
-                for (int j = i; j < m_QuadCount; ++j)
-                    if (m_Quads[j].Index < m_Quads[minIndex].Index)
-                        minIndex = j;
-
-                SwapQuads(m_Quads[i], m_Quads[minIndex]);
-                Sleep();
-            }
+            UpdateQuads();
 
             m_IsSorted = true;
         });
@@ -211,12 +211,12 @@ namespace Sandbox {
 
     void SortLayer::InsertionSortQuads() {
         m_SortFuture = std::async(std::launch::async, [&] {
-            for (int i = 1; i < m_QuadCount; ++i) {
-                for (int j = i; j > 0 && m_Quads[j].Index < m_Quads[j - 1].Index; --j) {
-                    SwapQuads(m_Quads[j], m_Quads[j - 1]);
-                    Sleep();
-                }
-            }
+            Algorithm::InsertionSort(m_Quads.begin(), m_Quads.end(), [&](const auto& lhs, const auto& rhs) {
+                Internal::Sleep(10);
+                UpdateQuads();
+
+                return lhs.Index < rhs.Index;
+            });
 
             m_IsSorted = true;
         });
@@ -224,21 +224,25 @@ namespace Sandbox {
 
     void SortLayer::ShellSortQuads() {
         m_SortFuture = std::async(std::launch::async, [&] {
-            int h = 1;
+            Algorithm::ShellSort(m_Quads.begin(), m_Quads.end(), [&](const auto& lhs, const auto& rhs) {
+                Internal::Sleep(10);
+                UpdateQuads();
 
-            while (h < m_QuadCount / 3)
-                h = 3 * h + 1;
+                return lhs.Index < rhs.Index;
+            });
 
-            while (h >= 1) {
-                for (int i = h; i < m_QuadCount; ++i) {
-                    for (int j = i; j >= h && m_Quads[j].Index < m_Quads[j - h].Index; j -= h) {
-                        SwapQuads(m_Quads[j], m_Quads[j - h]);
-                        Sleep();
-                    }
-                }
+            m_IsSorted = true;
+        });
+    }
 
-                h = h / 3;
-            }
+    void SortLayer::QuickSortQuads() {
+        m_SortFuture = std::async(std::launch::async, [&] {
+            Algorithm::QuickSort(m_Quads.begin(), m_Quads.end(), [&](const auto& lhs, const auto& rhs) {
+                Internal::Sleep(10);
+                UpdateQuads();
+
+                return lhs.Index < rhs.Index;
+            });
 
             m_IsSorted = true;
         });
