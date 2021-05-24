@@ -115,7 +115,7 @@ namespace Ziben {
 
         GetData().QuadVertexBuffer->SetData(
             GetData().QuadVertexBufferBase,
-            s_MaxVertexCount
+            s_MaxVertexCount * sizeof(QuadVertex)
 //            (uint8_t*)GetData().QuadVertexBufferPointer - (uint8_t*)GetData().QuadVertexBufferBase
         );
 

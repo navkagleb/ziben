@@ -1,7 +1,6 @@
 #include "Application.hpp"
 
 #include "Layers/Sandbox2D.hpp"
-#include "Layers/SortLayer.hpp"
 
 namespace Sandbox {
 
@@ -10,8 +9,7 @@ namespace Sandbox {
 
 //    PushLayer(new MenuLayer);
 //    PushLayer(new Layer2D);
-//        PushLayer(new Sandbox2D);
-        PushLayer(new SortLayer);
+        PushLayer(new Sandbox2D);
     }
 
 } // namespace Sandbox
