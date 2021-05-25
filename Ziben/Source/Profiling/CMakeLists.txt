@@ -14,9 +14,10 @@ add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(${TARGET} PUBLIC ZibenUtility)
 
 target_include_directories(${TARGET}
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/Ziben/Include
     PRIVATE
         ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/Profiling
-        ${PROJECT_SOURCE_DIR}/Ziben/Include
 )
 
 target_precompile_headers(${TARGET} PUBLIC ProfilingPch.hpp)
