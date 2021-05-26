@@ -25,20 +25,16 @@ namespace Ziben {
     void LayerStack::PopLayer(Layer* layer) {
         auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_Index, layer);
 
-        if (it != m_Layers.begin() + m_Index) {
-            layer->OnDetach();
+        if (it != m_Layers.begin() + m_Index)
             m_Layers.erase(it);
             --m_Index;
-        }
     }
 
     void LayerStack::PopOverlay(Layer* layer) {
         auto it = std::find(m_Layers.begin() + m_Index, m_Layers.end(), layer);
 
-        if (it != m_Layers.end()) {
-            layer->OnDetach();
+        if (it != m_Layers.end())
             m_Layers.erase(it);
-        }
     }
 
 } // namespace Ziben

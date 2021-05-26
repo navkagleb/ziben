@@ -57,19 +57,10 @@ namespace Ziben {
 
                 ImGuiLayer::Begin();
                 {
+                    ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
 
-    //                if (m_SceneManager->HasActiveScene()) {
-    //                    m_SceneManager->GetActiveScene()->OnUpdate(m_TimeStep);
-    //                    m_SceneManager->GetActiveScene()->OnRender();
-    //                    m_SceneManager->GetActiveScene()->OnImGuiRender();
-    //                }
-
-                    {
-                        ZIBEN_PROFILE_SCOPE("LayerStack OnImGuiRender");
-
-                        for (Layer *layer : *m_LayerStack)
-                            layer->OnImGuiRender();
-                    }
+                    for (Layer *layer : *m_LayerStack)
+                        layer->OnImGuiRender();
                 }
                 ImGuiLayer::End();
             }
@@ -123,9 +114,6 @@ namespace Ziben {
         dispatcher.Dispatch<WindowResizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowResized));
         dispatcher.Dispatch<WindowMinimizedEvent>(ZIBEN_BIND_EVENT_FUNC(OnWindowMinimized));
 
-//        if (m_SceneManager->HasActiveScene())
-//            m_SceneManager->GetActiveScene()->OnEvent(event);
-
         for (auto it = m_LayerStack->ReverseBegin(); it != m_LayerStack->ReverseEnd(); ++it) {
             if (event.IsHandled())
                 break;
@@ -136,7 +124,7 @@ namespace Ziben {
 
     bool Application::OnWindowClosed(WindowClosedEvent& event) {
         ZIBEN_CORE_ERROR("WindowClosedEvent");
-        return true;
+        return false;
     }
 
     bool Application::OnWindowResized(WindowResizedEvent& event) {
