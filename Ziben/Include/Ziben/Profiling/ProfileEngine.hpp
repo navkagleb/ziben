@@ -43,7 +43,7 @@ namespace Ziben::Profile {
 
 } // namespace Ziben::Profiling
 
-#define ZIBEN_PROFILE 1
+//#define ZIBEN_PROFILE 1
 
 #if ZIBEN_PROFILE
     #define ZIBEN_PROFILE_BEGIN_SESSION(name, filename) ::Ziben::Profile::ProfileEngine::GetRef().BeginSession(name, filename)

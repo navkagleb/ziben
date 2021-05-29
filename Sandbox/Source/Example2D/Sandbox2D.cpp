@@ -11,7 +11,7 @@
 #include <Ziben/Renderer/RenderCommand.hpp>
 #include <Ziben/Renderer/Renderer2D.hpp>
 
-#include "Application/Application.hpp"
+#include "Application.hpp"
 
 Sandbox2D::Sandbox2D()
     : Ziben::Layer("Sandbox2D")

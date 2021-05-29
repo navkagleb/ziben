@@ -1,4 +1,4 @@
-#include "Scene2D.hpp"
+#include "Layer2D.hpp"
 
 #include <imgui.h>
 
@@ -9,22 +9,21 @@
 #include <Ziben/Window/Input.hpp>
 #include <Ziben/Window/EventDispatcher.hpp>
 #include <Ziben/Window/KeyEvent.hpp>
-#include <Ziben/Renderer/RenderCommand.hpp>
+#include "Ziben/Renderer/RenderCommand.hpp"
 #include <Ziben/Renderer/Renderer.hpp>
 
-#include "Application/Application.hpp"
+#include "Application.hpp"
 
-Scene2D::Scene2D()
-    : Ziben::Scene("Scene2D")
-    , m_CameraController(1280.0f / 720.0f, true)
+Layer2D::Layer2D()
+    : Ziben::Layer("Scene2D")
+    , m_CameraController(1280.0f / 720.0f)
     , m_Shader(Ziben::Shader::Create("Assets/Shaders/TextureShader.glsl"))
-    , m_Position(0.0f)
     , m_SquareColor(0.2f, 0.3f, 0.8f) {
 
     float trianglePositions[] = {
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
         -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
     };
 
@@ -36,8 +35,8 @@ Scene2D::Scene2D()
     float squarePositions[] = {
         -0.5f, -0.5f, 0.0f,
         -0.5f,  0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
-         0.5f, -0.5,  0.0f
+        0.5f,  0.5f, 0.0f,
+        0.5f, -0.5,  0.0f
     };
 
     Ziben::IndexType squareIndices[] = {
@@ -50,7 +49,11 @@ Scene2D::Scene2D()
     auto triangleVertexBuffer = Ziben::VertexBuffer::Create(trianglePositions, sizeof(trianglePositions));
     triangleVertexBuffer->SetLayout({
         { Ziben::ShaderData::Type::Float3, "VertexPosition" },
-        { Ziben::ShaderData::Type::Float2, "TexCoord" },
+        { Ziben::ShaderData::Type::Float4, "Color"          },
+        { Ziben::ShaderData::Type::Float2, "TexCoord"       },
+        { Ziben::ShaderData::Type::Float,  "TexIndex"       },
+        { Ziben::ShaderData::Type::Float,  "TilingFactor"   },
+        { Ziben::ShaderData::Type::Int,    "EntityHandle"   }
     });
 
     auto triangleIndexBuffer = Ziben::IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(Ziben::HandleType));
@@ -61,7 +64,12 @@ Scene2D::Scene2D()
 
     auto squareVertexBuffer = Ziben::VertexBuffer::Create(squarePositions, sizeof(squarePositions ));
     squareVertexBuffer->SetLayout({
-        { Ziben::ShaderData::Type::Float3, "VertexPosition" }
+        { Ziben::ShaderData::Type::Float3, "VertexPosition" },
+        { Ziben::ShaderData::Type::Float4, "Color"          },
+        { Ziben::ShaderData::Type::Float2, "TexCoord"       },
+        { Ziben::ShaderData::Type::Float,  "TexIndex"       },
+        { Ziben::ShaderData::Type::Float,  "TilingFactor"   },
+        { Ziben::ShaderData::Type::Int,    "EntityHandle"   }
     });
 
     auto squareIndexBuffer = Ziben::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(Ziben::HandleType));
@@ -77,42 +85,30 @@ Scene2D::Scene2D()
     m_Shader->SetUniform("u_Texture", 0);
 }
 
-void Scene2D::OnEvent(Ziben::Event& event) {
+void Layer2D::OnEvent(Ziben::Event& event) {
+    m_CameraController.OnEvent(event);
+
     Ziben::EventDispatcher dispatcher(event);
 
     dispatcher.Dispatch<Ziben::KeyPressedEvent>([&](Ziben::KeyPressedEvent& event) {
-        auto& window = SandboxApplication::Get().GetWindow();
+        auto& window = Sandbox::Application::Get().GetWindow();
 
         if (event.GetKeyCode() == Ziben::Key::R)
             window.SetVerticalSync(!window.IsVerticalSync());
 
         return true;
     });
-
-    m_CameraController.OnEvent(event);
 }
 
-void Scene2D::OnUpdate(const Ziben::TimeStep& ts) {
+void Layer2D::OnUpdate(const Ziben::TimeStep& ts) {
     m_CameraController.OnUpdate(ts);
-
-    // Triangle
-    if (Ziben::Input::IsKeyPressed(Ziben::Key::J))
-        m_Position.x -= 2.5f * (float)ts;
-    else if (Ziben::Input::IsKeyPressed(Ziben::Key::L))
-        m_Position.x += 2.5f * (float)ts;
-
-    if (Ziben::Input::IsKeyPressed(Ziben::Key::K))
-        m_Position.y -= 2.5f * (float)ts;
-    else if (Ziben::Input::IsKeyPressed(Ziben::Key::I))
-        m_Position.y += 2.5f * (float)ts;
 }
 
-void Scene2D::OnRender() {
+void Layer2D::OnRender() {
     Ziben::RenderCommand::SetClearColor({ 0.11f, 0.11f, 0.11f, 0.5f });
     Ziben::RenderCommand::Clear();
 
     Ziben::Renderer::BeginScene(m_CameraController.GetCamera());
-
     {
         static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -133,16 +129,13 @@ void Scene2D::OnRender() {
         Ziben::Texture2D::Bind(m_ChernoTexture);
         Ziben::Renderer::Submit(m_Shader, m_TriangleVertexArray);
     }
-
     Ziben::Renderer::EndScene();
 }
 
-void Scene2D::OnImGuiRender() {
+void Layer2D::OnImGuiRender() {
     ImGui::Begin("Scene2D");
-
     {
         ImGui::ColorEdit3("SquareColor", glm::value_ptr(m_SquareColor));
     }
-
     ImGui::End();
 }

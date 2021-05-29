@@ -1,4 +1,4 @@
-#include "Application/Application.hpp"
+#include "Application.hpp"
 
 Ziben::Application* Ziben::CreateApplication(int argc, char** argv) {
     (void)argc;

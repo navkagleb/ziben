@@ -1,26 +1,17 @@
 set(TARGET ZibenSandbox)
 
-file(GLOB HEADER_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Algorithms/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Algorithms/*.inl
+file(GLOB_RECURSE HEADER_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Application/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entities/*.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Layers/*.hpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Scene/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.inl
 )
 
-file(GLOB SOURCE_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Algorithms/*.cpp
+file(GLOB_RECURSE SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Application/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Entities/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Layers/*.cpp
-#    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Scene/*.cpp
 )
 
-#set(ZIBEN_PROFILE TRUE CACHE INTERNAL "")
-add_compile_definitions(ZIBEN_PROFILE)
+target_compile_definitions(ZibenEngine PUBLIC ZIBEN_PROFILE=1)
+
+#add_compile_definitions(ZIBEN_PROFILE)
 
 include_directories(Source)
 

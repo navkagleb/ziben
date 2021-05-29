@@ -7,7 +7,7 @@
 #include "Ziben/Scene/Component.hpp"
 
 namespace Ziben {
-
+    
     void Renderer2D::Init() {
         ZIBEN_PROFILE_FUNCTION();
 
@@ -554,10 +554,10 @@ namespace Ziben {
     }
 
     Renderer2D::Data& Renderer2D::GetData() {
-        static Renderer2D::Data data;
+        static Data data;
         return data;
     }
-
+    
     void Renderer2D::StartBatch() {
         GetData().QuadIndexCount          = 0;
         GetData().TextureSlotIndex        = 1;

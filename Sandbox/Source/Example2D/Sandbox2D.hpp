@@ -8,7 +8,7 @@
 #include <Ziben/Renderer/SubTexture2D.hpp>
 #include <Ziben/Renderer/FrameBuffer.hpp>
 
-#include "Entities/ParticleSystem.hpp"
+#include "ParticleSystem.hpp"
 
 class Sandbox2D : public Ziben::Layer {
 public:
@@ -37,4 +37,4 @@ private:
 
     std::unordered_map<char, Ziben::Ref<Ziben::SubTexture2D>> m_Tiles;
 
-}; // class Layer2D;
+}; // class Sandbox2D
