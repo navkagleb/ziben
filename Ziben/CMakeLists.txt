@@ -22,9 +22,9 @@ add_subdirectory(Source/Window)
 add_subdirectory(Source/Renderer)
 add_subdirectory(Source/Scene)
 
-if (ZIBEN_PROFILE)
+if (ENABLE_ZIBEN_PROFILE)
     add_compile_definitions(ZIBEN_PROFILE)
-endif (ZIBEN_PROFILE)
+endif (ENABLE_ZIBEN_PROFILE)
 
 file(GLOB HEADER_FILES
     ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/*.hpp

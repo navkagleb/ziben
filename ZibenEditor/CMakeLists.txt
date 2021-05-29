@@ -9,7 +9,7 @@ file(GLOB_RECURSE SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
 )
 
-add_compile_definitions(ZIBEN_PROFILE)
+set_property(GLOBAL PROPERTY ENABLE_ZIBEN_PROFILE TRUE)
 
 add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})
 
@@ -23,5 +23,3 @@ add_custom_command(TARGET ${TARGET} PRE_BUILD
     ${CMAKE_CURRENT_BINARY_DIR}/Assets
     COMMENT "Copy ZibenEditor/Assets files to build directory" VERBATIM
 )
-
-add_compile_options()

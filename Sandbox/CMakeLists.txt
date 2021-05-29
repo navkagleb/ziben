@@ -9,7 +9,9 @@ file(GLOB_RECURSE SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
 )
 
-target_compile_definitions(ZibenEngine PUBLIC ZIBEN_PROFILE=1)
+set_property(GLOBAL PROPERTY ENABLE_ZIBEN_PROFILE TRUE)
+
+#target_compile_definitions(ZibenEngine PUBLIC ZIBEN_PROFILE=1)
 
 #add_compile_definitions(ZIBEN_PROFILE)
 
@@ -24,3 +26,5 @@ file(COPY
     DESTINATION
         ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+#remove_definitions(ZIBEN_PROFILE)
