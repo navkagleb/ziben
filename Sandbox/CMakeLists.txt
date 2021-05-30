@@ -9,17 +9,20 @@ file(GLOB_RECURSE SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
 )
 
-#set_property(GLOBAL PROPERTY ZIBEN_ENABLE_PROFILING TRUE)
+#set_property(GLOBAL PROPERTY ZIBEN_INTERNAL TRUE)
+#set_property(GLOBAL PROPERTY ZIBEN_ENABLE_PROFILING_INTERNAL TRUE)
 
-target_compile_definitions(ZibenEngine PUBLIC ZIBEN_PROFILING=1)
+#set(ZIBEN_ENABLE_PROFILING TRUE)
+#
+#message(STATUS "PROFILING sandbox: ${ZIBEN_ENABLE_PROFILING}")
 
-#add_compile_definitions(ZIBEN_PROFILE)
+#set(ZIBEN_ENABLE_PROFILING TRUE CACHE BOOL "ZibenEngine Param" FORCE)
 
 include_directories(Source)
 
 add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})
 
-target_link_libraries(${TARGET} PRIVATE ZibenEngine)
+target_link_libraries(${TARGET} PRIVATE Ziben::Engine)
 
 file(COPY
         ${CMAKE_CURRENT_SOURCE_DIR}/Assets

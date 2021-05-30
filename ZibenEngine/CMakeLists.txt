@@ -17,6 +17,8 @@ else ()
     message(STATUS "ZibenEngine: Release Mode")
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
 
+MESSAGE(STATUS "ZIBEN PROF ${ZIBEN_ENABLE_PROFILING}")
+
 # Enable Ziben Profiling
 if (ZIBEN_ENABLE_PROFILING)
     add_compile_definitions(ZIBEN_PROFILING)
@@ -31,15 +33,16 @@ add_subdirectory(Source/Renderer)
 add_subdirectory(Source/Scene)
 
 file(GLOB HEADER_FILES
-    ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/*.hpp
-    ${PROJECT_SOURCE_DIR}/Ziben/Source/*.hpp
+    ${PROJECT_SOURCE_DIR}/ZibenEngine/Include/Ziben/*.hpp
+    ${PROJECT_SOURCE_DIR}/ZibenEngine/Source/*.hpp
 )
 
 file(GLOB SOURCE_FILES
-    ${PROJECT_SOURCE_DIR}/Ziben/Source/*.cpp
+    ${PROJECT_SOURCE_DIR}/ZibenEngine/Source/*.cpp
 )
 
 add_library(${TARGET} STATIC ${HEADER_FILES} ${SOURCE_FILES})
+add_library(Ziben::Engine ALIAS ${TARGET})
 
 target_include_directories(${TARGET}
     PUBLIC

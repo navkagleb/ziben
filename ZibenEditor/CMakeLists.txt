@@ -9,13 +9,11 @@ file(GLOB_RECURSE SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/*.cpp
 )
 
-set_property(GLOBAL PROPERTY ENABLE_ZIBEN_PROFILE TRUE)
-
 add_executable(${TARGET} ${HEADER_FILES} ${SOURCE_FILES})
 
 target_include_directories(${TARGET} PRIVATE Source)
 
-target_link_libraries(${TARGET} PRIVATE ZibenEngine)
+target_link_libraries(${TARGET} PRIVATE Ziben::Engine)
 
 add_custom_command(TARGET ${TARGET} PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

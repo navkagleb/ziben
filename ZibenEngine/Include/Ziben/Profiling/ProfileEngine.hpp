@@ -41,11 +41,7 @@ namespace Ziben::Profile {
 
     using ProfileEngine = Ziben::Singleton<ProfileEngine_Impl>;
 
-} // namespace Ziben::Profiling
-
-//#define ZIBEN_PROFILE 1
-
-#if ZIBEN_PROFILING
+#ifdef ZIBEN_PROFILING
     #define ZIBEN_PROFILE_BEGIN_SESSION(name, filename) ::Ziben::Profile::ProfileEngine::GetRef().BeginSession(name, filename)
     #define ZIBEN_PROFILE_END_SESSION()                 ::Ziben::Profile::ProfileEngine::GetRef().EndSession()
     #define ZIBEN_PROFILE_SCOPE(name)                   ::Ziben::Profile::Timer Timer##__FILE__##__LINE__(name)
@@ -56,3 +52,5 @@ namespace Ziben::Profile {
     #define ZIBEN_PROFILE_SCOPE(name)
     #define ZIBEN_PROFILE_FUNCTION()
 #endif
+
+} // namespace Ziben::Profiling

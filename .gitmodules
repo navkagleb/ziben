@@ -28,3 +28,33 @@
 [submodule "Ziben/External/ImGuizmo"]
 	path = Ziben/External/ImGuizmo
 	url = https://github.com/NavkaGleb/ImGuizmo
+[submodule "ZibenEngine/External/entt"]
+	path = ZibenEngine/External/entt
+	url = https://github.com/skypjack/entt
+[submodule "ZibenEngine/External/glfw"]
+	path = ZibenEngine/External/glfw
+	url = https://github.com/glfw/glfw
+[submodule "ZibenEngine/External/glew-cmake"]
+	path = ZibenEngine/External/glew-cmake
+	url = https://github.com/Perlmint/glew-cmake
+[submodule "ZibenEngine/External/glm"]
+	path = ZibenEngine/External/glm
+	url = https://github.com/g-truc/glm
+[submodule "ZibenEngine/External/yaml-cpp"]
+	path = ZibenEngine/External/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
+[submodule "ZibenEngine/External/stb"]
+	path = ZibenEngine/External/stb
+	url = https://github.com/nothings/stb
+[submodule "ZibenEngine/External/spdlog"]
+	path = ZibenEngine/External/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "ZibenEngine/External/freetype"]
+	path = ZibenEngine/External/freetype
+	url = https://github.com/freetype/freetype
+[submodule "ZibenEngine/External/imgui"]
+	path = ZibenEngine/External/imgui
+	url = https://github.com/ocornut/imgui
+[submodule "ZibenEngine/External/ImGuizmo"]
+	path = ZibenEngine/External/ImGuizmo
+	url = https://github.com/NavkaGleb/ImGuizmo
