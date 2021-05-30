@@ -45,7 +45,7 @@ namespace Ziben::Profile {
 
 //#define ZIBEN_PROFILE 1
 
-#if ZIBEN_PROFILE
+#if ZIBEN_PROFILING
     #define ZIBEN_PROFILE_BEGIN_SESSION(name, filename) ::Ziben::Profile::ProfileEngine::GetRef().BeginSession(name, filename)
     #define ZIBEN_PROFILE_END_SESSION()                 ::Ziben::Profile::ProfileEngine::GetRef().EndSession()
     #define ZIBEN_PROFILE_SCOPE(name)                   ::Ziben::Profile::Timer Timer##__FILE__##__LINE__(name)

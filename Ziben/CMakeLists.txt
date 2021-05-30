@@ -11,9 +11,17 @@ add_subdirectory(External/yaml-cpp)   # serialization library
 # Detect Debug / Release modes
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_definitions(ZIBEN_DEBUG)
+    message(STATUS "ZibenEngine: Debug Mode")
 else ()
     add_compile_definitions(ZIBEN_RELEASE)
+    message(STATUS "ZibenEngine: Release Mode")
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
+
+# Enable Ziben Profiling
+if (ZIBEN_ENABLE_PROFILING)
+    add_compile_definitions(ZIBEN_PROFILING)
+    message(STATUS "ZibenEngine: Enable Profiling")
+endif (ZIBEN_ENABLE_PROFILING)
 
 add_subdirectory(Source/Utility)
 add_subdirectory(Source/Profiling)
@@ -21,10 +29,6 @@ add_subdirectory(Source/System)
 add_subdirectory(Source/Window)
 add_subdirectory(Source/Renderer)
 add_subdirectory(Source/Scene)
-
-if (ENABLE_ZIBEN_PROFILE)
-    add_compile_definitions(ZIBEN_PROFILE)
-endif (ENABLE_ZIBEN_PROFILE)
 
 file(GLOB HEADER_FILES
     ${PROJECT_SOURCE_DIR}/Ziben/Include/Ziben/*.hpp
