@@ -17,8 +17,6 @@ else ()
     message(STATUS "ZibenEngine: Release Mode")
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
 
-MESSAGE(STATUS "ZIBEN PROF ${ZIBEN_ENABLE_PROFILING}")
-
 # Enable Ziben Profiling
 if (ZIBEN_ENABLE_PROFILING)
     add_compile_definitions(ZIBEN_PROFILING)

@@ -63,7 +63,14 @@ namespace Ziben {
         assert(m_InternalFormat && m_DataFormat);
 
         glCreateTextures(GL_TEXTURE_2D, 1, &m_Handle);
-        glTextureStorage2D(m_Handle, 1, m_InternalFormat, static_cast<GLsizei>(m_Width), static_cast<GLsizei>(m_Height));
+
+        glTextureStorage2D(
+            m_Handle,
+            1,
+            m_InternalFormat,
+            static_cast<GLsizei>(m_Width),
+            static_cast<GLsizei>(m_Height)
+        );
 
         glTextureParameteri(m_Handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_Handle, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
